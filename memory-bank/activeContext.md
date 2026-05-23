@@ -2,9 +2,9 @@
 
 ## Estado actual
 
-Fase 2 inicial: nucleo contable.
+Fase 3 inicial: terceros.
 
-Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, plan de cuentas, periodos contables con cierre, asientos borrador con lineas dinamicas, edicion/descarte controlado y detalle visible, confirmacion de asientos, anulacion por contraasiento, Libro Diario, Libro Mayor, Balance de sumas y saldos, exportacion CSV, vista imprimible/PDF, permisos por tenant y auditoria local.
+Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, plan de cuentas, periodos contables con cierre, asientos borrador con lineas dinamicas, edicion/descarte controlado y detalle visible, confirmacion de asientos, anulacion por contraasiento, Libro Diario, Libro Mayor, Balance de sumas y saldos, exportacion CSV, vista imprimible/PDF, modulo inicial de terceros, permisos por tenant y auditoria local.
 
 ## Foco inmediato
 
@@ -12,7 +12,8 @@ Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma 
 - Crear migraciones iniciales.
 - Conectar autenticacion productiva a PostgreSQL cuando Docker/PostgreSQL este disponible.
 - Probar altas reales contra PostgreSQL.
-- Iniciar Fase 3 con terceros: clientes y proveedores.
+- Agregar edicion/desactivacion de terceros.
+- Vincular terceros a comprobantes emitidos/recibidos.
 - Mantener tests de aislamiento por `empresa_id` como proteccion obligatoria.
 
 ## Pendientes

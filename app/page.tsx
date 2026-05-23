@@ -41,6 +41,11 @@ const moduleCards = [
     href: "/contabilidad/asientos"
   },
   {
+    title: "Terceros",
+    detail: "Clientes y proveedores por empresa.",
+    href: "/terceros"
+  },
+  {
     title: "Reportes",
     detail: "Libro Diario y Mayor por empresa y periodo.",
     href: "/contabilidad/reportes"

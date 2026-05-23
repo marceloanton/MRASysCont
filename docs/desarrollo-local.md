@@ -51,6 +51,7 @@ Tambien funcionan en modo demo local:
 - `/contabilidad/periodos`
 - `/contabilidad/asientos`
 - `/contabilidad/reportes`
+- `/terceros`
 
 La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo. Tambien permite exportar esos reportes en CSV y abrir una vista imprimible para guardar como PDF desde el navegador.
 
@@ -63,6 +64,8 @@ El listado de asientos muestra el detalle de cuentas y montos de cada renglon pa
 Solo los asientos en estado `BORRADOR` pueden editarse. La edicion reemplaza fecha, descripcion y lineas completas; los asientos confirmados o anulados quedan bloqueados.
 
 Los asientos `BORRADOR` pueden descartarse. Los asientos `CONFIRMADO` o `ANULADO` no se eliminan: solo se corrigen con contraasiento.
+
+El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo. Las altas requieren PostgreSQL porque persisten contra la tabla `ThirdParty`.
 
 ## PostgreSQL con Docker
 

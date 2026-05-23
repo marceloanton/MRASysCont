@@ -30,6 +30,12 @@ enum JournalEntryStatus {
   ANULADO
 }
 
+enum ThirdPartyType {
+  CLIENTE
+  PROVEEDOR
+  CLIENTE_PROVEEDOR
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -59,6 +65,7 @@ model Company {
   accountingPeriods AccountingPeriod[]
   accounts          Account[]
   journalEntries    JournalEntry[]
+  thirdParties      ThirdParty[]
   auditEvents       AuditEvent[]
 }
 
@@ -174,6 +181,29 @@ model JournalEntryLine {
   account      Account      @relation(fields: [accountId], references: [id])
 
   @@index([accountId])
+}
+
+model ThirdParty {
+  id           String         @id @default(cuid())
+  companyId    String
+  type         ThirdPartyType
+  legalName    String
+  tradeName    String?
+  documentType String         @default("CUIT")
+  document     String
+  taxCondition String
+  email        String?
+  phone        String?
+  address      String?
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, document])
+  @@index([companyId, type])
+  @@index([companyId, active])
 }
 
 model AuditEvent {

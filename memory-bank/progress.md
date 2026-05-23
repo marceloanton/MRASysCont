@@ -25,10 +25,11 @@
 - Reportes iniciales Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa y periodo.
 - Exportacion CSV de Balance, Diario y Mayor.
 - Vista imprimible para guardar reportes como PDF desde el navegador.
+- Fase 3 inicial con terceros clientes/proveedores por empresa.
 
 ## En curso
 
-- Fase 1: persistencia real, autenticacion productiva y migraciones.
+- Fase 3: terceros y cuentas corrientes.
 
 ## Proximo
 
@@ -36,4 +37,5 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Iniciar Fase 3 con terceros: clientes y proveedores.
+- Agregar edicion/desactivacion de terceros.
+- Vincular terceros a comprobantes emitidos/recibidos.
