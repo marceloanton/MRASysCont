@@ -52,7 +52,7 @@ Tambien funcionan en modo demo local:
 - `/contabilidad/asientos`
 - `/contabilidad/reportes`
 
-La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo. Tambien permite exportar esos reportes en CSV.
+La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo. Tambien permite exportar esos reportes en CSV y abrir una vista imprimible para guardar como PDF desde el navegador.
 
 Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir cambios.
 

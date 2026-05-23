@@ -628,9 +628,135 @@ th {
   color: var(--muted);
 }
 
+.printPage {
+  background: white;
+  color: #111827;
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 32px;
+}
+
+.printActions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.printActions a,
+.printActions button {
+  background: #111827;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+
+.printHeader {
+  border-bottom: 2px solid #111827;
+  margin-bottom: 26px;
+  padding-bottom: 18px;
+}
+
+.printHeader p {
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.printHeader h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.2rem;
+  margin: 0 0 18px;
+}
+
+.printHeader dl {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.printHeader dt {
+  color: #6b7280;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.printHeader dd {
+  font-weight: 700;
+  margin: 4px 0 0;
+}
+
+.printSection {
+  break-inside: avoid;
+  margin-bottom: 28px;
+}
+
+.printSection h2 {
+  font-size: 1.25rem;
+  margin: 0 0 10px;
+}
+
+.printLedgerAccount {
+  break-inside: avoid;
+  margin-bottom: 18px;
+}
+
+.printLedgerAccount h3 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+
+.printPage table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  width: 100%;
+}
+
+.printPage th,
+.printPage td {
+  border: 1px solid #d1d5db;
+  padding: 7px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.printPage th {
+  background: #f3f4f6;
+}
+
+.printPage tfoot th {
+  background: #e5e7eb;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .printActions {
+    display: none;
+  }
+
+  .printPage {
+    max-width: none;
+    padding: 0;
+  }
+}
+
 @media (max-width: 900px) {
   .filterBar,
-  .reportSummary {
+  .reportSummary,
+  .printHeader dl {
     grid-template-columns: 1fr;
   }
 }

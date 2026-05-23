@@ -16,3 +16,4 @@
 - 2026-05-23: Se agregan reportes iniciales de Libro Diario y Libro Mayor filtrados por empresa activa y periodo.
 - 2026-05-23: Se agrega Balance de sumas y saldos derivado de las mismas lineas del Libro Diario para evitar consultas duplicadas y mantener consistencia de totales.
 - 2026-05-23: Se agrega exportacion CSV server-side de reportes, protegida por sesion y empresa activa.
+- 2026-05-23: Se agrega vista imprimible server-side para reportes; PDF se obtiene con impresion del navegador antes de incorporar un generador binario dedicado.

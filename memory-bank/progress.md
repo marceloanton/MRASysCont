@@ -20,6 +20,7 @@
 - Cierre de periodos contables para bloquear nuevas operaciones.
 - Reportes iniciales Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa y periodo.
 - Exportacion CSV de Balance, Diario y Mayor.
+- Vista imprimible para guardar reportes como PDF desde el navegador.
 
 ## En curso
 
@@ -31,4 +32,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar exportacion PDF para reportes.
+- Ampliar asientos a lineas dinamicas.

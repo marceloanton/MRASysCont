@@ -78,6 +78,9 @@ export default async function AccountingReportsPage({
         <Link href={`/contabilidad/reportes/export?type=mayor${exportPeriodQuery}`}>
           Mayor
         </Link>
+        <Link href={`/contabilidad/reportes/imprimir?periodId=${selectedPeriodId ?? "todos"}`}>
+          Imprimir / PDF
+        </Link>
       </section>
 
       <section className="reportSummary">
