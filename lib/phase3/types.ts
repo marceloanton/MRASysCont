@@ -50,3 +50,25 @@ export type VoucherResult = {
   message: string;
   id?: string;
 };
+
+export type ThirdPartyStatementLine = {
+  voucherId: string;
+  issueDate: string;
+  direction: VoucherDirection;
+  type: VoucherType;
+  number: string;
+  currency: string;
+  debit: number;
+  credit: number;
+  balanceImpact: number;
+};
+
+export type ThirdPartyStatement = {
+  thirdPartyId: string;
+  thirdPartyName: string;
+  document: string;
+  receivable: number;
+  payable: number;
+  netBalance: number;
+  lines: ThirdPartyStatementLine[];
+};

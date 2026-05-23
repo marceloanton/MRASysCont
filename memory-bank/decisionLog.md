@@ -24,3 +24,4 @@
 - 2026-05-23: Se inicia Fase 3 con `ThirdParty` por empresa para clientes/proveedores; documento unico por empresa y alta protegida por permisos.
 - 2026-05-23: Los terceros no se eliminan fisicamente desde UI; se editan o desactivan para conservar trazabilidad futura con comprobantes.
 - 2026-05-23: Se agregan comprobantes iniciales vinculados a terceros, sin CAE/ARCA todavia, para preparar cuentas corrientes y facturacion fiscal posterior.
+- 2026-05-23: Las cuentas corrientes se calculan como vista derivada de comprobantes; pagos/cobros quedan para tesoreria.

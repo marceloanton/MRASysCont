@@ -702,6 +702,22 @@ th {
   color: var(--muted);
 }
 
+.statementHeader {
+  align-items: baseline;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.statementHeader h2 {
+  margin: 0;
+}
+
+.statementHeader span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .printPage {
   background: white;
   color: #111827;

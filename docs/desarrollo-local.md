@@ -53,6 +53,7 @@ Tambien funcionan en modo demo local:
 - `/contabilidad/reportes`
 - `/terceros`
 - `/comprobantes`
+- `/cuentas-corrientes`
 
 La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo. Tambien permite exportar esos reportes en CSV y abrir una vista imprimible para guardar como PDF desde el navegador.
 
@@ -69,6 +70,8 @@ Los asientos `BORRADOR` pueden descartarse. Los asientos `CONFIRMADO` o `ANULADO
 El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo. Las altas, ediciones y cambios de estado requieren PostgreSQL porque persisten contra la tabla `ThirdParty`.
 
 El modulo `/comprobantes` registra facturas/notas/recibos emitidos o recibidos vinculados a terceros activos. No emite CAE ni llama ARCA/AFIP todavia; esa integracion queda para la fase fiscal.
+
+El modulo `/cuentas-corrientes` calcula saldos por tercero desde los comprobantes registrados. Todavia no registra pagos/cobros; eso entra en tesoreria.
 
 ## PostgreSQL con Docker
 

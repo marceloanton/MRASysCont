@@ -51,6 +51,11 @@ const moduleCards = [
     href: "/comprobantes"
   },
   {
+    title: "Cuentas corrientes",
+    detail: "Saldos a cobrar y pagar por tercero.",
+    href: "/cuentas-corrientes"
+  },
+  {
     title: "Reportes",
     detail: "Libro Diario y Mayor por empresa y periodo.",
     href: "/contabilidad/reportes"
