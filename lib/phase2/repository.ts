@@ -170,6 +170,61 @@ export async function createAccountingPeriod(input: {
   }
 }
 
+export async function closeAccountingPeriod(input: {
+  companyId: string;
+  periodId: string;
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para cerrar periodos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const period = await prisma.accountingPeriod.findFirst({
+      where: {
+        id: input.periodId,
+        companyId: input.companyId
+      }
+    });
+
+    if (!period) {
+      return {
+        ok: false,
+        message: "El periodo no existe para la empresa activa."
+      };
+    }
+
+    if (period.status === "CERRADO") {
+      return {
+        ok: false,
+        message: "El periodo ya esta cerrado."
+      };
+    }
+
+    await prisma.accountingPeriod.update({
+      where: {
+        id: period.id
+      },
+      data: {
+        status: "CERRADO"
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Periodo cerrado.",
+      id: period.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo cerrar el periodo. Revisar conexion."
+    };
+  }
+}
+
 export async function listJournalEntries(companyId: string) {
   if (!hasDatabase()) {
     return {

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { recordAuditEvent } from "@/lib/phase1/audit";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { createAccountingPeriod } from "@/lib/phase2/repository";
+import { closeAccountingPeriod, createAccountingPeriod } from "@/lib/phase2/repository";
 import { validatePeriodRange } from "@/lib/phase2/validation";
 
 export type PeriodFormState = {
@@ -81,4 +81,45 @@ export async function createPeriodAction(
     ok: result.ok,
     message: result.message
   };
+}
+
+export async function closePeriodAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
+
+  if (!tenant.membership.permissions.manageSettings) {
+    return;
+  }
+
+  const periodId = String(formData.get("periodId") ?? "");
+
+  if (!periodId) {
+    return;
+  }
+
+  const result = await closeAccountingPeriod({
+    companyId: tenant.company.id,
+    periodId
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: "accounting_period.closed",
+      entity: "AccountingPeriod",
+      entityId: result.id
+    });
+  }
+
+  revalidatePath("/contabilidad/periodos");
+  revalidatePath("/contabilidad/asientos");
 }

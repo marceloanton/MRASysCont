@@ -12,3 +12,4 @@
 - 2026-05-23: Se agregan asientos borrador con validacion de partida doble, periodo abierto y cuentas imputables de la empresa activa.
 - 2026-05-23: Se agrega confirmacion de asientos; solo los borradores balanceados de periodos abiertos pueden pasar a confirmado.
 - 2026-05-23: Se agrega anulacion de asientos confirmados mediante contraasiento inverso, dejando vinculo entre asiento original y asiento de anulacion.
+- 2026-05-23: Se agrega cierre de periodos contables; las operaciones de asientos ya validan periodo abierto para crear, confirmar y anular.

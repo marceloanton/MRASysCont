@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { listAccountingPeriods } from "@/lib/phase2/repository";
+import { closePeriodAction } from "./actions";
 import { PeriodForm } from "./period-form";
 
 export default async function PeriodsPage() {
@@ -51,6 +52,7 @@ export default async function PeriodsPage() {
                   <th>Desde</th>
                   <th>Hasta</th>
                   <th>Estado</th>
+                  <th>Accion</th>
                 </tr>
               </thead>
               <tbody>
@@ -60,6 +62,18 @@ export default async function PeriodsPage() {
                     <td>{period.startsAt}</td>
                     <td>{period.endsAt}</td>
                     <td>{period.status}</td>
+                    <td>
+                      {period.status === "ABIERTO" && canManage ? (
+                        <form action={closePeriodAction}>
+                          <input type="hidden" name="periodId" value={period.id} />
+                          <button className="tableButton dangerButton" type="submit">
+                            Cerrar
+                          </button>
+                        </form>
+                      ) : (
+                        <span className="mutedText">Bloqueado</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

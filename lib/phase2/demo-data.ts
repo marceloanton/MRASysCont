@@ -54,7 +54,7 @@ export const demoPeriods: AccountingPeriodSummary[] = [
     name: "Febrero 2026",
     startsAt: "2026-02-01",
     endsAt: "2026-02-28",
-    status: "ABIERTO"
+    status: "CERRADO"
   },
   {
     id: "period_gamma_2026_01",
