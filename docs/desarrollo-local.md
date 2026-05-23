@@ -74,7 +74,7 @@ El modulo `/comprobantes` registra facturas/notas/recibos emitidos o recibidos v
 
 El modulo `/cuentas-corrientes` calcula saldos por tercero desde los comprobantes registrados y movimientos iniciales de cobro/pago. Los cobros/pagos pueden vincularse a una caja/banco de tesoreria para crear el movimiento financiero en la misma transaccion.
 
-El modulo `/tesoreria` administra cajas/bancos/billeteras y movimientos iniciales. Todavia no incluye conciliacion bancaria ni asiento automatico.
+El modulo `/tesoreria` administra cajas/bancos/billeteras, movimientos iniciales y conciliacion manual por movimiento con fecha y referencia de extracto. Todavia no incluye importacion automatica de extractos ni asiento automatico.
 
 ## PostgreSQL con Docker
 

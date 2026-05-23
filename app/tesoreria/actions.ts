@@ -6,7 +6,8 @@ import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import {
   createTreasuryAccount,
-  createTreasuryMovement
+  createTreasuryMovement,
+  setTreasuryMovementReconciliation
 } from "@/lib/phase4/repository";
 import {
   isTreasuryAccountType,
@@ -186,4 +187,63 @@ export async function createTreasuryMovementAction(
     ok: result.ok,
     message: result.message
   };
+}
+
+export async function reconcileTreasuryMovementAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
+
+  if (!tenant.membership.permissions.issueInvoices) {
+    return;
+  }
+
+  const movementId = String(formData.get("movementId") ?? "");
+  const reconciled = String(formData.get("reconciled") ?? "") === "true";
+  const reconciledAtValue = String(formData.get("reconciledAt") ?? "");
+  const reconciledAt = reconciled ? new Date(reconciledAtValue) : undefined;
+  const reconciliationReference = String(
+    formData.get("reconciliationReference") ?? ""
+  ).trim();
+
+  if (!movementId) {
+    return;
+  }
+
+  if (reconciled && (!reconciledAt || Number.isNaN(reconciledAt.getTime()))) {
+    return;
+  }
+
+  const result = await setTreasuryMovementReconciliation({
+    companyId: tenant.company.id,
+    movementId,
+    reconciled,
+    reconciledAt,
+    reconciliationReference
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: reconciled
+        ? "treasury_movement.reconciled"
+        : "treasury_movement.unreconciled",
+      entity: "TreasuryMovement",
+      entityId: result.id,
+      metadata: {
+        reconciliationReference: reconciliationReference || null,
+        reconciledAt: reconciledAtValue || null
+      }
+    });
+  }
+
+  revalidatePath("/tesoreria");
 }

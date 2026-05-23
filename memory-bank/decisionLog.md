@@ -28,3 +28,4 @@
 - 2026-05-23: Se agregan cobros/pagos iniciales como `Settlement` aplicado al saldo global del tercero, sin imputacion especifica a comprobantes todavia.
 - 2026-05-23: Se inicia Fase 4 con tesoreria basica separada de cuentas corrientes; conciliacion y asiento automatico quedan para pasos posteriores.
 - 2026-05-23: Cobros/pagos pueden vincularse opcionalmente a caja/banco; si se vinculan, `Settlement` y `TreasuryMovement` se crean en una misma transaccion.
+- 2026-05-23: La conciliacion bancaria inicial se implementa manualmente por movimiento, guardando fecha y referencia de extracto; la importacion automatica queda para una etapa posterior.

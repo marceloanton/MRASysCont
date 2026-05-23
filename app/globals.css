@@ -571,6 +571,19 @@ th {
   color: var(--foreground);
 }
 
+.reconciliationAction {
+  display: grid;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.reconciliationAction input {
+  min-height: 34px;
+  background: #f7f8f4;
+  border-color: var(--line);
+  color: var(--foreground);
+}
+
 .dangerButton {
   background: #f1d5d0;
   color: var(--blocked);

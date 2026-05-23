@@ -335,6 +335,9 @@ model TreasuryMovement {
   amount            Decimal              @db.Decimal(18, 2)
   description       String
   reference         String?
+  reconciled        Boolean              @default(false)
+  reconciledAt      DateTime?
+  reconciliationReference String?
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
 
@@ -345,6 +348,7 @@ model TreasuryMovement {
   @@index([companyId, date])
   @@index([companyId, treasuryAccountId])
   @@index([companyId, type])
+  @@index([companyId, reconciled])
 }
 
 model AuditEvent {

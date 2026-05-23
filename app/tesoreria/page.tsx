@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { listTreasury } from "@/lib/phase4/repository";
+import { reconcileTreasuryMovementAction } from "./actions";
 import { TreasuryAccountForm } from "./treasury-account-form";
 import { TreasuryMovementForm } from "./treasury-movement-form";
 
@@ -21,6 +22,7 @@ export default async function TreasuryPage() {
   const canMove = tenant.membership.permissions.issueInvoices;
   const result = await listTreasury(tenant.company.id);
   const totalBalance = result.accounts.reduce((sum, account) => sum + account.balance, 0);
+  const reconciledMovements = result.movements.filter((movement) => movement.reconciled).length;
 
   return (
     <main className="adminPage">
@@ -42,6 +44,10 @@ export default async function TreasuryPage() {
         <article>
           <span>Movimientos</span>
           <strong>{result.movements.length}</strong>
+        </article>
+        <article>
+          <span>Conciliados</span>
+          <strong>{reconciledMovements}</strong>
         </article>
         <article>
           <span>Saldo total</span>
@@ -112,6 +118,8 @@ export default async function TreasuryPage() {
                   <th>Descripcion</th>
                   <th>Importe</th>
                   <th>Impacto</th>
+                  <th>Conciliacion</th>
+                  <th>Accion</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,6 +136,59 @@ export default async function TreasuryPage() {
                     </td>
                     <td>{movement.amount.toLocaleString("es-AR")}</td>
                     <td>{movement.signedAmount.toLocaleString("es-AR")}</td>
+                    <td>
+                      {movement.reconciled ? (
+                        <>
+                          <strong>Conciliado</strong>
+                          <small className="rowNote">
+                            {movement.reconciledAt ?? "-"}
+                            {movement.reconciliationReference
+                              ? ` · ${movement.reconciliationReference}`
+                              : ""}
+                          </small>
+                        </>
+                      ) : (
+                        <span className="mutedText">Pendiente</span>
+                      )}
+                    </td>
+                    <td>
+                      {canMove ? (
+                        movement.reconciled ? (
+                          <form action={reconcileTreasuryMovementAction}>
+                            <input type="hidden" name="movementId" value={movement.id} />
+                            <input type="hidden" name="reconciled" value="false" />
+                            <button className="tableButton dangerButton" type="submit">
+                              Desmarcar
+                            </button>
+                          </form>
+                        ) : (
+                          <form
+                            action={reconcileTreasuryMovementAction}
+                            className="reconciliationAction"
+                          >
+                            <input type="hidden" name="movementId" value={movement.id} />
+                            <input type="hidden" name="reconciled" value="true" />
+                            <input
+                              name="reconciledAt"
+                              type="date"
+                              defaultValue={movement.date}
+                              required
+                              aria-label="Fecha de conciliacion"
+                            />
+                            <input
+                              name="reconciliationReference"
+                              placeholder="Ref. extracto"
+                              aria-label="Referencia de extracto"
+                            />
+                            <button className="tableButton" type="submit">
+                              Conciliar
+                            </button>
+                          </form>
+                        )
+                      ) : (
+                        <span className="mutedText">Sin permiso</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

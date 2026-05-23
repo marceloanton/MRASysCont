@@ -73,7 +73,10 @@ export async function listTreasury(companyId: string) {
       amount: Math.abs(Number(movement.amount)),
       signedAmount: signedTreasuryAmount(movement.type as TreasuryMovementType, Number(movement.amount)),
       description: movement.description,
-      reference: movement.reference ?? undefined
+      reference: movement.reference ?? undefined,
+      reconciled: movement.reconciled,
+      reconciledAt: movement.reconciledAt ? normalizeDate(movement.reconciledAt) : undefined,
+      reconciliationReference: movement.reconciliationReference ?? undefined
     }));
     const mappedAccounts = accounts.map((account) => ({
       id: account.id,
@@ -96,6 +99,67 @@ export async function listTreasury(companyId: string) {
       source: "demo" as const,
       accounts: demoTreasuryAccounts.filter((account) => account.companyId === companyId),
       movements: demoTreasuryMovements.filter((movement) => movement.companyId === companyId)
+    };
+  }
+}
+
+export async function setTreasuryMovementReconciliation(input: {
+  companyId: string;
+  movementId: string;
+  reconciled: boolean;
+  reconciledAt?: Date;
+  reconciliationReference?: string;
+}): Promise<TreasuryResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para conciliar movimientos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const movement = await prisma.treasuryMovement.findFirst({
+      where: {
+        id: input.movementId,
+        companyId: input.companyId
+      }
+    });
+
+    if (!movement) {
+      return {
+        ok: false,
+        message: "El movimiento no existe o no pertenece a la empresa activa."
+      };
+    }
+
+    await prisma.treasuryMovement.update({
+      where: {
+        id: movement.id
+      },
+      data: input.reconciled
+        ? {
+            reconciled: true,
+            reconciledAt: input.reconciledAt ?? new Date(),
+            reconciliationReference: input.reconciliationReference || null
+          }
+        : {
+            reconciled: false,
+            reconciledAt: null,
+            reconciliationReference: null
+          }
+    });
+
+    return {
+      ok: true,
+      message: input.reconciled
+        ? "Movimiento conciliado."
+        : "Conciliacion removida.",
+      id: movement.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo actualizar la conciliacion. Revisar conexion."
     };
   }
 }

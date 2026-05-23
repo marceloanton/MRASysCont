@@ -12,7 +12,10 @@ export const demoTreasuryMovements: TreasuryMovementSummary[] = [
     amount: 21000,
     signedAmount: 21000,
     description: "Cobro parcial Cliente Demo",
-    reference: "TRX-DEMO-001"
+    reference: "TRX-DEMO-001",
+    reconciled: true,
+    reconciledAt: "2026-01-21",
+    reconciliationReference: "EXT-DEMO-001"
   },
   {
     id: "treasury_mov_alfa_2",
@@ -25,7 +28,8 @@ export const demoTreasuryMovements: TreasuryMovementSummary[] = [
     amount: 10000,
     signedAmount: -10000,
     description: "Pago parcial Proveedor Demo",
-    reference: "TRX-DEMO-002"
+    reference: "TRX-DEMO-002",
+    reconciled: false
   }
 ];
 

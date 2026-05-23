@@ -24,7 +24,7 @@ Construir una plataforma SaaS para:
 
 ## Estado del proyecto
 
-Estado actual: Fase 4 inicial. Ya existe documentacion, scaffold tecnico, login, sesiones preparadas para PostgreSQL, modo demo local, selector de empresa, permisos por tenant, auditoria local, pantallas administrativas de empresas/usuarios, plan de cuentas, periodos contables con cierre, asientos borrador con lineas dinamicas, edicion/descarte controlado de borradores, detalle visible de renglones, partida doble, confirmacion/anulacion por contraasiento, reportes Diario/Mayor/Balance de sumas y saldos con exportacion CSV/vista imprimible, terceros clientes/proveedores, comprobantes vinculados a terceros, cuentas corrientes con cobros/pagos vinculables a tesoreria y tesoreria basica.
+Estado actual: Fase 4 inicial. Ya existe documentacion, scaffold tecnico, login, sesiones preparadas para PostgreSQL, modo demo local, selector de empresa, permisos por tenant, auditoria local, pantallas administrativas de empresas/usuarios, plan de cuentas, periodos contables con cierre, asientos borrador con lineas dinamicas, edicion/descarte controlado de borradores, detalle visible de renglones, partida doble, confirmacion/anulacion por contraasiento, reportes Diario/Mayor/Balance de sumas y saldos con exportacion CSV/vista imprimible, terceros clientes/proveedores, comprobantes vinculados a terceros, cuentas corrientes con cobros/pagos vinculables a tesoreria y tesoreria basica con conciliacion manual inicial.
 
 La documentacion en `docs/` es la fuente oficial para alcance, arquitectura, reglas contables, seguridad, roadmap y criterios de aceptacion.
 

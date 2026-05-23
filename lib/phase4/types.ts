@@ -25,6 +25,9 @@ export type TreasuryMovementSummary = {
   signedAmount: number;
   description: string;
   reference?: string;
+  reconciled: boolean;
+  reconciledAt?: string;
+  reconciliationReference?: string;
 };
 
 export type TreasuryResult = {
