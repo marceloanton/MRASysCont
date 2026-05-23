@@ -8,6 +8,7 @@ import {
   listJournalEntries
 } from "@/lib/phase2/repository";
 import { confirmJournalEntryAction, reverseJournalEntryAction } from "./actions";
+import { JournalEntryEditForm } from "./journal-entry-edit-form";
 import { JournalEntryForm } from "./journal-entry-form";
 
 export default async function JournalEntriesPage() {
@@ -86,6 +87,12 @@ export default async function JournalEntriesPage() {
                           </div>
                         ))}
                       </div>
+                      {entry.status === "BORRADOR" && canPost ? (
+                        <JournalEntryEditForm
+                          accounts={accountsResult.accounts}
+                          entry={entry}
+                        />
+                      ) : null}
                     </td>
                     <td>{entry.totalDebit.toLocaleString("es-AR")}</td>
                     <td>{entry.totalCredit.toLocaleString("es-AR")}</td>

@@ -60,6 +60,8 @@ Los asientos permiten agregar mas de dos lineas. Cada linea debe imputar solo De
 
 El listado de asientos muestra el detalle de cuentas y montos de cada renglon para poder revisar el asiento antes de confirmar o anular.
 
+Solo los asientos en estado `BORRADOR` pueden editarse. La edicion reemplaza fecha, descripcion y lineas completas; los asientos confirmados o anulados quedan bloqueados.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

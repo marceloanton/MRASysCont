@@ -462,6 +462,90 @@ export async function createJournalEntry(input: {
   }
 }
 
+export async function updateDraftJournalEntry(input: {
+  companyId: string;
+  entryId: string;
+  date: Date;
+  description: string;
+  lines: JournalEntryLineInput[];
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para editar asientos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const entry = await prisma.journalEntry.findFirst({
+      where: {
+        id: input.entryId,
+        companyId: input.companyId
+      },
+      include: {
+        period: true
+      }
+    });
+
+    if (!entry) {
+      return {
+        ok: false,
+        message: "El asiento no existe para la empresa activa."
+      };
+    }
+
+    if (entry.status !== "BORRADOR") {
+      return {
+        ok: false,
+        message: "Solo se pueden editar asientos en borrador."
+      };
+    }
+
+    if (entry.period.status !== "ABIERTO") {
+      return {
+        ok: false,
+        message: "No se puede editar un asiento de un periodo cerrado."
+      };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.journalEntryLine.deleteMany({
+        where: {
+          journalEntryId: entry.id
+        }
+      });
+
+      await tx.journalEntry.update({
+        where: {
+          id: entry.id
+        },
+        data: {
+          date: input.date,
+          description: input.description,
+          lines: {
+            create: input.lines.map((line) => ({
+              accountId: line.accountId,
+              debit: line.debit,
+              credit: line.credit
+            }))
+          }
+        }
+      });
+    });
+
+    return {
+      ok: true,
+      message: "Asiento borrador actualizado.",
+      id: entry.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo editar el asiento. Revisar cuentas o conexion."
+    };
+  }
+}
+
 export async function confirmJournalEntry(input: {
   companyId: string;
   entryId: string;

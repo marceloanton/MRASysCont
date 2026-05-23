@@ -522,6 +522,32 @@ th {
   font-variant-numeric: tabular-nums;
 }
 
+.draftEdit {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.draftEdit summary {
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.draftEditForm {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.draftEditForm label {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .inlineAction {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) 88px;

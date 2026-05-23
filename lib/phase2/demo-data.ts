@@ -123,5 +123,32 @@ export const demoJournalEntries: JournalEntrySummary[] = [
         credit: 0
       }
     ]
+  },
+  {
+    id: "entry_alfa_3",
+    companyId: "emp_alfa",
+    periodId: "period_alfa_2026_01",
+    number: 3,
+    date: "2026-01-12",
+    description: "Borrador de gasto a revisar",
+    status: "BORRADOR",
+    totalDebit: 25000,
+    totalCredit: 25000,
+    lines: [
+      {
+        accountId: "acc_banco",
+        accountCode: "1.01.002",
+        accountName: "Banco",
+        debit: 0,
+        credit: 25000
+      },
+      {
+        accountId: "acc_caja",
+        accountCode: "1.01.001",
+        accountName: "Caja",
+        debit: 25000,
+        credit: 0
+      }
+    ]
   }
 ];
