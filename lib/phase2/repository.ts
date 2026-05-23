@@ -239,7 +239,14 @@ export async function listJournalEntries(companyId: string) {
         companyId
       },
       include: {
-        lines: true
+        lines: {
+          include: {
+            account: true
+          },
+          orderBy: {
+            id: "asc"
+          }
+        }
       },
       orderBy: {
         date: "desc"
@@ -269,7 +276,14 @@ export async function listJournalEntries(companyId: string) {
           reversedByEntryId: entry.reversedByEntryId ?? undefined,
           reversalReason: entry.reversalReason ?? undefined,
           totalDebit: totals.debit,
-          totalCredit: totals.credit
+          totalCredit: totals.credit,
+          lines: entry.lines.map((line) => ({
+            accountId: line.accountId,
+            accountCode: line.account.code,
+            accountName: line.account.name,
+            debit: Number(line.debit),
+            credit: Number(line.credit)
+          }))
         };
       })
     };

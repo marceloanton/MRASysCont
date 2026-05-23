@@ -16,6 +16,7 @@
 - Validaciones de codigo de cuenta, tipo de cuenta y rango de periodo.
 - Asientos borrador con dos lineas, partida doble, periodo abierto y cuentas de la empresa activa.
 - Asientos borrador con lineas dinamicas, validando que cada linea tenga Debe o Haber pero no ambos.
+- Detalle visible de lineas dentro del listado de asientos.
 - Confirmacion de asientos borrador con bloqueo de confirmados.
 - Anulacion de asientos confirmados mediante contraasiento vinculado.
 - Cierre de periodos contables para bloquear nuevas operaciones.
@@ -33,4 +34,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Mostrar detalle completo de lineas dentro del listado de asientos.
+- Agregar edicion controlada de asientos en borrador.

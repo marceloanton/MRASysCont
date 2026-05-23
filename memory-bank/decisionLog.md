@@ -18,3 +18,4 @@
 - 2026-05-23: Se agrega exportacion CSV server-side de reportes, protegida por sesion y empresa activa.
 - 2026-05-23: Se agrega vista imprimible server-side para reportes; PDF se obtiene con impresion del navegador antes de incorporar un generador binario dedicado.
 - 2026-05-23: Se permiten asientos con lineas dinamicas; la validacion central exige al menos dos lineas, Debe igual a Haber y una sola columna monetaria por linea.
+- 2026-05-23: El listado de asientos muestra los renglones contables para revisar cuentas y montos antes de confirmar o anular.

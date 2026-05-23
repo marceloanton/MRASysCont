@@ -77,7 +77,23 @@ export const demoJournalEntries: JournalEntrySummary[] = [
     status: "CONFIRMADO",
     reversedByEntryId: "entry_alfa_2",
     totalDebit: 100000,
-    totalCredit: 100000
+    totalCredit: 100000,
+    lines: [
+      {
+        accountId: "acc_caja",
+        accountCode: "1.01.001",
+        accountName: "Caja",
+        debit: 100000,
+        credit: 0
+      },
+      {
+        accountId: "acc_ventas",
+        accountCode: "4.01.001",
+        accountName: "Ventas",
+        debit: 0,
+        credit: 100000
+      }
+    ]
   },
   {
     id: "entry_alfa_2",
@@ -90,6 +106,22 @@ export const demoJournalEntries: JournalEntrySummary[] = [
     reversalOfEntryId: "entry_alfa_1",
     reversalReason: "Correccion de comprobante de prueba",
     totalDebit: 100000,
-    totalCredit: 100000
+    totalCredit: 100000,
+    lines: [
+      {
+        accountId: "acc_caja",
+        accountCode: "1.01.001",
+        accountName: "Caja",
+        debit: 0,
+        credit: 100000
+      },
+      {
+        accountId: "acc_ventas",
+        accountCode: "4.01.001",
+        accountName: "Ventas",
+        debit: 100000,
+        credit: 0
+      }
+    ]
   }
 ];

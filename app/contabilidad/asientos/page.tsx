@@ -73,7 +73,20 @@ export default async function JournalEntriesPage() {
                   <tr key={entry.id}>
                     <td>{entry.number}</td>
                     <td>{entry.date}</td>
-                    <td>{entry.description}</td>
+                    <td>
+                      <strong>{entry.description}</strong>
+                      <div className="entryLineDetail">
+                        {entry.lines.map((line, index) => (
+                          <div key={`${entry.id}-${line.accountId}-${index}`}>
+                            <span>
+                              {line.accountCode} - {line.accountName}
+                            </span>
+                            <span>Debe {line.debit.toLocaleString("es-AR")}</span>
+                            <span>Haber {line.credit.toLocaleString("es-AR")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
                     <td>{entry.totalDebit.toLocaleString("es-AR")}</td>
                     <td>{entry.totalCredit.toLocaleString("es-AR")}</td>
                     <td>

@@ -58,6 +58,8 @@ Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir ca
 
 Los asientos permiten agregar mas de dos lineas. Cada linea debe imputar solo Debe o Haber, y el total del asiento debe quedar balanceado.
 
+El listado de asientos muestra el detalle de cuentas y montos de cada renglon para poder revisar el asiento antes de confirmar o anular.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

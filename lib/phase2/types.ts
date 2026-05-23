@@ -41,6 +41,14 @@ export type JournalEntryLineInput = {
   credit: number;
 };
 
+export type JournalEntryLineSummary = {
+  accountId: string;
+  accountCode: string;
+  accountName: string;
+  debit: number;
+  credit: number;
+};
+
 export type JournalEntrySummary = {
   id: string;
   companyId: string;
@@ -54,6 +62,7 @@ export type JournalEntrySummary = {
   reversalReason?: string;
   totalDebit: number;
   totalCredit: number;
+  lines: JournalEntryLineSummary[];
 };
 
 export type JournalReportLine = {

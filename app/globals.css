@@ -500,6 +500,28 @@ th {
   font-size: 0.76rem;
 }
 
+.entryLineDetail {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.entryLineDetail div {
+  background: #f7f8f4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  font-size: 0.82rem;
+  gap: 8px;
+  grid-template-columns: minmax(180px, 1fr) minmax(92px, auto) minmax(92px, auto);
+  padding: 8px 10px;
+}
+
+.entryLineDetail span:not(:first-child) {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .inlineAction {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) 88px;
@@ -529,6 +551,10 @@ th {
   }
 
   .entryLine {
+    grid-template-columns: 1fr;
+  }
+
+  .entryLineDetail div {
     grid-template-columns: 1fr;
   }
 }
