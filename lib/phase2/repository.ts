@@ -277,3 +277,84 @@ export async function createJournalEntry(input: {
     };
   }
 }
+
+export async function confirmJournalEntry(input: {
+  companyId: string;
+  entryId: string;
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para confirmar asientos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const entry = await prisma.journalEntry.findFirst({
+      where: {
+        id: input.entryId,
+        companyId: input.companyId
+      },
+      include: {
+        lines: true,
+        period: true
+      }
+    });
+
+    if (!entry) {
+      return {
+        ok: false,
+        message: "El asiento no existe para la empresa activa."
+      };
+    }
+
+    if (entry.status !== "BORRADOR") {
+      return {
+        ok: false,
+        message: "Solo se pueden confirmar asientos en borrador."
+      };
+    }
+
+    if (entry.period.status !== "ABIERTO") {
+      return {
+        ok: false,
+        message: "No se puede confirmar un asiento en periodo cerrado."
+      };
+    }
+
+    const totals = sumJournalLines(
+      entry.lines.map((line) => ({
+        accountId: line.accountId,
+        debit: Number(line.debit),
+        credit: Number(line.credit)
+      }))
+    );
+
+    if (totals.debit <= 0 || totals.debit !== totals.credit) {
+      return {
+        ok: false,
+        message: "El asiento no esta balanceado."
+      };
+    }
+
+    await prisma.journalEntry.update({
+      where: {
+        id: entry.id
+      },
+      data: {
+        status: "CONFIRMADO"
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Asiento confirmado.",
+      id: entry.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo confirmar el asiento. Revisar conexion."
+    };
+  }
+}

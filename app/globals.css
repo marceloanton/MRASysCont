@@ -465,6 +465,17 @@ th {
   text-transform: uppercase;
 }
 
+.tableButton {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.86rem;
+}
+
+.mutedText {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
 @media (max-width: 900px) {
   .adminHeader,
   .adminGrid {

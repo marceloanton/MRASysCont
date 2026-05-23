@@ -74,7 +74,7 @@ export const demoJournalEntries: JournalEntrySummary[] = [
     number: 1,
     date: "2026-01-10",
     description: "Venta de prueba",
-    status: "BORRADOR",
+    status: "CONFIRMADO",
     totalDebit: 100000,
     totalCredit: 100000
   }

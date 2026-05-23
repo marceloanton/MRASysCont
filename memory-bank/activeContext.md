@@ -4,7 +4,7 @@
 
 Fase 2 inicial: nucleo contable.
 
-Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, plan de cuentas, periodos contables, asientos borrador, permisos por tenant y auditoria local.
+Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, plan de cuentas, periodos contables, asientos borrador, confirmacion de asientos, permisos por tenant y auditoria local.
 
 ## Foco inmediato
 
@@ -12,7 +12,8 @@ Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma 
 - Crear migraciones iniciales.
 - Conectar autenticacion productiva a PostgreSQL cuando Docker/PostgreSQL este disponible.
 - Probar altas reales contra PostgreSQL.
-- Ampliar asientos a lineas dinamicas y confirmacion inmutable.
+- Agregar anulacion con contraasientos.
+- Ampliar asientos a lineas dinamicas.
 - Mantener tests de aislamiento por `empresa_id` como proteccion obligatoria.
 
 ## Pendientes

@@ -5,6 +5,7 @@ import { recordAuditEvent } from "@/lib/phase1/audit";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import {
+  confirmJournalEntry,
   createJournalEntry,
   listAccountingPeriods,
   listAccounts
@@ -140,4 +141,44 @@ export async function createJournalEntryAction(
     ok: result.ok,
     message: result.message
   };
+}
+
+export async function confirmJournalEntryAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
+
+  if (!tenant.membership.permissions.postAccounting) {
+    return;
+  }
+
+  const entryId = String(formData.get("entryId") ?? "");
+
+  if (!entryId) {
+    return;
+  }
+
+  const result = await confirmJournalEntry({
+    companyId: tenant.company.id,
+    entryId
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: "journal_entry.confirmed",
+      entity: "JournalEntry",
+      entityId: result.id
+    });
+  }
+
+  revalidatePath("/contabilidad/asientos");
 }

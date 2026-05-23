@@ -7,6 +7,7 @@ import {
   listAccounts,
   listJournalEntries
 } from "@/lib/phase2/repository";
+import { confirmJournalEntryAction } from "./actions";
 import { JournalEntryForm } from "./journal-entry-form";
 
 export default async function JournalEntriesPage() {
@@ -64,6 +65,7 @@ export default async function JournalEntriesPage() {
                   <th>Debe</th>
                   <th>Haber</th>
                   <th>Estado</th>
+                  <th>Accion</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +77,18 @@ export default async function JournalEntriesPage() {
                     <td>{entry.totalDebit.toLocaleString("es-AR")}</td>
                     <td>{entry.totalCredit.toLocaleString("es-AR")}</td>
                     <td>{entry.status}</td>
+                    <td>
+                      {entry.status === "BORRADOR" && canPost ? (
+                        <form action={confirmJournalEntryAction}>
+                          <input type="hidden" name="entryId" value={entry.id} />
+                          <button className="tableButton" type="submit">
+                            Confirmar
+                          </button>
+                        </form>
+                      ) : (
+                        <span className="mutedText">Bloqueado</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

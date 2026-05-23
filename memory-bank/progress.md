@@ -15,6 +15,7 @@
 - Fase 2 inicial con `/contabilidad/cuentas` y `/contabilidad/periodos`.
 - Validaciones de codigo de cuenta, tipo de cuenta y rango de periodo.
 - Asientos borrador con dos lineas, partida doble, periodo abierto y cuentas de la empresa activa.
+- Confirmacion de asientos borrador con bloqueo de confirmados.
 
 ## En curso
 
@@ -26,4 +27,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar confirmacion de asientos, inmutabilidad y contraasientos.
+- Agregar contraasientos y anulacion.
