@@ -6,6 +6,7 @@ import { buildThirdPartyStatements } from "@/lib/phase3/current-account";
 import { listThirdParties } from "@/lib/phase3/repository";
 import { listSettlements } from "@/lib/phase3/settlement-repository";
 import { listVouchers } from "@/lib/phase3/voucher-repository";
+import { listTreasury } from "@/lib/phase4/repository";
 import { SettlementForm } from "./settlement-form";
 
 export default async function CurrentAccountsPage() {
@@ -20,10 +21,11 @@ export default async function CurrentAccountsPage() {
     workspace.companies
   );
   const canIssue = tenant.membership.permissions.issueInvoices;
-  const [thirdPartiesResult, vouchersResult, settlementsResult] = await Promise.all([
+  const [thirdPartiesResult, vouchersResult, settlementsResult, treasuryResult] = await Promise.all([
     listThirdParties(tenant.company.id),
     listVouchers(tenant.company.id),
-    listSettlements(tenant.company.id)
+    listSettlements(tenant.company.id),
+    listTreasury(tenant.company.id)
   ]);
   const statements = buildThirdPartyStatements(
     vouchersResult.vouchers,
@@ -63,7 +65,10 @@ export default async function CurrentAccountsPage() {
         <article className="panel">
           <h2>Registrar cobro/pago</h2>
           {canIssue ? (
-            <SettlementForm thirdParties={thirdPartiesResult.thirdParties} />
+            <SettlementForm
+              thirdParties={thirdPartiesResult.thirdParties}
+              treasuryAccounts={treasuryResult.accounts}
+            />
           ) : (
             <p className="emptyState">Tu rol no permite registrar cobros/pagos.</p>
           )}
@@ -105,6 +110,11 @@ export default async function CurrentAccountsPage() {
                         <td>
                           {line.type}
                           <small className="rowNote">{line.number}</small>
+                          {line.treasuryAccountName ? (
+                            <small className="rowNote">
+                              Tesoreria: {line.treasuryAccountName}
+                            </small>
+                          ) : null}
                         </td>
                         <td>{line.currency}</td>
                         <td>{line.debit.toLocaleString("es-AR")}</td>

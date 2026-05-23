@@ -30,7 +30,8 @@ export async function listSettlements(companyId: string) {
         companyId
       },
       include: {
-        thirdParty: true
+        thirdParty: true,
+        treasuryAccount: true
       },
       orderBy: {
         date: "desc"
@@ -44,6 +45,9 @@ export async function listSettlements(companyId: string) {
         companyId: settlement.companyId,
         thirdPartyId: settlement.thirdPartyId,
         thirdPartyName: settlement.thirdParty.legalName,
+        treasuryAccountId: settlement.treasuryAccountId ?? undefined,
+        treasuryAccountName: settlement.treasuryAccount?.name ?? undefined,
+        treasuryMovementId: settlement.treasuryMovementId ?? undefined,
         direction: settlement.direction as SettlementDirection,
         date: normalizeDate(settlement.date),
         currency: settlement.currency,
@@ -71,6 +75,7 @@ export async function createSettlement(input: {
   method: string;
   reference?: string;
   notes?: string;
+  treasuryAccountId?: string;
 }): Promise<SettlementResult> {
   if (!hasDatabase()) {
     return {
@@ -92,6 +97,60 @@ export async function createSettlement(input: {
       return {
         ok: false,
         message: "El tercero debe existir, estar activo y pertenecer a la empresa activa."
+      };
+    }
+
+    if (input.treasuryAccountId) {
+      const treasuryAccount = await prisma.treasuryAccount.findFirst({
+        where: {
+          id: input.treasuryAccountId,
+          companyId: input.companyId,
+          active: true
+        }
+      });
+
+      if (!treasuryAccount) {
+        return {
+          ok: false,
+          message: "La cuenta de tesoreria debe existir, estar activa y pertenecer a la empresa activa."
+        };
+      }
+
+      const settlement = await prisma.$transaction(async (tx) => {
+        const movement = await tx.treasuryMovement.create({
+          data: {
+            companyId: input.companyId,
+            treasuryAccountId: treasuryAccount.id,
+            type: input.direction === "COBRO" ? "INGRESO" : "EGRESO",
+            date: input.date,
+            currency: input.currency,
+            amount: input.amount,
+            description: `${input.direction === "COBRO" ? "Cobro" : "Pago"} - ${thirdParty.legalName}`,
+            reference: input.reference || null
+          }
+        });
+
+        return tx.settlement.create({
+          data: {
+            companyId: input.companyId,
+            thirdPartyId: input.thirdPartyId,
+            treasuryAccountId: treasuryAccount.id,
+            treasuryMovementId: movement.id,
+            direction: input.direction,
+            date: input.date,
+            currency: input.currency,
+            amount: input.amount,
+            method: input.method,
+            reference: input.reference || null,
+            notes: input.notes || null
+          }
+        });
+      });
+
+      return {
+        ok: true,
+        message: input.direction === "COBRO" ? "Cobro registrado." : "Pago registrado.",
+        id: settlement.id
       };
     }
 

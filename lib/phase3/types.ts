@@ -61,6 +61,7 @@ export type ThirdPartyStatementLine = {
   debit: number;
   credit: number;
   balanceImpact: number;
+  treasuryAccountName?: string;
 };
 
 export type ThirdPartyStatement = {
@@ -80,6 +81,9 @@ export type SettlementSummary = {
   companyId: string;
   thirdPartyId: string;
   thirdPartyName: string;
+  treasuryAccountId?: string;
+  treasuryAccountName?: string;
+  treasuryMovementId?: string;
   direction: SettlementDirection;
   date: string;
   currency: string;

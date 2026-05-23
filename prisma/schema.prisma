@@ -282,6 +282,8 @@ model Settlement {
   id           String              @id @default(cuid())
   companyId    String
   thirdPartyId String
+  treasuryAccountId String?
+  treasuryMovementId String? @unique
   direction    SettlementDirection
   date         DateTime
   currency     String              @default("ARS")
@@ -294,9 +296,12 @@ model Settlement {
 
   company    Company    @relation(fields: [companyId], references: [id])
   thirdParty ThirdParty @relation(fields: [thirdPartyId], references: [id])
+  treasuryAccount TreasuryAccount? @relation(fields: [treasuryAccountId], references: [id])
+  treasuryMovement TreasuryMovement? @relation(fields: [treasuryMovementId], references: [id])
 
   @@index([companyId, thirdPartyId])
   @@index([companyId, direction, date])
+  @@index([companyId, treasuryAccountId])
 }
 
 model TreasuryAccount {
@@ -313,6 +318,7 @@ model TreasuryAccount {
 
   company Company @relation(fields: [companyId], references: [id])
   movements TreasuryMovement[]
+  settlements Settlement[]
 
   @@unique([companyId, name])
   @@index([companyId, type])
@@ -334,6 +340,7 @@ model TreasuryMovement {
 
   company Company @relation(fields: [companyId], references: [id])
   treasuryAccount TreasuryAccount @relation(fields: [treasuryAccountId], references: [id])
+  settlement Settlement?
 
   @@index([companyId, date])
   @@index([companyId, treasuryAccountId])

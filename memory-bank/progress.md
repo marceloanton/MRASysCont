@@ -31,6 +31,7 @@
 - Cuentas corrientes derivadas con saldos por tercero.
 - Cobros/pagos iniciales aplicados al saldo global del tercero.
 - Fase 4 inicial con tesoreria basica: cajas/bancos y movimientos.
+- Cobros/pagos de cuenta corriente vinculables a movimientos de tesoreria.
 
 ## En curso
 
@@ -42,5 +43,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Vincular cobros/pagos de cuentas corrientes con movimientos de tesoreria.
 - Agregar conciliacion bancaria inicial.

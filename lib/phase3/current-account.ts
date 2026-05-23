@@ -79,7 +79,8 @@ export function buildThirdPartyStatements(
       currency: settlement.currency,
       debit: impact > 0 ? impact : 0,
       credit: impact < 0 ? Math.abs(impact) : 0,
-      balanceImpact: impact
+      balanceImpact: impact,
+      treasuryAccountName: settlement.treasuryAccountName
     });
     statements.set(settlement.thirdPartyId, current);
   }

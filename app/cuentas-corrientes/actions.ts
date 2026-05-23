@@ -60,6 +60,7 @@ export async function createSettlementAction(
   const method = String(formData.get("method") ?? "").trim();
   const reference = String(formData.get("reference") ?? "").trim();
   const notes = String(formData.get("notes") ?? "").trim();
+  const treasuryAccountId = String(formData.get("treasuryAccountId") ?? "").trim();
 
   if (
     !thirdPartyId ||
@@ -89,7 +90,8 @@ export async function createSettlementAction(
     amount,
     method,
     reference,
-    notes
+    notes,
+    treasuryAccountId: treasuryAccountId || undefined
   });
 
   if (result.ok) {
@@ -102,12 +104,14 @@ export async function createSettlementAction(
       metadata: {
         thirdPartyId,
         amount,
-        currency
+        currency,
+        treasuryAccountId: treasuryAccountId || null
       }
     });
   }
 
   revalidatePath("/cuentas-corrientes");
+  revalidatePath("/tesoreria");
 
   return {
     ok: result.ok,

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { ThirdPartySummary } from "@/lib/phase3/types";
+import type { TreasuryAccountSummary } from "@/lib/phase4/types";
 import { createSettlementAction, type SettlementFormState } from "./actions";
 
 const initialState: SettlementFormState = {
@@ -9,12 +10,19 @@ const initialState: SettlementFormState = {
   ok: false
 };
 
-export function SettlementForm({ thirdParties }: { thirdParties: ThirdPartySummary[] }) {
+export function SettlementForm({
+  thirdParties,
+  treasuryAccounts
+}: {
+  thirdParties: ThirdPartySummary[];
+  treasuryAccounts: TreasuryAccountSummary[];
+}) {
   const [state, formAction, pending] = useActionState(
     createSettlementAction,
     initialState
   );
   const activeThirdParties = thirdParties.filter((thirdParty) => thirdParty.active);
+  const activeTreasuryAccounts = treasuryAccounts.filter((account) => account.active);
 
   return (
     <form action={formAction} className="adminForm">
@@ -52,6 +60,16 @@ export function SettlementForm({ thirdParties }: { thirdParties: ThirdPartySumma
         <option>Cheque</option>
         <option>Tarjeta</option>
         <option>Otro</option>
+      </select>
+
+      <label htmlFor="treasuryAccountId">Caja / banco</label>
+      <select id="treasuryAccountId" name="treasuryAccountId" defaultValue="">
+        <option value="">No vincular tesoreria</option>
+        {activeTreasuryAccounts.map((account) => (
+          <option key={account.id} value={account.id}>
+            {account.name} - {account.currency}
+          </option>
+        ))}
       </select>
 
       <label htmlFor="reference">Referencia</label>

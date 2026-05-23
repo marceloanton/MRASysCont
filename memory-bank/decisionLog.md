@@ -27,3 +27,4 @@
 - 2026-05-23: Las cuentas corrientes se calculan como vista derivada de comprobantes; pagos/cobros quedan para tesoreria.
 - 2026-05-23: Se agregan cobros/pagos iniciales como `Settlement` aplicado al saldo global del tercero, sin imputacion especifica a comprobantes todavia.
 - 2026-05-23: Se inicia Fase 4 con tesoreria basica separada de cuentas corrientes; conciliacion y asiento automatico quedan para pasos posteriores.
+- 2026-05-23: Cobros/pagos pueden vincularse opcionalmente a caja/banco; si se vinculan, `Settlement` y `TreasuryMovement` se crean en una misma transaccion.
