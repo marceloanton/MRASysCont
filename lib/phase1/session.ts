@@ -1,8 +1,8 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { getDemoMemberships, getDemoUser } from "./demo-data";
 import type { SessionContext } from "./types";
+import { getWorkspaceData } from "./repository";
 
 const userCookie = "mrasyscont_demo_user";
 const companyCookie = "mrasyscont_demo_company";
@@ -10,17 +10,18 @@ const companyCookie = "mrasyscont_demo_company";
 export async function getSessionContext(): Promise<SessionContext> {
   const cookieStore = await cookies();
   const userId = cookieStore.get(userCookie)?.value ?? "usr_contador";
-  const user = getDemoUser(userId) ?? getDemoUser("usr_contador");
+  const activeCompanyId = cookieStore.get(companyCookie)?.value;
+  const workspace = await getWorkspaceData(userId, activeCompanyId);
 
-  if (!user) {
-    throw new Error("No hay usuario demo disponible.");
-  }
+  return workspace.session;
+}
 
-  return {
-    user,
-    memberships: getDemoMemberships(user.id),
-    activeCompanyId: cookieStore.get(companyCookie)?.value
-  };
+export async function getWorkspaceContext() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get(userCookie)?.value ?? "usr_contador";
+  const activeCompanyId = cookieStore.get(companyCookie)?.value;
+
+  return getWorkspaceData(userId, activeCompanyId);
 }
 
 export async function setDemoUser(userId: string) {

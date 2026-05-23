@@ -1,7 +1,7 @@
 import { changeActiveCompany, changeDemoUser } from "./actions";
 import { listAuditEvents } from "@/lib/phase1/audit";
-import { demoCompanies, demoUsers } from "@/lib/phase1/demo-data";
-import { getSessionContext } from "@/lib/phase1/session";
+import { demoUsers } from "@/lib/phase1/demo-data";
+import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenant } from "@/lib/phase1/tenant-access";
 
 const moduleCards = [
@@ -24,12 +24,13 @@ const moduleCards = [
 ];
 
 export default async function Home() {
-  const session = await getSessionContext();
+  const workspace = await getWorkspaceContext();
+  const { session } = workspace;
   const activeTenant = getActiveTenant(session);
   const allowedCompanyIds = new Set(
     session.memberships.map((membership) => membership.companyId)
   );
-  const availableCompanies = demoCompanies.filter((company) =>
+  const availableCompanies = workspace.companies.filter((company) =>
     allowedCompanyIds.has(company.id)
   );
   const auditEvents = listAuditEvents(activeTenant.company.id);
@@ -80,7 +81,10 @@ export default async function Home() {
               CUIT {activeTenant.company.cuit} · {activeTenant.company.taxCondition}
             </p>
           </div>
-          <div className="rolePill">{activeTenant.membership.role}</div>
+          <div className="roleStack">
+            <div className="rolePill">{activeTenant.membership.role}</div>
+            <span>{workspace.source === "database" ? "PostgreSQL" : "Demo local"}</span>
+          </div>
         </header>
 
         <section className="moduleGrid" aria-label="Modulos de plataforma">

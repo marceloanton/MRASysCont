@@ -9,6 +9,7 @@
 - Scaffold Next.js, TypeScript, Prisma y PostgreSQL.
 - Fase 1 inicial con usuarios demo, roles, empresas, selector de empresa, permisos por tenant y auditoria local.
 - Tests unitarios de aislamiento multi-empresa.
+- Docker Compose, migracion inicial, seed Prisma y fallback demo cuando PostgreSQL no esta disponible.
 
 ## En curso
 
@@ -16,6 +17,6 @@
 
 ## Proximo
 
-- Configurar PostgreSQL local o contenedor.
-- Crear migraciones iniciales.
+- Instalar Docker o configurar PostgreSQL local.
+- Ejecutar migraciones y seed.
 - Implementar login productivo y sesiones persistidas.

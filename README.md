@@ -39,6 +39,7 @@ La documentacion en `docs/` es la fuente oficial para alcance, arquitectura, reg
 - [Multimoneda](docs/multimoneda.md)
 - [Portal cliente](docs/portal-cliente.md)
 - [Roadmap](docs/roadmap.md)
+- [Desarrollo local](docs/desarrollo-local.md)
 - [Preguntas para el contador](docs/preguntas-contador.md)
 - [Criterios de aceptacion](docs/criterios-aceptacion.md)
 
@@ -65,6 +66,9 @@ npm run test
 npm run lint
 npm run typecheck
 npm run prisma:validate
+npm run db:up
+npm run db:migrate
+npm run db:seed
 ```
 
 Para validar Prisma sin una base local cargada:
@@ -72,3 +76,15 @@ Para validar Prisma sin una base local cargada:
 ```powershell
 $env:DATABASE_URL='postgresql://mrasyscont:mrasyscont@localhost:5432/mrasyscont?schema=public'; npm run prisma:validate
 ```
+
+## Base de datos local
+
+La configuracion recomendada usa PostgreSQL por Docker Compose:
+
+```bash
+npm run db:up
+npm run db:migrate
+npm run db:seed
+```
+
+Si Docker no esta instalado, la app sigue abriendo con datos demo locales. Cuando PostgreSQL este disponible, la misma pantalla inicial indica si esta leyendo desde `PostgreSQL` o desde `Demo local`.

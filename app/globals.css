@@ -121,6 +121,17 @@ button {
   color: var(--muted);
 }
 
+.roleStack {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.roleStack span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .rolePill {
   padding: 10px 14px;
   background: #e8efe7;

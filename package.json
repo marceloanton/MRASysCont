@@ -10,6 +10,10 @@
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate"
   },
@@ -28,6 +32,7 @@
     "eslint-config-next": "^15.3.2",
     "prisma": "^6.9.0",
     "typescript": "^5.8.3",
+    "tsx": "^4.20.6",
     "vitest": "^3.2.4"
   },
   "overrides": {

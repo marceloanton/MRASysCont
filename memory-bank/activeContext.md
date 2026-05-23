@@ -9,12 +9,12 @@ Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma 
 ## Foco inmediato
 
 - Reemplazar datos demo por persistencia real en PostgreSQL.
-- Definir estrategia concreta de autenticacion productiva.
 - Crear migraciones iniciales.
+- Definir estrategia concreta de autenticacion productiva.
 - Mantener tests de aislamiento por `empresa_id` como proteccion obligatoria.
 
 ## Pendientes
 
-- Configurar PostgreSQL local o contenedor.
-- Crear migraciones reales cuando la base este disponible.
+- Instalar Docker o configurar PostgreSQL local.
+- Ejecutar `npm run db:migrate` y `npm run db:seed`.
 - Implementar login productivo.
