@@ -43,6 +43,8 @@ La UI muestra la fuente activa:
 - `Demo local`: no hay conexion a PostgreSQL o aun no se sembraron datos.
 - `PostgreSQL`: la app leyo usuarios, empresas y membresias desde la base.
 
+En modo demo local los listados administrativos funcionan con datos de ejemplo. Las altas de empresas y usuarios requieren PostgreSQL para persistir cambios.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

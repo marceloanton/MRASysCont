@@ -7,19 +7,23 @@ import { getActiveTenant } from "@/lib/phase1/tenant-access";
 const moduleCards = [
   {
     title: "Empresas",
-    detail: "Selector de empresa activo y permisos por tenant."
+    detail: "Selector de empresa activo y permisos por tenant.",
+    href: "/admin/empresas"
   },
   {
     title: "Roles",
-    detail: "Contador, asistente y cliente con alcance separado."
+    detail: "Contador, asistente y cliente con alcance separado.",
+    href: "/admin/usuarios"
   },
   {
     title: "Auditoria",
-    detail: "Eventos criticos registrados por usuario y empresa."
+    detail: "Eventos criticos registrados por usuario y empresa.",
+    href: "/"
   },
   {
     title: "Seguridad",
-    detail: "Toda accion sensible valida acceso a empresa activa."
+    detail: "Toda accion sensible valida acceso a empresa activa.",
+    href: "/"
   }
 ];
 
@@ -94,10 +98,10 @@ export default async function Home() {
 
         <section className="moduleGrid" aria-label="Modulos de plataforma">
           {moduleCards.map((card) => (
-            <article className="moduleCard" key={card.title}>
+            <a className="moduleCard" href={card.href} key={card.title}>
               <h3>{card.title}</h3>
               <p>{card.detail}</p>
-            </article>
+            </a>
           ))}
         </section>
 

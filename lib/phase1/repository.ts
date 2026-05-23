@@ -1,9 +1,10 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { demoCompanies, getDemoMemberships, getDemoUser } from "./demo-data";
-import { verifyPassword } from "./password";
-import type { Company, Membership, PermissionSet, SessionContext, UserRole } from "./types";
+import { permissionsForRole } from "./permissions";
+import { demoCompanies, demoMemberships, demoUsers, getDemoMemberships, getDemoUser } from "./demo-data";
+import { hashPassword, verifyPassword } from "./password";
+import type { Company, Membership, PermissionSet, SessionContext, User, UserRole } from "./types";
 
 function permissionsFromMembership(input: {
   role: UserRole;
@@ -189,6 +190,157 @@ export async function listCompaniesFromDatabase(): Promise<Company[] | null> {
     }));
   } catch {
     return null;
+  }
+}
+
+export async function listUsers() {
+  if (!process.env.DATABASE_URL) {
+    return {
+      source: "demo" as const,
+      users: demoUsers
+    };
+  }
+
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: {
+        name: "asc"
+      }
+    });
+
+    return {
+      source: "database" as const,
+      users: users.map((user): User => ({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        active: user.active
+      }))
+    };
+  } catch {
+    return {
+      source: "demo" as const,
+      users: demoUsers
+    };
+  }
+}
+
+export async function listMemberships() {
+  if (!process.env.DATABASE_URL) {
+    return {
+      source: "demo" as const,
+      memberships: demoMemberships
+    };
+  }
+
+  try {
+    const memberships = await prisma.userCompany.findMany({
+      orderBy: {
+        createdAt: "asc"
+      }
+    });
+
+    return {
+      source: "database" as const,
+      memberships: memberships.map((membership): Membership => ({
+        userId: membership.userId,
+        companyId: membership.companyId,
+        role: membership.role,
+        permissions: permissionsFromMembership(membership)
+      }))
+    };
+  } catch {
+    return {
+      source: "demo" as const,
+      memberships: demoMemberships
+    };
+  }
+}
+
+export async function createCompany(input: {
+  legalName: string;
+  tradeName?: string;
+  cuit: string;
+  taxCondition: string;
+}) {
+  if (!process.env.DATABASE_URL) {
+    return {
+      ok: false,
+      message: "Para crear empresas hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const company = await prisma.company.create({
+      data: {
+        legalName: input.legalName,
+        tradeName: input.tradeName || null,
+        cuit: input.cuit,
+        taxCondition: input.taxCondition,
+        status: "ACTIVA"
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Empresa creada.",
+      companyId: company.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo crear la empresa. Revisar CUIT duplicado o conexion."
+    };
+  }
+}
+
+export async function createUserWithMembership(input: {
+  name: string;
+  email: string;
+  password: string;
+  companyId: string;
+  role: UserRole;
+}) {
+  if (!process.env.DATABASE_URL) {
+    return {
+      ok: false,
+      message: "Para crear usuarios hace falta PostgreSQL configurado."
+    };
+  }
+
+  const permissions = permissionsForRole(input.role);
+
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name: input.name,
+        email: input.email,
+        passwordHash: hashPassword(input.password),
+        active: true,
+        memberships: {
+          create: {
+            companyId: input.companyId,
+            role: input.role,
+            canManageSettings: permissions.manageSettings,
+            canManageUsers: permissions.manageUsers,
+            canPostAccounting: permissions.postAccounting,
+            canIssueInvoices: permissions.issueInvoices,
+            canReviewDocs: permissions.reviewDocuments
+          }
+        }
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Usuario creado.",
+      userId: user.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo crear el usuario. Revisar email duplicado o conexion."
+    };
   }
 }
 

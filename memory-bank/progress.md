@@ -11,6 +11,7 @@
 - Tests unitarios de aislamiento multi-empresa.
 - Docker Compose, migracion inicial, seed Prisma y fallback demo cuando PostgreSQL no esta disponible.
 - Login inicial, logout, hashing de contrasena y sesiones persistidas preparadas para PostgreSQL.
+- Pantallas administrativas `/admin/empresas` y `/admin/usuarios` con acciones protegidas por permisos.
 
 ## En curso
 
@@ -21,3 +22,4 @@
 - Instalar Docker o configurar PostgreSQL local.
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login productivo contra PostgreSQL local.
+- Probar CRUD real de empresas y usuarios contra PostgreSQL.
