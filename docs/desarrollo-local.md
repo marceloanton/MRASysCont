@@ -62,6 +62,8 @@ El listado de asientos muestra el detalle de cuentas y montos de cada renglon pa
 
 Solo los asientos en estado `BORRADOR` pueden editarse. La edicion reemplaza fecha, descripcion y lineas completas; los asientos confirmados o anulados quedan bloqueados.
 
+Los asientos `BORRADOR` pueden descartarse. Los asientos `CONFIRMADO` o `ANULADO` no se eliminan: solo se corrigen con contraasiento.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

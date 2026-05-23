@@ -20,3 +20,4 @@
 - 2026-05-23: Se permiten asientos con lineas dinamicas; la validacion central exige al menos dos lineas, Debe igual a Haber y una sola columna monetaria por linea.
 - 2026-05-23: El listado de asientos muestra los renglones contables para revisar cuentas y montos antes de confirmar o anular.
 - 2026-05-23: Se permite editar solo asientos en borrador; la edicion reemplaza lineas dentro de una transaccion y queda auditada.
+- 2026-05-23: Se permite descartar solo asientos en borrador; confirmados y anulados siguen protegidos contra eliminacion fisica.

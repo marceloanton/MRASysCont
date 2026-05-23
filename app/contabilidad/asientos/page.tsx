@@ -7,7 +7,11 @@ import {
   listAccounts,
   listJournalEntries
 } from "@/lib/phase2/repository";
-import { confirmJournalEntryAction, reverseJournalEntryAction } from "./actions";
+import {
+  confirmJournalEntryAction,
+  deleteDraftJournalEntryAction,
+  reverseJournalEntryAction
+} from "./actions";
 import { JournalEntryEditForm } from "./journal-entry-edit-form";
 import { JournalEntryForm } from "./journal-entry-form";
 
@@ -107,12 +111,20 @@ export default async function JournalEntriesPage() {
                     </td>
                     <td>
                       {entry.status === "BORRADOR" && canPost ? (
-                        <form action={confirmJournalEntryAction}>
-                          <input type="hidden" name="entryId" value={entry.id} />
-                          <button className="tableButton" type="submit">
-                            Confirmar
-                          </button>
-                        </form>
+                        <div className="actionStack">
+                          <form action={confirmJournalEntryAction}>
+                            <input type="hidden" name="entryId" value={entry.id} />
+                            <button className="tableButton" type="submit">
+                              Confirmar
+                            </button>
+                          </form>
+                          <form action={deleteDraftJournalEntryAction}>
+                            <input type="hidden" name="entryId" value={entry.id} />
+                            <button className="tableButton dangerButton" type="submit">
+                              Descartar
+                            </button>
+                          </form>
+                        </div>
                       ) : entry.status === "CONFIRMADO" &&
                         !entry.reversalOfEntryId &&
                         !entry.reversedByEntryId &&

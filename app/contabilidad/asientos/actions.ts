@@ -7,6 +7,7 @@ import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import {
   confirmJournalEntry,
   createJournalEntry,
+  deleteDraftJournalEntry,
   listAccountingPeriods,
   listAccounts,
   reverseJournalEntry,
@@ -318,6 +319,46 @@ export async function reverseJournalEntryAction(formData: FormData) {
         reversalEntryId: result.id ?? null,
         reason
       }
+    });
+  }
+
+  revalidatePath("/contabilidad/asientos");
+}
+
+export async function deleteDraftJournalEntryAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
+
+  if (!tenant.membership.permissions.postAccounting) {
+    return;
+  }
+
+  const entryId = String(formData.get("entryId") ?? "");
+
+  if (!entryId) {
+    return;
+  }
+
+  const result = await deleteDraftJournalEntry({
+    companyId: tenant.company.id,
+    entryId
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: "journal_entry.draft_deleted",
+      entity: "JournalEntry",
+      entityId: entryId
     });
   }
 

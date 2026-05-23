@@ -488,6 +488,11 @@ th {
   font-size: 0.86rem;
 }
 
+.actionStack {
+  display: grid;
+  gap: 8px;
+}
+
 .mutedText {
   color: var(--muted);
   font-size: 0.86rem;

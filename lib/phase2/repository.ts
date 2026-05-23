@@ -546,6 +546,76 @@ export async function updateDraftJournalEntry(input: {
   }
 }
 
+export async function deleteDraftJournalEntry(input: {
+  companyId: string;
+  entryId: string;
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para eliminar borradores hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const entry = await prisma.journalEntry.findFirst({
+      where: {
+        id: input.entryId,
+        companyId: input.companyId
+      },
+      include: {
+        period: true
+      }
+    });
+
+    if (!entry) {
+      return {
+        ok: false,
+        message: "El asiento no existe para la empresa activa."
+      };
+    }
+
+    if (entry.status !== "BORRADOR") {
+      return {
+        ok: false,
+        message: "Solo se pueden eliminar asientos en borrador."
+      };
+    }
+
+    if (entry.period.status !== "ABIERTO") {
+      return {
+        ok: false,
+        message: "No se puede eliminar un borrador de un periodo cerrado."
+      };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.journalEntryLine.deleteMany({
+        where: {
+          journalEntryId: entry.id
+        }
+      });
+
+      await tx.journalEntry.delete({
+        where: {
+          id: entry.id
+        }
+      });
+    });
+
+    return {
+      ok: true,
+      message: "Asiento borrador eliminado.",
+      id: entry.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo eliminar el borrador. Revisar conexion."
+    };
+  }
+}
+
 export async function confirmJournalEntry(input: {
   companyId: string;
   entryId: string;

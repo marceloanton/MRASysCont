@@ -18,6 +18,7 @@
 - Asientos borrador con lineas dinamicas, validando que cada linea tenga Debe o Haber pero no ambos.
 - Detalle visible de lineas dentro del listado de asientos.
 - Edicion controlada de asientos en borrador.
+- Descarte controlado de asientos en borrador.
 - Confirmacion de asientos borrador con bloqueo de confirmados.
 - Anulacion de asientos confirmados mediante contraasiento vinculado.
 - Cierre de periodos contables para bloquear nuevas operaciones.
@@ -35,4 +36,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar eliminacion controlada de asientos en borrador.
+- Iniciar Fase 3 con terceros: clientes y proveedores.
