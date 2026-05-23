@@ -1,4 +1,4 @@
-import type { AccountingPeriodSummary, AccountSummary } from "./types";
+import type { AccountingPeriodSummary, AccountSummary, JournalEntrySummary } from "./types";
 
 export const demoAccounts: AccountSummary[] = [
   {
@@ -63,5 +63,19 @@ export const demoPeriods: AccountingPeriodSummary[] = [
     startsAt: "2026-01-01",
     endsAt: "2026-01-31",
     status: "ABIERTO"
+  }
+];
+
+export const demoJournalEntries: JournalEntrySummary[] = [
+  {
+    id: "entry_alfa_1",
+    companyId: "emp_alfa",
+    periodId: "period_alfa_2026_01",
+    number: 1,
+    date: "2026-01-10",
+    description: "Venta de prueba",
+    status: "BORRADOR",
+    totalDebit: 100000,
+    totalCredit: 100000
   }
 ];

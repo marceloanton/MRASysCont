@@ -1,4 +1,5 @@
 import type { AccountType } from "./types";
+import type { AccountingPeriodSummary, AccountSummary, JournalEntryLineInput } from "./types";
 
 export const accountTypes: AccountType[] = [
   "ACTIVO",
@@ -19,4 +20,49 @@ export function validateAccountCode(code: string) {
 
 export function validatePeriodRange(startsAt: Date, endsAt: Date) {
   return startsAt instanceof Date && endsAt instanceof Date && startsAt < endsAt;
+}
+
+export function sumJournalLines(lines: JournalEntryLineInput[]) {
+  return lines.reduce(
+    (totals, line) => ({
+      debit: totals.debit + line.debit,
+      credit: totals.credit + line.credit
+    }),
+    {
+      debit: 0,
+      credit: 0
+    }
+  );
+}
+
+export function validateBalancedEntry(lines: JournalEntryLineInput[]) {
+  const totals = sumJournalLines(lines);
+  return lines.length >= 2 && totals.debit > 0 && totals.debit === totals.credit;
+}
+
+export function validateEntryAccountsBelongToCompany(
+  lines: JournalEntryLineInput[],
+  accounts: AccountSummary[],
+  companyId: string
+) {
+  const allowedAccounts = new Set(
+    accounts
+      .filter((account) => account.companyId === companyId && account.active && account.imputable)
+      .map((account) => account.id)
+  );
+
+  return lines.every((line) => allowedAccounts.has(line.accountId));
+}
+
+export function validateOpenPeriod(
+  periodId: string,
+  periods: AccountingPeriodSummary[],
+  companyId: string
+) {
+  return periods.some(
+    (period) =>
+      period.id === periodId &&
+      period.companyId === companyId &&
+      period.status === "ABIERTO"
+  );
 }

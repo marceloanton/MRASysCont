@@ -1,13 +1,16 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { demoAccounts, demoPeriods } from "./demo-data";
+import { demoAccounts, demoJournalEntries, demoPeriods } from "./demo-data";
 import type {
   AccountingPeriodSummary,
   AccountingResult,
   AccountSummary,
-  AccountType
+  AccountType,
+  JournalEntryLineInput,
+  JournalEntrySummary
 } from "./types";
+import { sumJournalLines } from "./validation";
 
 function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
@@ -163,6 +166,114 @@ export async function createAccountingPeriod(input: {
     return {
       ok: false,
       message: "No se pudo crear el periodo. Revisar fechas o conexion."
+    };
+  }
+}
+
+export async function listJournalEntries(companyId: string) {
+  if (!hasDatabase()) {
+    return {
+      source: "demo" as const,
+      entries: demoJournalEntries.filter((entry) => entry.companyId === companyId)
+    };
+  }
+
+  try {
+    const entries = await prisma.journalEntry.findMany({
+      where: {
+        companyId
+      },
+      include: {
+        lines: true
+      },
+      orderBy: {
+        date: "desc"
+      }
+    });
+
+    return {
+      source: "database" as const,
+      entries: entries.map((entry): JournalEntrySummary => {
+        const totals = sumJournalLines(
+          entry.lines.map((line) => ({
+            accountId: line.accountId,
+            debit: Number(line.debit),
+            credit: Number(line.credit)
+          }))
+        );
+
+        return {
+          id: entry.id,
+          companyId: entry.companyId,
+          periodId: entry.periodId,
+          number: entry.number,
+          date: normalizeDate(entry.date),
+          description: entry.description,
+          status: entry.status,
+          totalDebit: totals.debit,
+          totalCredit: totals.credit
+        };
+      })
+    };
+  } catch {
+    return {
+      source: "demo" as const,
+      entries: demoJournalEntries.filter((entry) => entry.companyId === companyId)
+    };
+  }
+}
+
+export async function createJournalEntry(input: {
+  companyId: string;
+  periodId: string;
+  date: Date;
+  description: string;
+  lines: JournalEntryLineInput[];
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para crear asientos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const latest = await prisma.journalEntry.findFirst({
+      where: {
+        companyId: input.companyId
+      },
+      orderBy: {
+        number: "desc"
+      }
+    });
+
+    const entry = await prisma.journalEntry.create({
+      data: {
+        companyId: input.companyId,
+        periodId: input.periodId,
+        number: (latest?.number ?? 0) + 1,
+        date: input.date,
+        description: input.description,
+        status: "BORRADOR",
+        lines: {
+          create: input.lines.map((line) => ({
+            accountId: line.accountId,
+            debit: line.debit,
+            credit: line.credit
+          }))
+        }
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Asiento borrador creado.",
+      id: entry.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo crear el asiento. Revisar periodo, cuentas o conexion."
     };
   }
 }

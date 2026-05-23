@@ -34,6 +34,11 @@ const moduleCards = [
     title: "Periodos",
     detail: "Apertura y control de meses/ejercicios por empresa.",
     href: "/contabilidad/periodos"
+  },
+  {
+    title: "Asientos",
+    detail: "Borradores con control de partida doble.",
+    href: "/contabilidad/asientos"
   }
 ];
 

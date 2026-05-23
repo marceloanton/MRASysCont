@@ -49,8 +49,9 @@ Tambien funcionan en modo demo local:
 
 - `/contabilidad/cuentas`
 - `/contabilidad/periodos`
+- `/contabilidad/asientos`
 
-Las altas de cuentas y periodos requieren PostgreSQL para persistir cambios.
+Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir cambios.
 
 ## PostgreSQL con Docker
 

@@ -430,6 +430,17 @@ button:disabled {
   min-height: 18px;
 }
 
+.entryLines {
+  display: grid;
+  gap: 10px;
+}
+
+.entryLine {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(88px, 0.5fr) minmax(88px, 0.5fr);
+  gap: 8px;
+}
+
 .tableWrap {
   overflow-x: auto;
   margin-top: 18px;
@@ -462,5 +473,9 @@ th {
 
   .adminHeader {
     display: grid;
+  }
+
+  .entryLine {
+    grid-template-columns: 1fr;
   }
 }

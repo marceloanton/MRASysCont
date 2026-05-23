@@ -32,3 +32,23 @@ export type AccountingResult = {
   message: string;
   id?: string;
 };
+
+export type JournalEntryStatus = "BORRADOR" | "CONFIRMADO" | "ANULADO";
+
+export type JournalEntryLineInput = {
+  accountId: string;
+  debit: number;
+  credit: number;
+};
+
+export type JournalEntrySummary = {
+  id: string;
+  companyId: string;
+  periodId: string;
+  number: number;
+  date: string;
+  description: string;
+  status: JournalEntryStatus;
+  totalDebit: number;
+  totalCredit: number;
+};
