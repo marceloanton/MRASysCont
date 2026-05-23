@@ -55,6 +55,11 @@ enum VoucherStatus {
   ANULADO
 }
 
+enum SettlementDirection {
+  COBRO
+  PAGO
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -86,6 +91,7 @@ model Company {
   journalEntries    JournalEntry[]
   thirdParties      ThirdParty[]
   vouchers          Voucher[]
+  settlements       Settlement[]
   auditEvents       AuditEvent[]
 }
 
@@ -221,6 +227,7 @@ model ThirdParty {
 
   company  Company   @relation(fields: [companyId], references: [id])
   vouchers Voucher[]
+  settlements Settlement[]
 
   @@unique([companyId, document])
   @@index([companyId, type])
@@ -254,6 +261,27 @@ model Voucher {
   @@index([companyId, direction, issueDate])
   @@index([companyId, thirdPartyId])
   @@index([companyId, status])
+}
+
+model Settlement {
+  id           String              @id @default(cuid())
+  companyId    String
+  thirdPartyId String
+  direction    SettlementDirection
+  date         DateTime
+  currency     String              @default("ARS")
+  amount       Decimal             @db.Decimal(18, 2)
+  method       String
+  reference    String?
+  notes        String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id])
+  thirdParty ThirdParty @relation(fields: [thirdPartyId], references: [id])
+
+  @@index([companyId, thirdPartyId])
+  @@index([companyId, direction, date])
 }
 
 model AuditEvent {

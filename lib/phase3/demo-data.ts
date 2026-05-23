@@ -1,4 +1,4 @@
-import type { ThirdPartySummary, VoucherSummary } from "./types";
+import type { SettlementSummary, ThirdPartySummary, VoucherSummary } from "./types";
 
 export const demoThirdParties: ThirdPartySummary[] = [
   {
@@ -76,5 +76,34 @@ export const demoVouchers: VoucherSummary[] = [
     totalAmount: 30250,
     status: "REGISTRADO",
     notes: "Factura recibida demo"
+  }
+];
+
+export const demoSettlements: SettlementSummary[] = [
+  {
+    id: "settlement_alfa_cobro_1",
+    companyId: "emp_alfa",
+    thirdPartyId: "third_alfa_cliente",
+    thirdPartyName: "Cliente Demo SA",
+    direction: "COBRO",
+    date: "2026-01-20",
+    currency: "ARS",
+    amount: 21000,
+    method: "Transferencia",
+    reference: "TRX-DEMO-001",
+    notes: "Cobro parcial demo"
+  },
+  {
+    id: "settlement_alfa_pago_1",
+    companyId: "emp_alfa",
+    thirdPartyId: "third_alfa_proveedor",
+    thirdPartyName: "Proveedor Demo SRL",
+    direction: "PAGO",
+    date: "2026-01-22",
+    currency: "ARS",
+    amount: 10000,
+    method: "Transferencia",
+    reference: "TRX-DEMO-002",
+    notes: "Pago parcial demo"
   }
 ];

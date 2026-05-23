@@ -28,6 +28,27 @@ describe("third party current account", () => {
     expect(statement.netBalance).toBe(121);
   });
 
+  it("applies collections against receivable balance", () => {
+    const [statement] = buildThirdPartyStatements(
+      [baseVoucher],
+      [
+        {
+          id: "settlement_1",
+          companyId: "emp",
+          thirdPartyId: "third",
+          thirdPartyName: "Cliente",
+          direction: "COBRO",
+          date: "2026-01-02",
+          currency: "ARS",
+          amount: 21,
+          method: "Transferencia"
+        }
+      ]
+    );
+
+    expect(statement.netBalance).toBe(100);
+  });
+
   it("adds received invoices as payable", () => {
     const [statement] = buildThirdPartyStatements([
       {
@@ -39,6 +60,32 @@ describe("third party current account", () => {
     expect(statement.receivable).toBe(0);
     expect(statement.payable).toBe(121);
     expect(statement.netBalance).toBe(-121);
+  });
+
+  it("applies payments against payable balance", () => {
+    const [statement] = buildThirdPartyStatements(
+      [
+        {
+          ...baseVoucher,
+          direction: "RECIBIDO"
+        }
+      ],
+      [
+        {
+          id: "settlement_1",
+          companyId: "emp",
+          thirdPartyId: "third",
+          thirdPartyName: "Cliente",
+          direction: "PAGO",
+          date: "2026-01-02",
+          currency: "ARS",
+          amount: 21,
+          method: "Transferencia"
+        }
+      ]
+    );
+
+    expect(statement.netBalance).toBe(-100);
   });
 
   it("ignores cancelled vouchers and inverts credit notes", () => {

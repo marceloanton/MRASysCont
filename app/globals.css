@@ -397,6 +397,11 @@ button:disabled {
   margin-top: 28px;
 }
 
+.singleColumn {
+  grid-template-columns: 1fr;
+  margin-bottom: 18px;
+}
+
 .adminForm {
   display: grid;
   gap: 10px;

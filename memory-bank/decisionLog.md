@@ -25,3 +25,4 @@
 - 2026-05-23: Los terceros no se eliminan fisicamente desde UI; se editan o desactivan para conservar trazabilidad futura con comprobantes.
 - 2026-05-23: Se agregan comprobantes iniciales vinculados a terceros, sin CAE/ARCA todavia, para preparar cuentas corrientes y facturacion fiscal posterior.
 - 2026-05-23: Las cuentas corrientes se calculan como vista derivada de comprobantes; pagos/cobros quedan para tesoreria.
+- 2026-05-23: Se agregan cobros/pagos iniciales como `Settlement` aplicado al saldo global del tercero, sin imputacion especifica a comprobantes todavia.

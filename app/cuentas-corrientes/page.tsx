@@ -3,7 +3,10 @@ import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { buildThirdPartyStatements } from "@/lib/phase3/current-account";
+import { listThirdParties } from "@/lib/phase3/repository";
+import { listSettlements } from "@/lib/phase3/settlement-repository";
 import { listVouchers } from "@/lib/phase3/voucher-repository";
+import { SettlementForm } from "./settlement-form";
 
 export default async function CurrentAccountsPage() {
   const workspace = await getWorkspaceContext();
@@ -16,8 +19,16 @@ export default async function CurrentAccountsPage() {
     workspace.session,
     workspace.companies
   );
-  const vouchersResult = await listVouchers(tenant.company.id);
-  const statements = buildThirdPartyStatements(vouchersResult.vouchers);
+  const canIssue = tenant.membership.permissions.issueInvoices;
+  const [thirdPartiesResult, vouchersResult, settlementsResult] = await Promise.all([
+    listThirdParties(tenant.company.id),
+    listVouchers(tenant.company.id),
+    listSettlements(tenant.company.id)
+  ]);
+  const statements = buildThirdPartyStatements(
+    vouchersResult.vouchers,
+    settlementsResult.settlements
+  );
   const totalReceivable = statements.reduce((sum, item) => sum + item.receivable, 0);
   const totalPayable = statements.reduce((sum, item) => sum + item.payable, 0);
 
@@ -48,6 +59,17 @@ export default async function CurrentAccountsPage() {
         </article>
       </section>
 
+      <section className="adminGrid singleColumn">
+        <article className="panel">
+          <h2>Registrar cobro/pago</h2>
+          {canIssue ? (
+            <SettlementForm thirdParties={thirdPartiesResult.thirdParties} />
+          ) : (
+            <p className="emptyState">Tu rol no permite registrar cobros/pagos.</p>
+          )}
+        </article>
+      </section>
+
       <section className="reportStack">
         {statements.length === 0 ? (
           <article className="panel">
@@ -68,7 +90,7 @@ export default async function CurrentAccountsPage() {
                     <tr>
                       <th>Fecha</th>
                       <th>Operacion</th>
-                      <th>Comprobante</th>
+                      <th>Documento / Referencia</th>
                       <th>Moneda</th>
                       <th>Debe</th>
                       <th>Haber</th>
@@ -77,7 +99,7 @@ export default async function CurrentAccountsPage() {
                   </thead>
                   <tbody>
                     {statement.lines.map((line) => (
-                      <tr key={line.voucherId}>
+                      <tr key={line.id}>
                         <td>{line.issueDate}</td>
                         <td>{line.direction}</td>
                         <td>

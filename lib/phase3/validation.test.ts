@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isVoucherDirection,
   isVoucherType,
+  validatePositiveAmount,
   validateVoucherAmounts,
   validateVoucherNumber
 } from "./validation";
@@ -34,5 +35,11 @@ describe("phase 3 validation", () => {
         totalAmount: 120
       })
     ).toBe(false);
+  });
+
+  it("validates positive settlement amounts", () => {
+    expect(validatePositiveAmount(1)).toBe(true);
+    expect(validatePositiveAmount(0)).toBe(false);
+    expect(validatePositiveAmount(-1)).toBe(false);
   });
 });

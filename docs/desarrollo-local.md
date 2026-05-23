@@ -71,7 +71,7 @@ El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo
 
 El modulo `/comprobantes` registra facturas/notas/recibos emitidos o recibidos vinculados a terceros activos. No emite CAE ni llama ARCA/AFIP todavia; esa integracion queda para la fase fiscal.
 
-El modulo `/cuentas-corrientes` calcula saldos por tercero desde los comprobantes registrados. Todavia no registra pagos/cobros; eso entra en tesoreria.
+El modulo `/cuentas-corrientes` calcula saldos por tercero desde los comprobantes registrados y movimientos iniciales de cobro/pago. Todavia no reemplaza tesoreria completa con caja, bancos y conciliacion.
 
 ## PostgreSQL con Docker
 

@@ -52,10 +52,10 @@ export type VoucherResult = {
 };
 
 export type ThirdPartyStatementLine = {
-  voucherId: string;
+  id: string;
   issueDate: string;
-  direction: VoucherDirection;
-  type: VoucherType;
+  direction: VoucherDirection | SettlementDirection;
+  type: VoucherType | "COBRO" | "PAGO";
   number: string;
   currency: string;
   debit: number;
@@ -71,4 +71,26 @@ export type ThirdPartyStatement = {
   payable: number;
   netBalance: number;
   lines: ThirdPartyStatementLine[];
+};
+
+export type SettlementDirection = "COBRO" | "PAGO";
+
+export type SettlementSummary = {
+  id: string;
+  companyId: string;
+  thirdPartyId: string;
+  thirdPartyName: string;
+  direction: SettlementDirection;
+  date: string;
+  currency: string;
+  amount: number;
+  method: string;
+  reference?: string;
+  notes?: string;
+};
+
+export type SettlementResult = {
+  ok: boolean;
+  message: string;
+  id?: string;
 };

@@ -52,7 +52,7 @@ const moduleCards = [
   },
   {
     title: "Cuentas corrientes",
-    detail: "Saldos a cobrar y pagar por tercero.",
+    detail: "Saldos, cobros y pagos por tercero.",
     href: "/cuentas-corrientes"
   },
   {

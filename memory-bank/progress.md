@@ -29,6 +29,7 @@
 - Edicion y activacion/desactivacion de terceros.
 - Comprobantes iniciales emitidos/recibidos vinculados a terceros.
 - Cuentas corrientes derivadas con saldos por tercero.
+- Cobros/pagos iniciales aplicados al saldo global del tercero.
 
 ## En curso
 
@@ -40,4 +41,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar pagos/cobros iniciales para aplicar contra cuentas corrientes.
+- Iniciar tesoreria con cajas/bancos y movimientos.

@@ -1,4 +1,9 @@
-import type { ThirdPartyType, VoucherDirection, VoucherType } from "./types";
+import type {
+  SettlementDirection,
+  ThirdPartyType,
+  VoucherDirection,
+  VoucherType
+} from "./types";
 
 export const thirdPartyTypes: ThirdPartyType[] = [
   "CLIENTE",
@@ -54,4 +59,14 @@ export function validateVoucherAmounts(input: {
     totalCents > 0 &&
     netCents + taxCents === totalCents
   );
+}
+
+export const settlementDirections: SettlementDirection[] = ["COBRO", "PAGO"];
+
+export function isSettlementDirection(value: string): value is SettlementDirection {
+  return settlementDirections.includes(value as SettlementDirection);
+}
+
+export function validatePositiveAmount(amount: number) {
+  return Number.isFinite(amount) && Math.round(amount * 100) > 0;
 }
