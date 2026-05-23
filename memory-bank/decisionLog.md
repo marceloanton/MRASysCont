@@ -8,3 +8,4 @@
 - 2026-05-23: Se agrega preparacion de persistencia real con Docker Compose, migracion Prisma inicial, seed y fallback demo cuando PostgreSQL no esta disponible localmente.
 - 2026-05-23: Se agrega login inicial con hash scrypt, sesiones persistidas en PostgreSQL cuando exista base y modo demo local solo para desarrollo.
 - 2026-05-23: Se agregan pantallas admin de empresas y usuarios; las mutaciones requieren permisos y PostgreSQL, mientras los listados usan fallback demo en desarrollo.
+- 2026-05-23: Se inicia Fase 2 con plan de cuentas y periodos contables por empresa, usando permisos `manageSettings`, fallback demo y repositorios preparados para PostgreSQL.

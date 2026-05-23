@@ -1,5 +1,5 @@
 import { getDemoCompany } from "./demo-data";
-import type { PermissionKey, SessionContext, TenantAccess } from "./types";
+import type { Company, PermissionKey, SessionContext, TenantAccess } from "./types";
 
 export class TenantAccessError extends Error {
   constructor(message: string) {
@@ -55,4 +55,53 @@ export function getActiveTenant(session: SessionContext): TenantAccess {
   }
 
   return assertCompanyAccess(session, activeCompanyId);
+}
+
+export function assertCompanyAccessWithCompanies(
+  session: SessionContext,
+  companies: Company[],
+  companyId: string,
+  requiredPermission?: PermissionKey
+): TenantAccess {
+  if (!session.user.active) {
+    throw new TenantAccessError("El usuario esta inactivo.");
+  }
+
+  const membership = session.memberships.find(
+    (membershipItem) => membershipItem.companyId === companyId
+  );
+
+  if (!membership) {
+    throw new TenantAccessError("El usuario no tiene acceso a esta empresa.");
+  }
+
+  if (requiredPermission && !membership.permissions[requiredPermission]) {
+    throw new TenantAccessError("El usuario no tiene permiso para esta accion.");
+  }
+
+  const company = companies.find((companyItem) => companyItem.id === companyId);
+
+  if (!company || company.status !== "ACTIVA") {
+    throw new TenantAccessError("La empresa no esta activa.");
+  }
+
+  return {
+    user: session.user,
+    company,
+    membership
+  };
+}
+
+export function getActiveTenantFromCompanies(
+  session: SessionContext,
+  companies: Company[]
+): TenantAccess {
+  const activeCompanyId =
+    session.activeCompanyId ?? session.memberships.at(0)?.companyId;
+
+  if (!activeCompanyId) {
+    throw new TenantAccessError("El usuario no tiene empresas asignadas.");
+  }
+
+  return assertCompanyAccessWithCompanies(session, companies, activeCompanyId);
 }

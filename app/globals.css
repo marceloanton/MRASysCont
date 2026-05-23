@@ -417,6 +417,19 @@ button:disabled {
   color: var(--foreground);
 }
 
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--foreground) !important;
+  text-transform: none !important;
+}
+
+.checkRow input {
+  width: 18px;
+  min-height: 18px;
+}
+
 .tableWrap {
   overflow-x: auto;
   margin-top: 18px;

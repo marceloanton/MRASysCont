@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { changeActiveCompany, logout } from "./actions";
 import { listAuditEvents } from "@/lib/phase1/audit";
 import { getWorkspaceContext } from "@/lib/phase1/session";
-import { getActiveTenant } from "@/lib/phase1/tenant-access";
+import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 
 const moduleCards = [
   {
@@ -24,6 +24,16 @@ const moduleCards = [
     title: "Seguridad",
     detail: "Toda accion sensible valida acceso a empresa activa.",
     href: "/"
+  },
+  {
+    title: "Plan de cuentas",
+    detail: "Cuentas contables propias por empresa.",
+    href: "/contabilidad/cuentas"
+  },
+  {
+    title: "Periodos",
+    detail: "Apertura y control de meses/ejercicios por empresa.",
+    href: "/contabilidad/periodos"
   }
 ];
 
@@ -35,7 +45,7 @@ export default async function Home() {
   }
 
   const { session } = workspace;
-  const activeTenant = getActiveTenant(session);
+  const activeTenant = getActiveTenantFromCompanies(session, workspace.companies);
   const allowedCompanyIds = new Set(
     session.memberships.map((membership) => membership.companyId)
   );

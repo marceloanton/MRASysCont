@@ -2,16 +2,17 @@
 
 ## Estado actual
 
-Fase 1 inicial: plataforma multi-empresa.
+Fase 2 inicial: nucleo contable.
 
-Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, permisos por tenant y auditoria local.
+Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, login inicial, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, pantallas admin de empresas/usuarios, plan de cuentas, periodos contables, permisos por tenant y auditoria local.
 
 ## Foco inmediato
 
 - Reemplazar datos demo por persistencia real en PostgreSQL.
 - Crear migraciones iniciales.
 - Conectar autenticacion productiva a PostgreSQL cuando Docker/PostgreSQL este disponible.
-- Probar altas reales de empresas y usuarios contra PostgreSQL.
+- Probar altas reales contra PostgreSQL.
+- Implementar asientos contables borrador con partida doble.
 - Mantener tests de aislamiento por `empresa_id` como proteccion obligatoria.
 
 ## Pendientes
@@ -19,3 +20,4 @@ Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma 
 - Instalar Docker o configurar PostgreSQL local.
 - Ejecutar `npm run db:migrate` y `npm run db:seed`.
 - Reemplazar modo demo por datos persistidos en entorno local con PostgreSQL.
+- Agregar reglas de bloqueo para periodos cerrados cuando existan asientos.

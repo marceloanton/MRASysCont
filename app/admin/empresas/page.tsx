@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
-import { getActiveTenant } from "@/lib/phase1/tenant-access";
+import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { CompanyForm } from "./company-form";
 
 export default async function CompaniesPage() {
@@ -11,7 +11,10 @@ export default async function CompaniesPage() {
     redirect("/login");
   }
 
-  const activeTenant = getActiveTenant(workspace.session);
+  const activeTenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
   const canManage = activeTenant.membership.permissions.manageSettings;
 
   return (

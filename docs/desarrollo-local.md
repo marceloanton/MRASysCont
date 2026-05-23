@@ -45,6 +45,13 @@ La UI muestra la fuente activa:
 
 En modo demo local los listados administrativos funcionan con datos de ejemplo. Las altas de empresas y usuarios requieren PostgreSQL para persistir cambios.
 
+Tambien funcionan en modo demo local:
+
+- `/contabilidad/cuentas`
+- `/contabilidad/periodos`
+
+Las altas de cuentas y periodos requieren PostgreSQL para persistir cambios.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

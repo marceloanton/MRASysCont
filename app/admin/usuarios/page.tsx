@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { listMemberships, listUsers } from "@/lib/phase1/repository";
 import { getWorkspaceContext } from "@/lib/phase1/session";
-import { getActiveTenant } from "@/lib/phase1/tenant-access";
+import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { UserForm } from "./user-form";
 
 export default async function UsersPage() {
@@ -12,7 +12,10 @@ export default async function UsersPage() {
     redirect("/login");
   }
 
-  const activeTenant = getActiveTenant(workspace.session);
+  const activeTenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
   const canManage = activeTenant.membership.permissions.manageUsers;
   const usersResult = await listUsers();
   const membershipsResult = await listMemberships();
