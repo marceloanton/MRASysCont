@@ -437,8 +437,25 @@ button:disabled {
 
 .entryLine {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(88px, 0.5fr) minmax(88px, 0.5fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(88px, 0.5fr) minmax(88px, 0.5fr) 84px;
   gap: 8px;
+}
+
+.secondaryButton,
+.lineRemoveButton {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--foreground);
+}
+
+.lineRemoveButton {
+  min-height: 42px;
+  padding: 0 10px;
+}
+
+.lineRemoveButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .tableWrap {

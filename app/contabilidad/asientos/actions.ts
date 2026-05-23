@@ -33,6 +33,20 @@ function numberFromForm(value: FormDataEntryValue | null) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function journalLinesFromForm(formData: FormData): JournalEntryLineInput[] {
+  const accountIds = formData.getAll("accountId");
+  const debitValues = formData.getAll("debit");
+  const creditValues = formData.getAll("credit");
+
+  return accountIds
+    .map((accountId, index) => ({
+      accountId: String(accountId ?? ""),
+      debit: numberFromForm(debitValues[index] ?? null),
+      credit: numberFromForm(creditValues[index] ?? null)
+    }))
+    .filter((line) => line.accountId && (line.debit > 0 || line.credit > 0));
+}
+
 export async function createJournalEntryAction(
   _previousState: JournalEntryFormState = initialState,
   formData: FormData
@@ -63,18 +77,7 @@ export async function createJournalEntryAction(
   const periodId = String(formData.get("periodId") ?? "");
   const date = new Date(String(formData.get("date") ?? ""));
   const description = String(formData.get("description") ?? "").trim();
-  const lines: JournalEntryLineInput[] = [
-    {
-      accountId: String(formData.get("line1AccountId") ?? ""),
-      debit: numberFromForm(formData.get("line1Debit")),
-      credit: numberFromForm(formData.get("line1Credit"))
-    },
-    {
-      accountId: String(formData.get("line2AccountId") ?? ""),
-      debit: numberFromForm(formData.get("line2Debit")),
-      credit: numberFromForm(formData.get("line2Credit"))
-    }
-  ];
+  const lines = journalLinesFromForm(formData);
 
   if (!periodId || Number.isNaN(date.getTime()) || !description) {
     return {

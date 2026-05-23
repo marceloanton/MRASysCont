@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import type { AccountingPeriodSummary, AccountSummary } from "@/lib/phase2/types";
 import { createJournalEntryAction, type JournalEntryFormState } from "./actions";
 
@@ -8,6 +8,8 @@ const initialState: JournalEntryFormState = {
   message: "",
   ok: false
 };
+
+const minimumLines = 2;
 
 export function JournalEntryForm({
   accounts,
@@ -22,6 +24,17 @@ export function JournalEntryForm({
   );
   const imputableAccounts = accounts.filter((account) => account.imputable && account.active);
   const openPeriods = periods.filter((period) => period.status === "ABIERTO");
+  const [lineIds, setLineIds] = useState([crypto.randomUUID(), crypto.randomUUID()]);
+
+  function addLine() {
+    setLineIds((current) => [...current, crypto.randomUUID()]);
+  }
+
+  function removeLine(lineId: string) {
+    setLineIds((current) =>
+      current.length > minimumLines ? current.filter((id) => id !== lineId) : current
+    );
+  }
 
   return (
     <form action={formAction} className="adminForm">
@@ -41,30 +54,33 @@ export function JournalEntryForm({
       <input id="description" name="description" required />
 
       <div className="entryLines">
-        <div className="entryLine">
-          <select name="line1AccountId" required aria-label="Cuenta linea 1">
-            {imputableAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.code} - {account.name}
-              </option>
-            ))}
-          </select>
-          <input name="line1Debit" inputMode="decimal" placeholder="Debe" />
-          <input name="line1Credit" inputMode="decimal" placeholder="Haber" />
-        </div>
-
-        <div className="entryLine">
-          <select name="line2AccountId" required aria-label="Cuenta linea 2">
-            {imputableAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.code} - {account.name}
-              </option>
-            ))}
-          </select>
-          <input name="line2Debit" inputMode="decimal" placeholder="Debe" />
-          <input name="line2Credit" inputMode="decimal" placeholder="Haber" />
-        </div>
+        {lineIds.map((lineId, index) => (
+          <div className="entryLine" key={lineId}>
+            <select name="accountId" required aria-label={`Cuenta linea ${index + 1}`}>
+              {imputableAccounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.code} - {account.name}
+                </option>
+              ))}
+            </select>
+            <input name="debit" inputMode="decimal" placeholder="Debe" aria-label={`Debe linea ${index + 1}`} />
+            <input name="credit" inputMode="decimal" placeholder="Haber" aria-label={`Haber linea ${index + 1}`} />
+            <button
+              className="lineRemoveButton"
+              type="button"
+              onClick={() => removeLine(lineId)}
+              disabled={lineIds.length <= minimumLines}
+              aria-label={`Quitar linea ${index + 1}`}
+            >
+              Quitar
+            </button>
+          </div>
+        ))}
       </div>
+
+      <button className="secondaryButton" type="button" onClick={addLine}>
+        Agregar linea
+      </button>
 
       {state.message ? (
         <p className={state.ok ? "formSuccess" : "formError"}>{state.message}</p>

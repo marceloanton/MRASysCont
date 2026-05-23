@@ -56,6 +56,8 @@ La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y s
 
 Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir cambios.
 
+Los asientos permiten agregar mas de dos lineas. Cada linea debe imputar solo Debe o Haber, y el total del asiento debe quedar balanceado.
+
 ## PostgreSQL con Docker
 
 Cuando Docker este instalado:

@@ -42,6 +42,19 @@ describe("accounting validation", () => {
         { accountId: "b", debit: 0, credit: 90 }
       ])
     ).toBe(false);
+    expect(
+      validateBalancedEntry([
+        { accountId: "a", debit: 100, credit: 50 },
+        { accountId: "b", debit: 0, credit: 50 }
+      ])
+    ).toBe(false);
+    expect(
+      validateBalancedEntry([
+        { accountId: "a", debit: 100, credit: 0 },
+        { accountId: "b", debit: 0, credit: 50 },
+        { accountId: "c", debit: 0, credit: 50 }
+      ])
+    ).toBe(true);
   });
 
   it("rejects accounts from another company", () => {

@@ -37,7 +37,15 @@ export function sumJournalLines(lines: JournalEntryLineInput[]) {
 
 export function validateBalancedEntry(lines: JournalEntryLineInput[]) {
   const totals = sumJournalLines(lines);
-  return lines.length >= 2 && totals.debit > 0 && totals.debit === totals.credit;
+  const validLines = lines.every(
+    (line) =>
+      line.accountId &&
+      line.debit >= 0 &&
+      line.credit >= 0 &&
+      ((line.debit > 0 && line.credit === 0) || (line.credit > 0 && line.debit === 0))
+  );
+
+  return lines.length >= 2 && validLines && totals.debit > 0 && totals.debit === totals.credit;
 }
 
 export function validateEntryAccountsBelongToCompany(
