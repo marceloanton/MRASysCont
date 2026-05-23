@@ -27,6 +27,7 @@
 - Vista imprimible para guardar reportes como PDF desde el navegador.
 - Fase 3 inicial con terceros clientes/proveedores por empresa.
 - Edicion y activacion/desactivacion de terceros.
+- Comprobantes iniciales emitidos/recibidos vinculados a terceros.
 
 ## En curso
 
@@ -38,4 +39,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Vincular terceros a comprobantes emitidos/recibidos.
+- Agregar cuentas corrientes con saldos por tercero.

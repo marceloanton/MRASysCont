@@ -36,6 +36,25 @@ enum ThirdPartyType {
   CLIENTE_PROVEEDOR
 }
 
+enum VoucherDirection {
+  EMITIDO
+  RECIBIDO
+}
+
+enum VoucherType {
+  FACTURA
+  NOTA_CREDITO
+  NOTA_DEBITO
+  RECIBO
+  OTRO
+}
+
+enum VoucherStatus {
+  BORRADOR
+  REGISTRADO
+  ANULADO
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -66,6 +85,7 @@ model Company {
   accounts          Account[]
   journalEntries    JournalEntry[]
   thirdParties      ThirdParty[]
+  vouchers          Voucher[]
   auditEvents       AuditEvent[]
 }
 
@@ -199,11 +219,41 @@ model ThirdParty {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
-  company Company @relation(fields: [companyId], references: [id])
+  company  Company   @relation(fields: [companyId], references: [id])
+  vouchers Voucher[]
 
   @@unique([companyId, document])
   @@index([companyId, type])
   @@index([companyId, active])
+}
+
+model Voucher {
+  id            String           @id @default(cuid())
+  companyId     String
+  thirdPartyId  String
+  direction     VoucherDirection
+  type          VoucherType
+  letter        String?
+  pointOfSale   String
+  number        String
+  issueDate     DateTime
+  dueDate       DateTime?
+  currency      String           @default("ARS")
+  netAmount     Decimal          @default(0) @db.Decimal(18, 2)
+  taxAmount     Decimal          @default(0) @db.Decimal(18, 2)
+  totalAmount   Decimal          @db.Decimal(18, 2)
+  status        VoucherStatus    @default(REGISTRADO)
+  notes         String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id])
+  thirdParty ThirdParty @relation(fields: [thirdPartyId], references: [id])
+
+  @@unique([companyId, direction, type, letter, pointOfSale, number])
+  @@index([companyId, direction, issueDate])
+  @@index([companyId, thirdPartyId])
+  @@index([companyId, status])
 }
 
 model AuditEvent {

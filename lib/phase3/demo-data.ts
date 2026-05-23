@@ -1,4 +1,4 @@
-import type { ThirdPartySummary } from "./types";
+import type { ThirdPartySummary, VoucherSummary } from "./types";
 
 export const demoThirdParties: ThirdPartySummary[] = [
   {
@@ -36,5 +36,45 @@ export const demoThirdParties: ThirdPartySummary[] = [
     document: "30111222",
     taxCondition: "Consumidor Final",
     active: true
+  }
+];
+
+export const demoVouchers: VoucherSummary[] = [
+  {
+    id: "voucher_alfa_emitido_1",
+    companyId: "emp_alfa",
+    thirdPartyId: "third_alfa_cliente",
+    thirdPartyName: "Cliente Demo SA",
+    direction: "EMITIDO",
+    type: "FACTURA",
+    letter: "A",
+    pointOfSale: "0001",
+    number: "00000001",
+    issueDate: "2026-01-15",
+    dueDate: "2026-01-25",
+    currency: "ARS",
+    netAmount: 100000,
+    taxAmount: 21000,
+    totalAmount: 121000,
+    status: "REGISTRADO",
+    notes: "Comprobante demo sin CAE"
+  },
+  {
+    id: "voucher_alfa_recibido_1",
+    companyId: "emp_alfa",
+    thirdPartyId: "third_alfa_proveedor",
+    thirdPartyName: "Proveedor Demo SRL",
+    direction: "RECIBIDO",
+    type: "FACTURA",
+    letter: "A",
+    pointOfSale: "0003",
+    number: "00000125",
+    issueDate: "2026-01-16",
+    currency: "ARS",
+    netAmount: 25000,
+    taxAmount: 5250,
+    totalAmount: 30250,
+    status: "REGISTRADO",
+    notes: "Factura recibida demo"
   }
 ];

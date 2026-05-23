@@ -46,6 +46,11 @@ const moduleCards = [
     href: "/terceros"
   },
   {
+    title: "Comprobantes",
+    detail: "Facturas y documentos vinculados a terceros.",
+    href: "/comprobantes"
+  },
+  {
     title: "Reportes",
     detail: "Libro Diario y Mayor por empresa y periodo.",
     href: "/contabilidad/reportes"
