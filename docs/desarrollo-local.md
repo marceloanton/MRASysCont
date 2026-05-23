@@ -54,6 +54,7 @@ Tambien funcionan en modo demo local:
 - `/terceros`
 - `/comprobantes`
 - `/cuentas-corrientes`
+- `/tesoreria`
 
 La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo. Tambien permite exportar esos reportes en CSV y abrir una vista imprimible para guardar como PDF desde el navegador.
 
@@ -72,6 +73,8 @@ El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo
 El modulo `/comprobantes` registra facturas/notas/recibos emitidos o recibidos vinculados a terceros activos. No emite CAE ni llama ARCA/AFIP todavia; esa integracion queda para la fase fiscal.
 
 El modulo `/cuentas-corrientes` calcula saldos por tercero desde los comprobantes registrados y movimientos iniciales de cobro/pago. Todavia no reemplaza tesoreria completa con caja, bancos y conciliacion.
+
+El modulo `/tesoreria` administra cajas/bancos/billeteras y movimientos iniciales. Todavia no incluye conciliacion bancaria ni asiento automatico.
 
 ## PostgreSQL con Docker
 

@@ -56,6 +56,11 @@ const moduleCards = [
     href: "/cuentas-corrientes"
   },
   {
+    title: "Tesoreria",
+    detail: "Caja, bancos y movimientos iniciales.",
+    href: "/tesoreria"
+  },
+  {
     title: "Reportes",
     detail: "Libro Diario y Mayor por empresa y periodo.",
     href: "/contabilidad/reportes"

@@ -60,6 +60,19 @@ enum SettlementDirection {
   PAGO
 }
 
+enum TreasuryAccountType {
+  CAJA
+  BANCO
+  BILLETERA
+}
+
+enum TreasuryMovementType {
+  INGRESO
+  EGRESO
+  TRANSFERENCIA
+  AJUSTE
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -92,6 +105,8 @@ model Company {
   thirdParties      ThirdParty[]
   vouchers          Voucher[]
   settlements       Settlement[]
+  treasuryAccounts  TreasuryAccount[]
+  treasuryMovements TreasuryMovement[]
   auditEvents       AuditEvent[]
 }
 
@@ -282,6 +297,47 @@ model Settlement {
 
   @@index([companyId, thirdPartyId])
   @@index([companyId, direction, date])
+}
+
+model TreasuryAccount {
+  id        String              @id @default(cuid())
+  companyId String
+  type      TreasuryAccountType
+  name      String
+  currency  String              @default("ARS")
+  bankName  String?
+  accountNumber String?
+  active    Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+  movements TreasuryMovement[]
+
+  @@unique([companyId, name])
+  @@index([companyId, type])
+  @@index([companyId, active])
+}
+
+model TreasuryMovement {
+  id                String               @id @default(cuid())
+  companyId         String
+  treasuryAccountId String
+  type              TreasuryMovementType
+  date              DateTime
+  currency          String               @default("ARS")
+  amount            Decimal              @db.Decimal(18, 2)
+  description       String
+  reference         String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+  treasuryAccount TreasuryAccount @relation(fields: [treasuryAccountId], references: [id])
+
+  @@index([companyId, date])
+  @@index([companyId, treasuryAccountId])
+  @@index([companyId, type])
 }
 
 model AuditEvent {

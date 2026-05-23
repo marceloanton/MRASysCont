@@ -26,3 +26,4 @@
 - 2026-05-23: Se agregan comprobantes iniciales vinculados a terceros, sin CAE/ARCA todavia, para preparar cuentas corrientes y facturacion fiscal posterior.
 - 2026-05-23: Las cuentas corrientes se calculan como vista derivada de comprobantes; pagos/cobros quedan para tesoreria.
 - 2026-05-23: Se agregan cobros/pagos iniciales como `Settlement` aplicado al saldo global del tercero, sin imputacion especifica a comprobantes todavia.
+- 2026-05-23: Se inicia Fase 4 con tesoreria basica separada de cuentas corrientes; conciliacion y asiento automatico quedan para pasos posteriores.
