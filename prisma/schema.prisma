@@ -34,11 +34,14 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
+  passwordHash String?
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   memberships UserCompany[]
   auditEvents AuditEvent[]
+  sessions    Session[]
 }
 
 model Company {
@@ -64,6 +67,11 @@ model UserCompany {
   userId    String
   companyId String
   role      UserRole
+  canManageSettings Boolean @default(false)
+  canManageUsers    Boolean @default(false)
+  canPostAccounting Boolean @default(false)
+  canIssueInvoices  Boolean @default(false)
+  canReviewDocs     Boolean @default(false)
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id])
@@ -71,6 +79,20 @@ model UserCompany {
 
   @@unique([userId, companyId])
   @@index([companyId, role])
+}
+
+model Session {
+  id              String   @id @default(cuid())
+  userId          String
+  activeCompanyId String?
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, expiresAt])
+  @@index([activeCompanyId])
 }
 
 model AccountingPeriod {

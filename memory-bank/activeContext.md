@@ -2,19 +2,19 @@
 
 ## Estado actual
 
-Fase 0: preparacion del proyecto.
+Fase 1 inicial: plataforma multi-empresa.
 
-Se creo la documentacion base y se esta inicializando el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL.
+Se creo la documentacion base, el stack tecnico con Next.js, TypeScript, Prisma y PostgreSQL, y una primera capa funcional de usuarios demo, empresas, roles, selector de empresa, permisos por tenant y auditoria local.
 
 ## Foco inmediato
 
-- Validar que el scaffold compila.
-- Dejar comandos base de desarrollo.
-- Preparar el camino para Fase 1: login, empresas, roles, permisos, selector de empresa y auditoria.
+- Reemplazar datos demo por persistencia real en PostgreSQL.
+- Definir estrategia concreta de autenticacion productiva.
+- Crear migraciones iniciales.
+- Mantener tests de aislamiento por `empresa_id` como proteccion obligatoria.
 
 ## Pendientes
 
-- Definir estrategia concreta de autenticacion.
-- Implementar Fase 1.
 - Configurar PostgreSQL local o contenedor.
 - Crear migraciones reales cuando la base este disponible.
+- Implementar login productivo.

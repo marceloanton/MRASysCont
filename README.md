@@ -24,7 +24,7 @@ Construir una plataforma SaaS para:
 
 ## Estado del proyecto
 
-Estado actual: Fase 0. Ya existe documentacion inicial y scaffold tecnico con Next.js, TypeScript, Prisma y PostgreSQL como base.
+Estado actual: Fase 1 inicial. Ya existe documentacion, scaffold tecnico y una primera capa funcional de usuarios demo, empresas, roles, selector de empresa, permisos por tenant y auditoria local.
 
 La documentacion en `docs/` es la fuente oficial para alcance, arquitectura, reglas contables, seguridad, roadmap y criterios de aceptacion.
 
@@ -67,4 +67,8 @@ npm run typecheck
 npm run prisma:validate
 ```
 
-Nota: `npm run test` se agregara cuando se incorpore el framework de pruebas.
+Para validar Prisma sin una base local cargada:
+
+```powershell
+$env:DATABASE_URL='postgresql://mrasyscont:mrasyscont@localhost:5432/mrasyscont?schema=public'; npm run prisma:validate
+```
