@@ -19,6 +19,7 @@
 - Anulacion de asientos confirmados mediante contraasiento vinculado.
 - Cierre de periodos contables para bloquear nuevas operaciones.
 - Reportes iniciales Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa y periodo.
+- Exportacion CSV de Balance, Diario y Mayor.
 
 ## En curso
 
@@ -30,4 +31,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar exportacion CSV/PDF para reportes.
+- Agregar exportacion PDF para reportes.

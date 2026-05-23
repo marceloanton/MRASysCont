@@ -24,6 +24,9 @@ export default async function AccountingReportsPage({
   const periodsResult = await listAccountingPeriods(tenant.company.id);
   const selectedPeriodId =
     params.periodId && params.periodId !== "todos" ? params.periodId : undefined;
+  const exportPeriodQuery = selectedPeriodId
+    ? `&periodId=${encodeURIComponent(selectedPeriodId)}`
+    : "";
   const reports = await getAccountingReports({
     companyId: tenant.company.id,
     periodId: selectedPeriodId
@@ -63,6 +66,19 @@ export default async function AccountingReportsPage({
         </select>
         <button type="submit">Aplicar</button>
       </form>
+
+      <section className="exportBar" aria-label="Exportaciones CSV">
+        <span>Exportar CSV</span>
+        <Link href={`/contabilidad/reportes/export?type=balance${exportPeriodQuery}`}>
+          Balance
+        </Link>
+        <Link href={`/contabilidad/reportes/export?type=diario${exportPeriodQuery}`}>
+          Diario
+        </Link>
+        <Link href={`/contabilidad/reportes/export?type=mayor${exportPeriodQuery}`}>
+          Mayor
+        </Link>
+      </section>
 
       <section className="reportSummary">
         <article>
