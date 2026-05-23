@@ -61,8 +61,10 @@ export type JournalReportLine = {
   number: number;
   date: string;
   description: string;
+  accountId: string;
   accountCode: string;
   accountName: string;
+  accountType: AccountType;
   debit: number;
   credit: number;
 };
@@ -75,4 +77,15 @@ export type LedgerAccountReport = {
   totalCredit: number;
   balance: number;
   lines: JournalReportLine[];
+};
+
+export type TrialBalanceLine = {
+  accountId: string;
+  accountCode: string;
+  accountName: string;
+  accountType: AccountType;
+  totalDebit: number;
+  totalCredit: number;
+  debitBalance: number;
+  creditBalance: number;
 };

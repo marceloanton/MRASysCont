@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { listAccountingPeriods } from "@/lib/phase2/repository";
-import { getJournalReport, getLedgerReport } from "@/lib/phase2/reports";
+import { getAccountingReports } from "@/lib/phase2/reports";
 
 export default async function AccountingReportsPage({
   searchParams
@@ -24,18 +24,20 @@ export default async function AccountingReportsPage({
   const periodsResult = await listAccountingPeriods(tenant.company.id);
   const selectedPeriodId =
     params.periodId && params.periodId !== "todos" ? params.periodId : undefined;
-  const [journalReport, ledgerReport] = await Promise.all([
-    getJournalReport({
-      companyId: tenant.company.id,
-      periodId: selectedPeriodId
-    }),
-    getLedgerReport({
-      companyId: tenant.company.id,
-      periodId: selectedPeriodId
-    })
-  ]);
-  const totalDebit = journalReport.lines.reduce((sum, line) => sum + line.debit, 0);
-  const totalCredit = journalReport.lines.reduce((sum, line) => sum + line.credit, 0);
+  const reports = await getAccountingReports({
+    companyId: tenant.company.id,
+    periodId: selectedPeriodId
+  });
+  const totalDebit = reports.journalLines.reduce((sum, line) => sum + line.debit, 0);
+  const totalCredit = reports.journalLines.reduce((sum, line) => sum + line.credit, 0);
+  const totalDebitBalance = reports.trialBalanceLines.reduce(
+    (sum, line) => sum + line.debitBalance,
+    0
+  );
+  const totalCreditBalance = reports.trialBalanceLines.reduce(
+    (sum, line) => sum + line.creditBalance,
+    0
+  );
 
   return (
     <main className="reportPage">
@@ -46,7 +48,7 @@ export default async function AccountingReportsPage({
           <h1>Reportes contables</h1>
           <p>{tenant.company.legalName}</p>
         </div>
-        <span>{journalReport.source === "database" ? "PostgreSQL" : "Demo local"}</span>
+        <span>{reports.source === "database" ? "PostgreSQL" : "Demo local"}</span>
       </header>
 
       <form className="filterBar">
@@ -79,6 +81,47 @@ export default async function AccountingReportsPage({
 
       <section className="reportStack">
         <article className="panel">
+          <h2>Balance de sumas y saldos</h2>
+          <div className="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cuenta</th>
+                  <th>Tipo</th>
+                  <th>Debe</th>
+                  <th>Haber</th>
+                  <th>Saldo deudor</th>
+                  <th>Saldo acreedor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.trialBalanceLines.map((line) => (
+                  <tr key={line.accountId}>
+                    <td>
+                      {line.accountCode} - {line.accountName}
+                    </td>
+                    <td>{line.accountType}</td>
+                    <td>{line.totalDebit.toLocaleString("es-AR")}</td>
+                    <td>{line.totalCredit.toLocaleString("es-AR")}</td>
+                    <td>{line.debitBalance.toLocaleString("es-AR")}</td>
+                    <td>{line.creditBalance.toLocaleString("es-AR")}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colSpan={2}>Totales</th>
+                  <th>{totalDebit.toLocaleString("es-AR")}</th>
+                  <th>{totalCredit.toLocaleString("es-AR")}</th>
+                  <th>{totalDebitBalance.toLocaleString("es-AR")}</th>
+                  <th>{totalCreditBalance.toLocaleString("es-AR")}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </article>
+
+        <article className="panel">
           <h2>Libro Diario</h2>
           <div className="tableWrap">
             <table>
@@ -93,7 +136,7 @@ export default async function AccountingReportsPage({
                 </tr>
               </thead>
               <tbody>
-                {journalReport.lines.map((line, index) => (
+                {reports.journalLines.map((line, index) => (
                   <tr key={`${line.entryId}-${line.accountCode}-${index}`}>
                     <td>{line.number}</td>
                     <td>{line.date}</td>
@@ -113,7 +156,7 @@ export default async function AccountingReportsPage({
         <article className="panel">
           <h2>Libro Mayor</h2>
           <div className="ledgerStack">
-            {ledgerReport.accounts.map((account) => (
+            {reports.ledgerAccounts.map((account) => (
               <section className="ledgerAccount" key={account.accountId}>
                 <header>
                   <h3>

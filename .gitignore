@@ -22,6 +22,7 @@ pnpm-debug.log*
 
 # cache
 *.tsbuildinfo
+.playwright-mcp/
 
 # database
 *.db

@@ -2,7 +2,12 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { demoJournalReportLines } from "./report-demo-data";
-import type { JournalReportLine, LedgerAccountReport } from "./types";
+import type {
+  AccountType,
+  JournalReportLine,
+  LedgerAccountReport,
+  TrialBalanceLine
+} from "./types";
 
 function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
@@ -16,7 +21,7 @@ function buildLedger(lines: JournalReportLine[]): LedgerAccountReport[] {
   const groups = new Map<string, LedgerAccountReport>();
 
   for (const line of lines) {
-    const key = `${line.accountCode}:${line.accountName}`;
+    const key = line.accountId;
     const current = groups.get(key) ?? {
       accountId: key,
       accountCode: line.accountCode,
@@ -32,6 +37,35 @@ function buildLedger(lines: JournalReportLine[]): LedgerAccountReport[] {
     current.balance = current.totalDebit - current.totalCredit;
     current.lines.push(line);
     groups.set(key, current);
+  }
+
+  return Array.from(groups.values()).sort((a, b) =>
+    a.accountCode.localeCompare(b.accountCode)
+  );
+}
+
+function buildTrialBalance(lines: JournalReportLine[]): TrialBalanceLine[] {
+  const groups = new Map<string, TrialBalanceLine>();
+
+  for (const line of lines) {
+    const current = groups.get(line.accountId) ?? {
+      accountId: line.accountId,
+      accountCode: line.accountCode,
+      accountName: line.accountName,
+      accountType: line.accountType,
+      totalDebit: 0,
+      totalCredit: 0,
+      debitBalance: 0,
+      creditBalance: 0
+    };
+
+    current.totalDebit += line.debit;
+    current.totalCredit += line.credit;
+
+    const balance = current.totalDebit - current.totalCredit;
+    current.debitBalance = balance > 0 ? balance : 0;
+    current.creditBalance = balance < 0 ? Math.abs(balance) : 0;
+    groups.set(line.accountId, current);
   }
 
   return Array.from(groups.values()).sort((a, b) =>
@@ -82,8 +116,10 @@ export async function getJournalReport(input: {
         number: entry.number,
         date: normalizeDate(entry.date),
         description: entry.description,
+        accountId: line.account.id,
         accountCode: line.account.code,
         accountName: line.account.name,
+        accountType: line.account.type as AccountType,
         debit: Number(line.debit),
         credit: Number(line.credit)
       }))
@@ -110,5 +146,31 @@ export async function getLedgerReport(input: {
   return {
     source: journal.source,
     accounts: buildLedger(journal.lines)
+  };
+}
+
+export async function getTrialBalanceReport(input: {
+  companyId: string;
+  periodId?: string;
+}) {
+  const journal = await getJournalReport(input);
+
+  return {
+    source: journal.source,
+    lines: buildTrialBalance(journal.lines)
+  };
+}
+
+export async function getAccountingReports(input: {
+  companyId: string;
+  periodId?: string;
+}) {
+  const journal = await getJournalReport(input);
+
+  return {
+    source: journal.source,
+    journalLines: journal.lines,
+    ledgerAccounts: buildLedger(journal.lines),
+    trialBalanceLines: buildTrialBalance(journal.lines)
   };
 }

@@ -52,6 +52,8 @@ Tambien funcionan en modo demo local:
 - `/contabilidad/asientos`
 - `/contabilidad/reportes`
 
+La pantalla de reportes muestra Libro Diario, Libro Mayor y Balance de sumas y saldos por empresa activa y periodo.
+
 Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir cambios.
 
 ## PostgreSQL con Docker

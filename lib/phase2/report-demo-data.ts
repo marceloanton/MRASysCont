@@ -9,8 +9,10 @@ export const demoJournalReportLines: JournalReportLine[] = [
     number: 1,
     date: "2026-01-10",
     description: "Venta de prueba",
+    accountId: accountById.get("acc_caja")?.id ?? "acc_caja",
     accountCode: accountById.get("acc_caja")?.code ?? "1.01.001",
     accountName: accountById.get("acc_caja")?.name ?? "Caja",
+    accountType: accountById.get("acc_caja")?.type ?? "ACTIVO",
     debit: 100000,
     credit: 0
   },
@@ -19,8 +21,10 @@ export const demoJournalReportLines: JournalReportLine[] = [
     number: 1,
     date: "2026-01-10",
     description: "Venta de prueba",
+    accountId: accountById.get("acc_ventas")?.id ?? "acc_ventas",
     accountCode: accountById.get("acc_ventas")?.code ?? "4.01.001",
     accountName: accountById.get("acc_ventas")?.name ?? "Ventas",
+    accountType: accountById.get("acc_ventas")?.type ?? "INGRESOS",
     debit: 0,
     credit: 100000
   },
@@ -29,8 +33,10 @@ export const demoJournalReportLines: JournalReportLine[] = [
     number: 2,
     date: "2026-01-11",
     description: "Contraasiento por anulacion: Venta de prueba",
+    accountId: accountById.get("acc_caja")?.id ?? "acc_caja",
     accountCode: accountById.get("acc_caja")?.code ?? "1.01.001",
     accountName: accountById.get("acc_caja")?.name ?? "Caja",
+    accountType: accountById.get("acc_caja")?.type ?? "ACTIVO",
     debit: 0,
     credit: 100000
   },
@@ -39,8 +45,10 @@ export const demoJournalReportLines: JournalReportLine[] = [
     number: 2,
     date: "2026-01-11",
     description: "Contraasiento por anulacion: Venta de prueba",
+    accountId: accountById.get("acc_ventas")?.id ?? "acc_ventas",
     accountCode: accountById.get("acc_ventas")?.code ?? "4.01.001",
     accountName: accountById.get("acc_ventas")?.name ?? "Ventas",
+    accountType: accountById.get("acc_ventas")?.type ?? "INGRESOS",
     debit: 100000,
     credit: 0
   }
