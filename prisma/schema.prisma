@@ -138,16 +138,25 @@ model JournalEntry {
   date        DateTime
   description String
   status      JournalEntryStatus @default(BORRADOR)
+  reversalOfEntryId String?
+  reversedByEntryId String?
+  reversalReason    String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
   company Company              @relation(fields: [companyId], references: [id])
   period  AccountingPeriod     @relation(fields: [periodId], references: [id])
   lines   JournalEntryLine[]
+  reversalOfEntry JournalEntry? @relation("JournalEntryReversal", fields: [reversalOfEntryId], references: [id])
+  reversedByEntry JournalEntry? @relation("JournalEntryReversedBy", fields: [reversedByEntryId], references: [id])
+  reversalEntries JournalEntry[] @relation("JournalEntryReversal")
+  reversedEntries JournalEntry[] @relation("JournalEntryReversedBy")
 
   @@unique([companyId, number])
   @@index([companyId, date])
   @@index([companyId, periodId, status])
+  @@index([reversalOfEntryId])
+  @@index([reversedByEntryId])
 }
 
 model JournalEntryLine {

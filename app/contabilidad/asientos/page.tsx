@@ -7,7 +7,7 @@ import {
   listAccounts,
   listJournalEntries
 } from "@/lib/phase2/repository";
-import { confirmJournalEntryAction } from "./actions";
+import { confirmJournalEntryAction, reverseJournalEntryAction } from "./actions";
 import { JournalEntryForm } from "./journal-entry-form";
 
 export default async function JournalEntriesPage() {
@@ -76,13 +76,37 @@ export default async function JournalEntriesPage() {
                     <td>{entry.description}</td>
                     <td>{entry.totalDebit.toLocaleString("es-AR")}</td>
                     <td>{entry.totalCredit.toLocaleString("es-AR")}</td>
-                    <td>{entry.status}</td>
+                    <td>
+                      {entry.status}
+                      {entry.reversalOfEntryId ? (
+                        <small className="rowNote">Contraasiento</small>
+                      ) : null}
+                      {entry.reversedByEntryId ? (
+                        <small className="rowNote">Anulado por #{entry.reversedByEntryId.slice(0, 6)}</small>
+                      ) : null}
+                    </td>
                     <td>
                       {entry.status === "BORRADOR" && canPost ? (
                         <form action={confirmJournalEntryAction}>
                           <input type="hidden" name="entryId" value={entry.id} />
                           <button className="tableButton" type="submit">
                             Confirmar
+                          </button>
+                        </form>
+                      ) : entry.status === "CONFIRMADO" &&
+                        !entry.reversalOfEntryId &&
+                        !entry.reversedByEntryId &&
+                        canPost ? (
+                        <form action={reverseJournalEntryAction} className="inlineAction">
+                          <input type="hidden" name="entryId" value={entry.id} />
+                          <input
+                            name="reason"
+                            placeholder="Motivo"
+                            required
+                            aria-label="Motivo de anulacion"
+                          />
+                          <button className="tableButton dangerButton" type="submit">
+                            Anular
                           </button>
                         </form>
                       ) : (

@@ -75,6 +75,20 @@ export const demoJournalEntries: JournalEntrySummary[] = [
     date: "2026-01-10",
     description: "Venta de prueba",
     status: "CONFIRMADO",
+    reversedByEntryId: "entry_alfa_2",
+    totalDebit: 100000,
+    totalCredit: 100000
+  },
+  {
+    id: "entry_alfa_2",
+    companyId: "emp_alfa",
+    periodId: "period_alfa_2026_01",
+    number: 2,
+    date: "2026-01-11",
+    description: "Contraasiento por anulacion: Venta de prueba",
+    status: "CONFIRMADO",
+    reversalOfEntryId: "entry_alfa_1",
+    reversalReason: "Correccion de comprobante de prueba",
     totalDebit: 100000,
     totalCredit: 100000
   }

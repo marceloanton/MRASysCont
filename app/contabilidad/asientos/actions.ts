@@ -8,7 +8,8 @@ import {
   confirmJournalEntry,
   createJournalEntry,
   listAccountingPeriods,
-  listAccounts
+  listAccounts,
+  reverseJournalEntry
 } from "@/lib/phase2/repository";
 import {
   validateBalancedEntry,
@@ -177,6 +178,52 @@ export async function confirmJournalEntryAction(formData: FormData) {
       action: "journal_entry.confirmed",
       entity: "JournalEntry",
       entityId: result.id
+    });
+  }
+
+  revalidatePath("/contabilidad/asientos");
+}
+
+export async function reverseJournalEntryAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(
+    workspace.session,
+    workspace.companies
+  );
+
+  if (!tenant.membership.permissions.postAccounting) {
+    return;
+  }
+
+  const entryId = String(formData.get("entryId") ?? "");
+  const reason = String(formData.get("reason") ?? "").trim();
+
+  if (!entryId || !reason) {
+    return;
+  }
+
+  const result = await reverseJournalEntry({
+    companyId: tenant.company.id,
+    entryId,
+    reason
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: "journal_entry.reversed",
+      entity: "JournalEntry",
+      entityId: entryId,
+      metadata: {
+        reversalEntryId: result.id ?? null,
+        reason
+      }
     });
   }
 

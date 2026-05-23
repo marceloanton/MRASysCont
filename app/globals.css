@@ -476,6 +476,31 @@ th {
   font-size: 0.86rem;
 }
 
+.rowNote {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.inlineAction {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 88px;
+  gap: 6px;
+}
+
+.inlineAction input {
+  min-height: 34px;
+  background: #f7f8f4;
+  border-color: var(--line);
+  color: var(--foreground);
+}
+
+.dangerButton {
+  background: #f1d5d0;
+  color: var(--blocked);
+}
+
 @media (max-width: 900px) {
   .adminHeader,
   .adminGrid {

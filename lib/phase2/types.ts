@@ -49,6 +49,9 @@ export type JournalEntrySummary = {
   date: string;
   description: string;
   status: JournalEntryStatus;
+  reversalOfEntryId?: string;
+  reversedByEntryId?: string;
+  reversalReason?: string;
   totalDebit: number;
   totalCredit: number;
 };

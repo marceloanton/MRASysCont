@@ -11,3 +11,4 @@
 - 2026-05-23: Se inicia Fase 2 con plan de cuentas y periodos contables por empresa, usando permisos `manageSettings`, fallback demo y repositorios preparados para PostgreSQL.
 - 2026-05-23: Se agregan asientos borrador con validacion de partida doble, periodo abierto y cuentas imputables de la empresa activa.
 - 2026-05-23: Se agrega confirmacion de asientos; solo los borradores balanceados de periodos abiertos pueden pasar a confirmado.
+- 2026-05-23: Se agrega anulacion de asientos confirmados mediante contraasiento inverso, dejando vinculo entre asiento original y asiento de anulacion.

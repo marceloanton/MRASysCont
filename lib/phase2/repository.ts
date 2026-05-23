@@ -210,6 +210,9 @@ export async function listJournalEntries(companyId: string) {
           date: normalizeDate(entry.date),
           description: entry.description,
           status: entry.status,
+          reversalOfEntryId: entry.reversalOfEntryId ?? undefined,
+          reversedByEntryId: entry.reversedByEntryId ?? undefined,
+          reversalReason: entry.reversalReason ?? undefined,
           totalDebit: totals.debit,
           totalCredit: totals.credit
         };
@@ -219,6 +222,118 @@ export async function listJournalEntries(companyId: string) {
     return {
       source: "demo" as const,
       entries: demoJournalEntries.filter((entry) => entry.companyId === companyId)
+    };
+  }
+}
+
+export async function reverseJournalEntry(input: {
+  companyId: string;
+  entryId: string;
+  reason: string;
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para anular asientos hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const entry = await prisma.journalEntry.findFirst({
+      where: {
+        id: input.entryId,
+        companyId: input.companyId
+      },
+      include: {
+        lines: true,
+        period: true
+      }
+    });
+
+    if (!entry) {
+      return {
+        ok: false,
+        message: "El asiento no existe para la empresa activa."
+      };
+    }
+
+    if (entry.status !== "CONFIRMADO") {
+      return {
+        ok: false,
+        message: "Solo se pueden anular asientos confirmados."
+      };
+    }
+
+    if (entry.reversedByEntryId || entry.reversalOfEntryId) {
+      return {
+        ok: false,
+        message: "Este asiento ya forma parte de una anulacion."
+      };
+    }
+
+    if (entry.period.status !== "ABIERTO") {
+      return {
+        ok: false,
+        message: "No se puede anular un asiento en periodo cerrado."
+      };
+    }
+
+    const latest = await prisma.journalEntry.findFirst({
+      where: {
+        companyId: input.companyId
+      },
+      orderBy: {
+        number: "desc"
+      }
+    });
+
+    const reversal = await prisma.$transaction(async (tx) => {
+      const reversalEntry = await tx.journalEntry.create({
+        data: {
+          companyId: entry.companyId,
+          periodId: entry.periodId,
+          number: (latest?.number ?? 0) + 1,
+          date: new Date(),
+          description: `Contraasiento por anulacion: ${entry.description}`,
+          status: "CONFIRMADO",
+          reversalOfEntryId: entry.id,
+          reversalReason: input.reason,
+          lines: {
+            create: entry.lines.map((line) => ({
+              accountId: line.accountId,
+              debit: line.credit,
+              credit: line.debit,
+              currency: line.currency,
+              originalAmount: line.originalAmount,
+              exchangeRate: line.exchangeRate
+            }))
+          }
+        }
+      });
+
+      await tx.journalEntry.update({
+        where: {
+          id: entry.id
+        },
+        data: {
+          status: "ANULADO",
+          reversedByEntryId: reversalEntry.id,
+          reversalReason: input.reason
+        }
+      });
+
+      return reversalEntry;
+    });
+
+    return {
+      ok: true,
+      message: "Asiento anulado con contraasiento.",
+      id: reversal.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo anular el asiento. Revisar conexion."
     };
   }
 }

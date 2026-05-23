@@ -16,6 +16,7 @@
 - Validaciones de codigo de cuenta, tipo de cuenta y rango de periodo.
 - Asientos borrador con dos lineas, partida doble, periodo abierto y cuentas de la empresa activa.
 - Confirmacion de asientos borrador con bloqueo de confirmados.
+- Anulacion de asientos confirmados mediante contraasiento vinculado.
 
 ## En curso
 
@@ -27,4 +28,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar contraasientos y anulacion.
+- Agregar cierre de periodos y bloqueo operativo.
