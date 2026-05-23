@@ -103,3 +103,117 @@ export async function createThirdParty(input: {
     };
   }
 }
+
+export async function updateThirdParty(input: {
+  companyId: string;
+  thirdPartyId: string;
+  type: ThirdPartyType;
+  legalName: string;
+  tradeName?: string;
+  documentType: string;
+  document: string;
+  taxCondition: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}): Promise<ThirdPartyResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para editar terceros hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const existing = await prisma.thirdParty.findFirst({
+      where: {
+        id: input.thirdPartyId,
+        companyId: input.companyId
+      }
+    });
+
+    if (!existing) {
+      return {
+        ok: false,
+        message: "El tercero no existe para la empresa activa."
+      };
+    }
+
+    const thirdParty = await prisma.thirdParty.update({
+      where: {
+        id: existing.id
+      },
+      data: {
+        type: input.type,
+        legalName: input.legalName,
+        tradeName: input.tradeName || null,
+        documentType: input.documentType,
+        document: input.document,
+        taxCondition: input.taxCondition,
+        email: input.email || null,
+        phone: input.phone || null,
+        address: input.address || null
+      }
+    });
+
+    return {
+      ok: true,
+      message: "Tercero actualizado.",
+      id: thirdParty.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo editar el tercero. Revisar documento duplicado o conexion."
+    };
+  }
+}
+
+export async function setThirdPartyActive(input: {
+  companyId: string;
+  thirdPartyId: string;
+  active: boolean;
+}): Promise<ThirdPartyResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para cambiar estado hace falta PostgreSQL configurado."
+    };
+  }
+
+  try {
+    const existing = await prisma.thirdParty.findFirst({
+      where: {
+        id: input.thirdPartyId,
+        companyId: input.companyId
+      }
+    });
+
+    if (!existing) {
+      return {
+        ok: false,
+        message: "El tercero no existe para la empresa activa."
+      };
+    }
+
+    const thirdParty = await prisma.thirdParty.update({
+      where: {
+        id: existing.id
+      },
+      data: {
+        active: input.active
+      }
+    });
+
+    return {
+      ok: true,
+      message: input.active ? "Tercero activado." : "Tercero desactivado.",
+      id: thirdParty.id
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo cambiar el estado del tercero."
+    };
+  }
+}

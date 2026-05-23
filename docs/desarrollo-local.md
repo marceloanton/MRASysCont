@@ -65,7 +65,7 @@ Solo los asientos en estado `BORRADOR` pueden editarse. La edicion reemplaza fec
 
 Los asientos `BORRADOR` pueden descartarse. Los asientos `CONFIRMADO` o `ANULADO` no se eliminan: solo se corrigen con contraasiento.
 
-El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo. Las altas requieren PostgreSQL porque persisten contra la tabla `ThirdParty`.
+El modulo `/terceros` lista clientes/proveedores por empresa activa en modo demo. Las altas, ediciones y cambios de estado requieren PostgreSQL porque persisten contra la tabla `ThirdParty`.
 
 ## PostgreSQL con Docker
 

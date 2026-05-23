@@ -26,6 +26,7 @@
 - Exportacion CSV de Balance, Diario y Mayor.
 - Vista imprimible para guardar reportes como PDF desde el navegador.
 - Fase 3 inicial con terceros clientes/proveedores por empresa.
+- Edicion y activacion/desactivacion de terceros.
 
 ## En curso
 
@@ -37,5 +38,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar edicion/desactivacion de terceros.
 - Vincular terceros a comprobantes emitidos/recibidos.

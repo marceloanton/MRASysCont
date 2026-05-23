@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { listThirdParties } from "@/lib/phase3/repository";
+import { setThirdPartyActiveAction } from "./actions";
+import { ThirdPartyEditForm } from "./third-party-edit-form";
 import { ThirdPartyForm } from "./third-party-form";
 
 export default async function ThirdPartiesPage() {
@@ -53,6 +55,7 @@ export default async function ThirdPartiesPage() {
                   <th>Condicion</th>
                   <th>Contacto</th>
                   <th>Estado</th>
+                  <th>Accion</th>
                 </tr>
               </thead>
               <tbody>
@@ -63,6 +66,7 @@ export default async function ThirdPartiesPage() {
                       {thirdParty.tradeName ? (
                         <small className="rowNote">{thirdParty.tradeName}</small>
                       ) : null}
+                      {canManage ? <ThirdPartyEditForm thirdParty={thirdParty} /> : null}
                     </td>
                     <td>{thirdParty.type}</td>
                     <td>
@@ -76,6 +80,26 @@ export default async function ThirdPartiesPage() {
                       ) : null}
                     </td>
                     <td>{thirdParty.active ? "ACTIVO" : "INACTIVO"}</td>
+                    <td>
+                      {canManage ? (
+                        <form action={setThirdPartyActiveAction}>
+                          <input type="hidden" name="thirdPartyId" value={thirdParty.id} />
+                          <input
+                            type="hidden"
+                            name="active"
+                            value={thirdParty.active ? "false" : "true"}
+                          />
+                          <button
+                            className={thirdParty.active ? "tableButton dangerButton" : "tableButton"}
+                            type="submit"
+                          >
+                            {thirdParty.active ? "Desactivar" : "Activar"}
+                          </button>
+                        </form>
+                      ) : (
+                        <span className="mutedText">Bloqueado</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
