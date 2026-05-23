@@ -10,6 +10,7 @@
 - Fase 1 inicial con usuarios demo, roles, empresas, selector de empresa, permisos por tenant y auditoria local.
 - Tests unitarios de aislamiento multi-empresa.
 - Docker Compose, migracion inicial, seed Prisma y fallback demo cuando PostgreSQL no esta disponible.
+- Login inicial, logout, hashing de contrasena y sesiones persistidas preparadas para PostgreSQL.
 
 ## En curso
 
@@ -19,4 +20,4 @@
 
 - Instalar Docker o configurar PostgreSQL local.
 - Ejecutar migraciones y seed.
-- Implementar login productivo y sesiones persistidas.
+- Ejecutar flujo completo login productivo contra PostgreSQL local.

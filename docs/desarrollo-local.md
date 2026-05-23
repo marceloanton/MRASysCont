@@ -30,6 +30,14 @@ DATABASE_URL="postgresql://mrasyscont:mrasyscont@localhost:5432/mrasyscont?schem
 
 Si PostgreSQL no esta disponible, la pantalla inicial sigue funcionando con datos demo locales.
 
+Entrar por:
+
+```text
+http://127.0.0.1:3000/login
+```
+
+En desarrollo, usar los botones de `Modo demo local`.
+
 La UI muestra la fuente activa:
 
 - `Demo local`: no hay conexion a PostgreSQL o aun no se sembraron datos.
@@ -50,6 +58,20 @@ Luego iniciar la app:
 ```bash
 npm run dev
 ```
+
+Usuario seed:
+
+```text
+contador@mrasyscont.local
+```
+
+Contrasena seed por defecto:
+
+```text
+MraSysCont2026!
+```
+
+La contrasena puede cambiarse con `SEED_USER_PASSWORD` antes de ejecutar `npm run db:seed`.
 
 ## Validaciones
 

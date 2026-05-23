@@ -1,6 +1,6 @@
-import { changeActiveCompany, changeDemoUser } from "./actions";
+import { redirect } from "next/navigation";
+import { changeActiveCompany, logout } from "./actions";
 import { listAuditEvents } from "@/lib/phase1/audit";
-import { demoUsers } from "@/lib/phase1/demo-data";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenant } from "@/lib/phase1/tenant-access";
 
@@ -25,6 +25,11 @@ const moduleCards = [
 
 export default async function Home() {
   const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    redirect("/login");
+  }
+
   const { session } = workspace;
   const activeTenant = getActiveTenant(session);
   const allowedCompanyIds = new Set(
@@ -43,17 +48,11 @@ export default async function Home() {
           <h1>Operacion del estudio</h1>
         </div>
 
-        <form action={changeDemoUser} className="controlGroup">
-          <label htmlFor="userId">Usuario demo</label>
-          <select id="userId" name="userId" defaultValue={session.user.id}>
-            {demoUsers.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit">Cambiar usuario</button>
-        </form>
+        <div className="signedUser">
+          <span>Usuario activo</span>
+          <strong>{session.user.name}</strong>
+          <small>{session.user.email}</small>
+        </div>
 
         <form action={changeActiveCompany} className="controlGroup">
           <label htmlFor="companyId">Empresa activa</label>
@@ -69,6 +68,12 @@ export default async function Home() {
             ))}
           </select>
           <button type="submit">Seleccionar empresa</button>
+        </form>
+
+        <form action={logout}>
+          <button className="secondaryButton" type="submit">
+            Cerrar sesion
+          </button>
         </form>
       </aside>
 

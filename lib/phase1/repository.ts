@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { demoCompanies, getDemoMemberships, getDemoUser } from "./demo-data";
+import { verifyPassword } from "./password";
 import type { Company, Membership, PermissionSet, SessionContext, UserRole } from "./types";
 
 function permissionsFromMembership(input: {
@@ -61,6 +62,106 @@ export async function getSessionFromDatabase(
       })),
       activeCompanyId
     };
+  } catch {
+    return null;
+  }
+}
+
+export async function authenticateUser(email: string, password: string) {
+  if (!process.env.DATABASE_URL) {
+    return null;
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email
+      }
+    });
+
+    if (!user?.active || !user.passwordHash) {
+      return null;
+    }
+
+    if (!verifyPassword(password, user.passwordHash)) {
+      return null;
+    }
+
+    return user;
+  } catch {
+    return null;
+  }
+}
+
+export async function createDatabaseSession(userId: string) {
+  if (!process.env.DATABASE_URL) {
+    return null;
+  }
+
+  try {
+    return await prisma.session.create({
+      data: {
+        userId,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 12)
+      }
+    });
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteDatabaseSession(sessionId: string) {
+  if (!process.env.DATABASE_URL) {
+    return;
+  }
+
+  try {
+    await prisma.session.delete({
+      where: {
+        id: sessionId
+      }
+    });
+  } catch {
+    // Session may already be gone; logout should stay idempotent.
+  }
+}
+
+export async function updateSessionCompany(sessionId: string, companyId: string) {
+  if (!process.env.DATABASE_URL) {
+    return;
+  }
+
+  try {
+    await prisma.session.update({
+      where: {
+        id: sessionId
+      },
+      data: {
+        activeCompanyId: companyId
+      }
+    });
+  } catch {
+    // Fallback cookie still keeps the active company in development.
+  }
+}
+
+export async function getWorkspaceBySessionId(sessionId: string) {
+  if (!process.env.DATABASE_URL) {
+    return null;
+  }
+
+  try {
+    const session = await prisma.session.findUnique({
+      where: {
+        id: sessionId
+      }
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      return null;
+    }
+
+    return getWorkspaceData(session.userId, session.activeCompanyId ?? undefined);
   } catch {
     return null;
   }

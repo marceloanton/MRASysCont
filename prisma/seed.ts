@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { demoCompanies, demoMemberships, demoUsers } from "../lib/phase1/demo-data";
+import { hashPassword } from "../lib/phase1/password";
 
 const prisma = new PrismaClient();
+const seedPassword = process.env.SEED_USER_PASSWORD ?? "MraSysCont2026!";
 
 async function main() {
   for (const user of demoUsers) {
@@ -11,12 +13,14 @@ async function main() {
         id: user.id,
         email: user.email,
         name: user.name,
-        active: user.active
+        active: user.active,
+        passwordHash: hashPassword(seedPassword)
       },
       update: {
         email: user.email,
         name: user.name,
-        active: user.active
+        active: user.active,
+        passwordHash: hashPassword(seedPassword)
       }
     });
   }

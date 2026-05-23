@@ -3,21 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { recordAuditEvent } from "@/lib/phase1/audit";
-import { getSessionContext, setActiveCompany, setDemoUser } from "@/lib/phase1/session";
+import { getSessionContext, setActiveCompany } from "@/lib/phase1/session";
 import { assertCompanyAccess } from "@/lib/phase1/tenant-access";
+import { logout } from "./login/actions";
 
-export async function changeDemoUser(formData: FormData) {
-  const userId = String(formData.get("userId") ?? "");
-  await setDemoUser(userId);
-  recordAuditEvent({
-    userId,
-    action: "auth.demo_user_changed",
-    entity: "User",
-    entityId: userId
-  });
-  revalidatePath("/");
-  redirect("/");
-}
+export { logout };
 
 export async function changeActiveCompany(formData: FormData) {
   const companyId = String(formData.get("companyId") ?? "");
@@ -33,4 +23,5 @@ export async function changeActiveCompany(formData: FormData) {
     entityId: access.company.id
   });
   revalidatePath("/");
+  redirect("/");
 }

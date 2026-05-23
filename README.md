@@ -24,7 +24,7 @@ Construir una plataforma SaaS para:
 
 ## Estado del proyecto
 
-Estado actual: Fase 1 inicial. Ya existe documentacion, scaffold tecnico y una primera capa funcional de usuarios demo, empresas, roles, selector de empresa, permisos por tenant y auditoria local.
+Estado actual: Fase 1 inicial. Ya existe documentacion, scaffold tecnico, login, sesiones preparadas para PostgreSQL, modo demo local, empresas, roles, selector de empresa, permisos por tenant y auditoria local.
 
 La documentacion en `docs/` es la fuente oficial para alcance, arquitectura, reglas contables, seguridad, roadmap y criterios de aceptacion.
 

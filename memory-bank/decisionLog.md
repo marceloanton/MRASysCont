@@ -6,3 +6,4 @@
 - 2026-05-23: Se inicializa stack tecnico recomendado con Next.js, TypeScript, Prisma y PostgreSQL.
 - 2026-05-23: Se implementa Fase 1 inicial con usuarios demo, selector de empresa, permisos centralizados, validacion de tenant y tests de aislamiento antes de conectar PostgreSQL.
 - 2026-05-23: Se agrega preparacion de persistencia real con Docker Compose, migracion Prisma inicial, seed y fallback demo cuando PostgreSQL no esta disponible localmente.
+- 2026-05-23: Se agrega login inicial con hash scrypt, sesiones persistidas en PostgreSQL cuando exista base y modo demo local solo para desarrollo.
