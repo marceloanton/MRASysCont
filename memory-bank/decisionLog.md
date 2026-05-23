@@ -13,3 +13,4 @@
 - 2026-05-23: Se agrega confirmacion de asientos; solo los borradores balanceados de periodos abiertos pueden pasar a confirmado.
 - 2026-05-23: Se agrega anulacion de asientos confirmados mediante contraasiento inverso, dejando vinculo entre asiento original y asiento de anulacion.
 - 2026-05-23: Se agrega cierre de periodos contables; las operaciones de asientos ya validan periodo abierto para crear, confirmar y anular.
+- 2026-05-23: Se agregan reportes iniciales de Libro Diario y Libro Mayor filtrados por empresa activa y periodo.

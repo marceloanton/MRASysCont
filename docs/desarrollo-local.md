@@ -50,6 +50,7 @@ Tambien funcionan en modo demo local:
 - `/contabilidad/cuentas`
 - `/contabilidad/periodos`
 - `/contabilidad/asientos`
+- `/contabilidad/reportes`
 
 Las altas de cuentas, periodos y asientos requieren PostgreSQL para persistir cambios.
 

@@ -18,6 +18,7 @@
 - Confirmacion de asientos borrador con bloqueo de confirmados.
 - Anulacion de asientos confirmados mediante contraasiento vinculado.
 - Cierre de periodos contables para bloquear nuevas operaciones.
+- Reportes iniciales Libro Diario y Libro Mayor por empresa y periodo.
 
 ## En curso
 
@@ -29,4 +30,4 @@
 - Ejecutar migraciones y seed.
 - Ejecutar flujo completo login/productivo contra PostgreSQL local.
 - Probar CRUD real de empresas, usuarios, cuentas y periodos contra PostgreSQL.
-- Agregar reportes contables iniciales Diario y Mayor.
+- Agregar balance de sumas y saldos.

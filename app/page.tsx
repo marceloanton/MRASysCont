@@ -39,6 +39,11 @@ const moduleCards = [
     title: "Asientos",
     detail: "Borradores con control de partida doble.",
     href: "/contabilidad/asientos"
+  },
+  {
+    title: "Reportes",
+    detail: "Libro Diario y Mayor por empresa y periodo.",
+    href: "/contabilidad/reportes"
   }
 ];
 

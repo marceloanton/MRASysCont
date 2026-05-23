@@ -55,3 +55,24 @@ export type JournalEntrySummary = {
   totalDebit: number;
   totalCredit: number;
 };
+
+export type JournalReportLine = {
+  entryId: string;
+  number: number;
+  date: string;
+  description: string;
+  accountCode: string;
+  accountName: string;
+  debit: number;
+  credit: number;
+};
+
+export type LedgerAccountReport = {
+  accountId: string;
+  accountCode: string;
+  accountName: string;
+  totalDebit: number;
+  totalCredit: number;
+  balance: number;
+  lines: JournalReportLine[];
+};
