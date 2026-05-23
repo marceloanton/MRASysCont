@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CONTADOR
+  ASISTENTE
+  CLIENTE
+}
+
+enum TenantStatus {
+  ACTIVA
+  SUSPENDIDA
+  ARCHIVADA
+}
+
+enum AccountingPeriodStatus {
+  ABIERTO
+  CERRADO
+}
+
+enum JournalEntryStatus {
+  BORRADOR
+  CONFIRMADO
+  ANULADO
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships UserCompany[]
+  auditEvents AuditEvent[]
+}
+
+model Company {
+  id             String       @id @default(cuid())
+  legalName      String
+  tradeName      String?
+  cuit           String       @unique
+  taxCondition   String
+  baseCurrency   String       @default("ARS")
+  status         TenantStatus @default(ACTIVA)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  memberships       UserCompany[]
+  accountingPeriods AccountingPeriod[]
+  accounts          Account[]
+  journalEntries    JournalEntry[]
+  auditEvents       AuditEvent[]
+}
+
+model UserCompany {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([userId, companyId])
+  @@index([companyId, role])
+}
+
+model AccountingPeriod {
+  id        String                 @id @default(cuid())
+  companyId String
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  status    AccountingPeriodStatus @default(ABIERTO)
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+
+  company        Company        @relation(fields: [companyId], references: [id])
+  journalEntries JournalEntry[]
+
+  @@index([companyId, status])
+  @@index([companyId, startsAt, endsAt])
+}
+
+model Account {
+  id        String   @id @default(cuid())
+  companyId String
+  code      String
+  name      String
+  type      String
+  imputable Boolean  @default(true)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+  lines   JournalEntryLine[]
+
+  @@unique([companyId, code])
+  @@index([companyId, type])
+}
+
+model JournalEntry {
+  id          String             @id @default(cuid())
+  companyId   String
+  periodId    String
+  number      Int
+  date        DateTime
+  description String
+  status      JournalEntryStatus @default(BORRADOR)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  company Company              @relation(fields: [companyId], references: [id])
+  period  AccountingPeriod     @relation(fields: [periodId], references: [id])
+  lines   JournalEntryLine[]
+
+  @@unique([companyId, number])
+  @@index([companyId, date])
+  @@index([companyId, periodId, status])
+}
+
+model JournalEntryLine {
+  id             String   @id @default(cuid())
+  journalEntryId String
+  accountId      String
+  debit          Decimal  @default(0) @db.Decimal(18, 2)
+  credit         Decimal  @default(0) @db.Decimal(18, 2)
+  currency       String   @default("ARS")
+  originalAmount Decimal? @db.Decimal(18, 2)
+  exchangeRate   Decimal? @db.Decimal(18, 6)
+  createdAt      DateTime @default(now())
+
+  journalEntry JournalEntry @relation(fields: [journalEntryId], references: [id])
+  account      Account      @relation(fields: [accountId], references: [id])
+
+  @@index([accountId])
+}
+
+model AuditEvent {
+  id         String   @id @default(cuid())
+  companyId  String?
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  occurredAt DateTime @default(now())
+
+  company Company? @relation(fields: [companyId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
+
+  @@index([companyId, occurredAt])
+  @@index([userId, occurredAt])
+}
