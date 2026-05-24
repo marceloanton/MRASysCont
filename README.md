@@ -71,6 +71,25 @@ npm run db:migrate
 npm run db:seed
 ```
 
+## Trabajar en otra PC
+
+```bash
+git clone <url-del-repo>
+cd MRASysCont
+npm install
+copy .env.example .env
+npm run prisma:generate
+npm run dev
+```
+
+Si la otra PC tiene Docker, levantar PostgreSQL y sembrar datos:
+
+```bash
+npm run db:up
+npm run db:migrate
+npm run db:seed
+```
+
 Para validar Prisma sin una base local cargada:
 
 ```powershell

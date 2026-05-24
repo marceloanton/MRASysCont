@@ -16,6 +16,19 @@ Definir como levantar MRASysCont en una maquina de desarrollo y como pasar del m
 npm install
 ```
 
+## Clonar en otra PC
+
+```bash
+git clone <url-del-repo>
+cd MRASysCont
+npm install
+copy .env.example .env
+npm run prisma:generate
+npm run dev
+```
+
+El archivo `.env` se crea localmente en cada PC y no se sube a Git. Para trabajar con datos persistidos, instalar Docker Desktop o PostgreSQL local y ejecutar las migraciones.
+
 ## Variables de entorno
 
 Crear `.env` local usando `.env.example` como referencia.
