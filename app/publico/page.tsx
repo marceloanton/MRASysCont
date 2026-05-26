@@ -2,10 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 const shots = [
-  { src: "/docs/screenshots/01-home.png", title: "Inicio" },
-  { src: "/docs/screenshots/03-admin-empresas.png", title: "Empresas" },
-  { src: "/docs/screenshots/06-comprobantes.png", title: "Comprobantes" },
-  { src: "/docs/screenshots/08-contabilidad-reportes.png", title: "Reportes e IVA" }
+  { src: "/screenshots/01-home.png", title: "Inicio" },
+  { src: "/screenshots/03-admin-empresas.png", title: "Empresas" },
+  { src: "/screenshots/06-comprobantes.png", title: "Comprobantes" },
+  { src: "/screenshots/08-contabilidad-reportes.png", title: "Reportes e IVA" }
 ];
 
 const pillars = [
