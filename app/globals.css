@@ -882,3 +882,114 @@ th {
     grid-template-columns: 1fr;
   }
 }
+
+.landingPage {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 40px 16px 60px;
+}
+
+.landingHero {
+  background: linear-gradient(135deg, #17201b 0%, #0f6b4f 100%);
+  border-radius: 14px;
+  color: #f8fbf4;
+  padding: 34px;
+}
+
+.landingKicker {
+  color: #e0a33c;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.landingHero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0;
+}
+
+.landingHero p {
+  line-height: 1.6;
+  max-width: 860px;
+}
+
+.landingCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.landingCtas a {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  color: #f8fbf4;
+  font-weight: 800;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+
+.landingGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 18px 0 28px;
+}
+
+.landingGrid article {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.landingGrid h2 {
+  font-size: 1rem;
+  margin: 0 0 10px;
+}
+
+.landingGrid p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.landingShots h2 {
+  margin: 0 0 14px;
+}
+
+.landingShots > div {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landingShots figure {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.landingShots img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.landingShots figcaption {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 10px 12px;
+}
+
+@media (max-width: 900px) {
+  .landingGrid,
+  .landingShots > div {
+    grid-template-columns: 1fr;
+  }
+}
