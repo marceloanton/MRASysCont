@@ -1,44 +1,45 @@
-MRASysCont Proprietary License v1.0
+Licencia Propietaria MRASysCont v1.0
 Copyright (c) 2026 Marcelo Anton
-All rights reserved.
+Todos los derechos reservados.
 
-This repository is NOT open source software.
+Este repositorio NO es software de codigo abierto.
 
-1) Grant for evaluation and non-commercial use
-You may view, clone, run and modify this software only for:
-- personal evaluation,
-- internal testing,
-- educational or non-commercial purposes.
+1) Permiso para evaluacion y uso no comercial
+Puede ver, clonar, ejecutar y modificar este software unicamente para:
+- evaluacion personal,
+- pruebas internas,
+- fines educativos o no comerciales.
 
-2) Commercial use requires paid license
-Any commercial use requires prior written authorization and a paid commercial
-license from the copyright holder, including but not limited to:
-- accounting services to paying clients,
-- issuing invoices/receipts in business operations,
-- use inside a law/accounting/finance practice for revenue-generating activity,
-- SaaS offering, hosting, sublicensing or resale.
+2) Uso comercial requiere licencia paga
+Cualquier uso comercial requiere autorizacion previa por escrito y licencia
+comercial paga del titular de derechos, incluyendo, sin limitacion:
+- servicios contables a clientes pagos,
+- emision de facturas/comprobantes en operaciones de negocio,
+- uso en estudio contable para actividad que genera ingresos,
+- oferta SaaS, hosting, sublicenciamiento o reventa.
 
-3) Restrictions
-Without a commercial license, you may not:
-- use this software in production for revenue-generating activity,
-- sublicense, sell, rent, lease or distribute this software as a paid product,
-- remove copyright or license notices.
+3) Restricciones
+Sin licencia comercial no puede:
+- usar este software en produccion para actividad comercial,
+- sublicenciar, vender, alquilar, arrendar o distribuir este software como
+  producto pago,
+- remover avisos de copyright o licencia.
 
-4) Ownership
-All intellectual property rights remain with the copyright holder.
+4) Propiedad
+Todos los derechos de propiedad intelectual permanecen en el titular.
 
-5) No warranty
-This software is provided "AS IS", without warranties of any kind, express or
-implied, including merchantability, fitness for a particular purpose and
-non-infringement.
+5) Sin garantia
+Este software se entrega "TAL CUAL", sin garantias de ningun tipo, expresas o
+implicitas, incluyendo comerciabilidad, aptitud para un fin particular y no
+infraccion.
 
-6) Limitation of liability
-In no event shall the copyright holder be liable for any claim, damages or
-other liability arising from the software or its use.
+6) Limitacion de responsabilidad
+En ningun caso el titular sera responsable por reclamos, danos u otras
+responsabilidades derivados del software o de su uso.
 
-7) Additional terms
-See:
+7) Terminos adicionales
+Ver:
 - TERMS.md
 - COMMERCIAL_LICENSE.md
 
-If there is any conflict, the signed commercial agreement prevails.
+Si existe conflicto, prevalece el acuerdo comercial firmado.

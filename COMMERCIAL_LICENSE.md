@@ -1,46 +1,46 @@
-# MRASysCont Commercial License (Template)
+# MRASysCont - Licencia Comercial (Plantilla)
 
-Last updated: 2026-05-26
+Ultima actualizacion: 2026-05-26
 
-This is a template outline for paid commercial licensing.
+Esta es una plantilla base para licenciamiento comercial pago.
 
-## 1. Parties
-- Licensor: repository/project owner.
-- Licensee: individual or legal entity purchasing rights.
+## 1. Partes
+- Licenciante: titular del repositorio/proyecto.
+- Licenciatario: persona humana o juridica que adquiere derechos.
 
-## 2. Scope
-- Grant type: non-exclusive, non-transferable.
-- Allowed environment(s): as defined in order form.
-- Tenant/accounting scope: as defined in order form.
+## 2. Alcance
+- Tipo de concesion: no exclusiva, intransferible.
+- Ambientes habilitados: segun orden comercial.
+- Alcance tenant/contable: segun orden comercial.
 
-## 3. Commercial rights
-When active and paid, the licensee may use MRASysCont for:
-- internal professional accounting operations;
-- issuance and management of commercial documentation;
-- support of paying clients.
+## 3. Derechos comerciales
+Con licencia activa y paga, el licenciatario puede usar MRASysCont para:
+- operacion profesional contable interna;
+- emision y gestion de documentacion comercial;
+- atencion de clientes pagos.
 
-## 4. Pricing and billing
-- Pricing model: per study / per seat / per deployment (define in order form).
-- Billing cycle: monthly or annual.
-- Non-payment may suspend commercial rights.
+## 4. Precio y facturacion
+- Modelo de precio: por estudio / por usuario / por despliegue (definir en orden).
+- Ciclo de cobro: mensual o anual.
+- La falta de pago puede suspender los derechos comerciales.
 
-## 5. Support and updates
-- Support channel and SLA: defined in order form.
-- Update rights: defined by plan.
+## 5. Soporte y actualizaciones
+- Canal de soporte y SLA: definidos en orden comercial.
+- Derechos de actualizacion: segun plan contratado.
 
-## 6. Restrictions
-Licensee may not:
-- sublicense or resell code without written authorization;
-- remove copyright/license notices;
-- distribute source as own product.
+## 6. Restricciones
+El licenciatario no puede:
+- sublicenciar o revender el codigo sin autorizacion escrita;
+- remover avisos de copyright/licencia;
+- distribuir el codigo fuente como producto propio.
 
-## 7. Termination
-Licensor may terminate for material breach, including non-payment or forbidden
-distribution.
+## 7. Rescision
+El licenciante puede rescindir por incumplimiento material, incluyendo falta de
+pago o distribucion prohibida.
 
-## 8. Liability and warranty
-Unless otherwise agreed in signed contract, software is provided AS IS.
+## 8. Responsabilidad y garantia
+Salvo pacto distinto en contrato firmado, el software se entrega "TAL CUAL".
 
-## 9. Final agreement
-The signed commercial contract and order form prevail over this template.
-
+## 9. Acuerdo final
+El contrato comercial firmado y su orden comercial prevalecen sobre esta
+plantilla.

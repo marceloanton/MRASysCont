@@ -1,47 +1,46 @@
-# MRASysCont Terms Of Use
+# MRASysCont - Terminos De Uso
 
-Last updated: 2026-05-26
+Ultima actualizacion: 2026-05-26
 
-These terms govern use of the MRASysCont source code and related documentation.
+Estos terminos regulan el uso del codigo fuente y la documentacion de
+MRASysCont.
 
-## 1. License model
+## 1. Modelo de licencia
 
-MRASysCont uses a proprietary model:
-- evaluation/non-commercial use: allowed under LICENSE;
-- commercial use: requires paid commercial license.
+MRASysCont usa un modelo propietario:
+- uso de evaluacion/no comercial: permitido bajo `LICENSE`;
+- uso comercial: requiere licencia comercial paga.
 
-## 2. Commercial use (payment required)
+## 2. Uso comercial (requiere pago)
 
-You must obtain a paid license before using MRASysCont for activities tied to
-revenue or professional services, including:
-- accounting services to paying clients;
-- issuing fiscal/commercial vouchers in real operations;
-- internal operation of an accounting firm for paid services;
-- SaaS or hosted offering to third parties.
+Debe obtenerse una licencia paga antes de usar MRASysCont para actividades con
+fines de lucro o servicios profesionales, incluyendo:
+- servicios contables a clientes pagos;
+- emision de comprobantes fiscales/comerciales en operaciones reales;
+- operacion interna de un estudio contable con actividad facturable;
+- oferta SaaS o servicio hospedado a terceros.
 
-## 3. Non-commercial use
+## 3. Uso no comercial
 
-Allowed for:
-- local development,
+Permitido para:
+- desarrollo local,
 - demos,
-- testing and validation,
-- educational learning.
+- pruebas y validacion,
+- aprendizaje educativo.
 
-Non-commercial use does not grant rights for production commercial operation.
+El uso no comercial no otorga derecho de operacion comercial productiva.
 
-## 4. No legal/accounting replacement
+## 4. No reemplazo profesional
 
-MRASysCont assists professionals and does not replace legal or accounting
-professional judgment.
+MRASysCont asiste al profesional y no reemplaza el criterio legal o contable.
 
-## 5. Compliance responsibility
+## 5. Responsabilidad de cumplimiento
 
-The user is responsible for:
-- legal and fiscal compliance in their jurisdiction;
-- correct data processing and retention;
-- proper credential and certificate management.
+El usuario es responsable por:
+- cumplimiento legal y fiscal en su jurisdiccion;
+- tratamiento y retencion correcta de datos;
+- gestion adecuada de credenciales y certificados.
 
-## 6. Contact for commercial licensing
+## 6. Contacto para licencia comercial
 
-To request a commercial license, contact the project owner/repository owner.
-
+Para solicitar licencia comercial, contactar al titular del proyecto/repositorio.
