@@ -1,0 +1,3 @@
+lead_id,fecha,empresa,contacto_email,origen,estado,interes,proxima_accion,fecha_proxima_accion,owner,notas
+L-0001,2026-05-26,Ejemplo SA,contacto@ejemplo.com,referido,nuevo,alta,agendar demo,2026-05-28,Marcelo,
+L-0002,2026-05-26,Estudio ABC,admin@abc.com,linkedin,en seguimiento,media,enviar propuesta,2026-05-29,Marcelo,
