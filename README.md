@@ -83,6 +83,9 @@ Documentos:
 - [TERMS.md](TERMS.md)
 - [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md)
 
+Contacto comercial/licencias:
+- marceloanton@outlook.com
+
 Variables de entorno de licencia:
 
 ```bash

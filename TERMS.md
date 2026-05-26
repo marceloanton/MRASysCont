@@ -43,4 +43,6 @@ El usuario es responsable por:
 
 ## 6. Contacto para licencia comercial
 
-Para solicitar licencia comercial, contactar al titular del proyecto/repositorio.
+Para solicitar licencia comercial, contactar al titular del proyecto:
+
+- Email: marceloanton@outlook.com

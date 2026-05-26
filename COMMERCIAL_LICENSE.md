@@ -44,3 +44,7 @@ Salvo pacto distinto en contrato firmado, el software se entrega "TAL CUAL".
 ## 9. Acuerdo final
 El contrato comercial firmado y su orden comercial prevalecen sobre esta
 plantilla.
+
+## 10. Contacto comercial
+
+- Email: marceloanton@outlook.com
