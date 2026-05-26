@@ -1,109 +1,127 @@
 # MRASysCont
 
-MRASysCont sera un sistema contable web multi-empresa para estudios contables. El contador opera como usuario central del sistema, administra multiples empresas cliente desde una sola plataforma y mantiene los datos de cada empresa aislados.
+Plataforma integral para estudio contable argentino, multi-tenant por **Study -> Client -> Company**, con trazabilidad, seguridad y roadmap por fases.
 
-## Objetivo
+## Estado actual
 
-Construir una plataforma SaaS para:
+- Fase 0.6: GO
+- Fase 1: GO
+- Fase 2: GO
+- Fase 3: GO
+- Fase 4: GO
+- Fase 5: GO
+- Fase 6: GO
+- Fase 7: GO
+- Fase 8: GO (IVA base)
 
-- Administrar empresas cliente como tenants independientes.
-- Llevar contabilidad formal con plan de cuentas, asientos, libros y cierres.
-- Emitir facturacion electronica ARCA/AFIP por empresa.
-- Operar en ARS como moneda base y registrar operaciones en USD.
-- Dar acceso de lectura a clientes y permitir subida de documentos para revision.
-- Mantener auditoria, seguridad, backups y trazabilidad desde el primer dia.
+## Qué incluye hoy
 
-## Stack recomendado
+- Seguridad y tenancy real (`studyId`, `companyId`) con autorización backend por objeto.
+- Gestión del estudio: clientes, tareas internas, vencimientos y dashboard.
+- Terceros y cuentas corrientes por empresa.
+- Núcleo contable: cuentas, períodos, asientos, cierres, Diario y Mayor.
+- Expediente documental con control de acceso.
+- Multimoneda base (ARS/USD) con reglas de precisión decimal.
+- Comprobantes locales (A/B/C, NC/ND) con numeración por empresa/PDV.
+- IVA base: libros IVA ventas/compras, reporte mensual y exportación CSV/Excel.
 
-- Frontend: Next.js o React moderno.
-- Backend: API web con permisos centralizados y validacion obligatoria de empresa activa.
-- Base de datos: PostgreSQL.
-- Infraestructura: Cloud/VPS con ambientes local, staging y produccion.
-- Procesos asincronicos: cola de trabajos para ARCA/AFIP, reportes, backups y tareas programadas.
-- Almacenamiento: documentos privados por empresa y certificados fiscales cifrados.
+## Capturas del sistema
 
-## Estado del proyecto
+### Dashboard / Inicio
 
-Estado actual: Fase 4 inicial. Ya existe documentacion, scaffold tecnico, login, sesiones preparadas para PostgreSQL, modo demo local, selector de empresa, permisos por tenant, auditoria local, pantallas administrativas de empresas/usuarios, plan de cuentas, periodos contables con cierre, asientos borrador con lineas dinamicas, edicion/descarte controlado de borradores, detalle visible de renglones, partida doble, confirmacion/anulacion por contraasiento, reportes Diario/Mayor/Balance de sumas y saldos con exportacion CSV/vista imprimible, terceros clientes/proveedores, comprobantes vinculados a terceros, cuentas corrientes con cobros/pagos vinculables a tesoreria y tesoreria basica con conciliacion manual inicial.
+![Inicio](docs/screenshots/01-home.png)
 
-La documentacion en `docs/` es la fuente oficial para alcance, arquitectura, reglas contables, seguridad, roadmap y criterios de aceptacion.
+### Administración de estudios
 
-## Documentos principales
+![Admin estudios](docs/screenshots/02-admin-estudios.png)
 
-- [Producto](docs/producto.md)
-- [Arquitectura](docs/arquitectura.md)
-- [Modelo de datos](docs/modelo-datos.md)
-- [Seguridad y auditoria](docs/seguridad-y-auditoria.md)
-- [Contabilidad](docs/contabilidad.md)
-- [Facturacion ARCA/AFIP](docs/facturacion-arca-afip.md)
-- [Multimoneda](docs/multimoneda.md)
-- [Portal cliente](docs/portal-cliente.md)
+### Administración de empresas
+
+![Admin empresas](docs/screenshots/03-admin-empresas.png)
+
+### Gestión de clientes del estudio
+
+![Clientes del estudio](docs/screenshots/04-estudio-clientes.png)
+
+### Terceros
+
+![Terceros](docs/screenshots/05-terceros.png)
+
+### Comprobantes locales
+
+![Comprobantes](docs/screenshots/06-comprobantes.png)
+
+### Asientos contables
+
+![Asientos](docs/screenshots/07-contabilidad-asientos.png)
+
+### Reportes contables e IVA
+
+![Reportes](docs/screenshots/08-contabilidad-reportes.png)
+
+## Documentación canónica
+
 - [Roadmap](docs/roadmap.md)
-- [Desarrollo local](docs/desarrollo-local.md)
-- [Preguntas para el contador](docs/preguntas-contador.md)
-- [Criterios de aceptacion](docs/criterios-aceptacion.md)
+- [Especificación de producto](docs/PRODUCT_SPEC.md)
+- [Especificación técnica](docs/TECHNICAL_SPEC.md)
+- [Modelo de seguridad](docs/SECURITY_MODEL.md)
+- [Autorización por endpoint](docs/ENDPOINT_AUTHORIZATION.md)
+- [Tenancy y ambientes](docs/TENANCY_AND_ENVIRONMENTS_CANONICAL.md)
+- [Máquina de estados](docs/STATE_MACHINE.md)
+- [Cobertura crítica de tests](docs/CRITICAL_TEST_COVERAGE.md)
+- [Quality gates de CI](docs/CI_QUALITY_GATES.md)
 
-## Reglas no negociables
+## Setup local
 
-- Ningun endpoint puede operar sin empresa activa validada.
-- Ninguna tabla operativa queda sin `empresa_id`, salvo tablas globales justificadas.
-- Los asientos confirmados no se editan ni eliminan.
-- Las correcciones contables se hacen con contraasiento.
-- Los periodos cerrados quedan bloqueados.
-- Cada accion critica queda auditada.
-- Cada empresa tiene CUIT, condicion fiscal, certificados, puntos de venta, periodos y configuracion propios.
-- Los certificados y secretos fiscales se guardan cifrados.
-- Todo reporte, exportacion y backup debe poder ejecutarse por empresa.
-- ARCA/AFIP se implementa en una capa aislada, extensible y testeable en homologacion antes de produccion.
+### Requisitos
 
-## Comandos
+- Node.js 20+
+- npm 10+
+- PostgreSQL 15+ (o Docker)
+
+### Pasos rápidos
 
 ```bash
 npm install
-npm run dev
-npm run build
-npm run test
-npm run lint
-npm run typecheck
-npm run prisma:validate
+copy .env.example .env
+npm run prisma:generate
 npm run db:up
 npm run db:migrate
 npm run db:seed
+npm run dev
+```
+
+## Quality gates
+
+```bash
+npx prisma validate
+npm run db:migration:check
+npm run lint
+npm run typecheck
+npm run test:tenancy
+npm run test:permissions
+npm test
+npm run build
 ```
 
 ## Trabajar en otra PC
 
 ```bash
-git clone <url-del-repo>
+git clone https://github.com/marceloanton/MRASysCont.git
 cd MRASysCont
 npm install
 copy .env.example .env
 npm run prisma:generate
+npm run db:up
+npm run db:migrate
+npm run db:seed
 npm run dev
 ```
 
-Si la otra PC tiene Docker, levantar PostgreSQL y sembrar datos:
+## Deploy gratuito recomendado
 
-```bash
-npm run db:up
-npm run db:migrate
-npm run db:seed
-```
+- Frontend/App: Vercel (free)
+- PostgreSQL: Neon o Supabase (free)
+- Storage documental: Supabase Storage o Cloudflare R2 (free tier)
 
-Para validar Prisma sin una base local cargada:
-
-```powershell
-$env:DATABASE_URL='postgresql://mrasyscont:mrasyscont@localhost:5432/mrasyscont?schema=public'; npm run prisma:validate
-```
-
-## Base de datos local
-
-La configuracion recomendada usa PostgreSQL por Docker Compose:
-
-```bash
-npm run db:up
-npm run db:migrate
-npm run db:seed
-```
-
-Si Docker no esta instalado, la app sigue abriendo con datos demo locales. Cuando PostgreSQL este disponible, la misma pantalla inicial indica si esta leyendo desde `PostgreSQL` o desde `Demo local`.
+> Para uso fiscal real, operar con hardening, backups y revisión legal/contable previa.
