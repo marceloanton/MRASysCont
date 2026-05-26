@@ -47,6 +47,18 @@ Plataforma integral para estudios contables argentinos.
 - [Deploy free](docs/DEPLOY_FREE.md)
 - [Acceso a docs internas](docs/public/INTERNAL_DOCS_ACCESS.md)
 
+## Planes (referencia)
+
+| Plan | Alcance | Soporte |
+|---|---|---|
+| Base | 1 estudio, usuarios iniciales, modulos core | Email |
+| Pro | 1 estudio, mas usuarios, prioridad operativa | Prioritario |
+| Enterprise | Alcance y roadmap a medida | SLA acordado |
+
+Detalle comercial:
+- [Pricing público](docs/PRICING_PUBLIC.md)
+- [Onboarding offer](docs/ONBOARDING_OFFER.md)
+
 ## Puesta en marcha local
 
 ```bash
@@ -66,3 +78,9 @@ npm run dev
 
 Contacto comercial:
 - marceloanton@outlook.com
+
+## Solicitar demo
+
+Si queres una demo privada para tu estudio:
+- Email: `marceloanton@outlook.com`
+- Asunto sugerido: `Demo MRASysCont`
