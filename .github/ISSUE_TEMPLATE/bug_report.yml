@@ -1,0 +1,46 @@
+name: Bug Report
+description: Reportar un error funcional o tecnico
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumen
+      description: Que esta fallando
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: Pasos claros y datos de prueba
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado actual
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidad
+      options:
+        - critica
+        - alta
+        - media
+        - baja
+    validations:
+      required: true
+  - type: input
+    id: phase
+    attributes:
+      label: Fase afectada
+      placeholder: Fase 4, Fase 7, etc.

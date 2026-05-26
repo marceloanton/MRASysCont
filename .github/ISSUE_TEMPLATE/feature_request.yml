@@ -1,0 +1,33 @@
+name: Feature Request
+description: Solicitar una mejora alineada a roadmap
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Necesidad
+      description: Problema de negocio que resuelve
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Como deberia funcionar
+    validations:
+      required: true
+  - type: input
+    id: phase
+    attributes:
+      label: Fase roadmap
+      placeholder: Fase objetivo
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Validaciones
+      options:
+        - label: No contradice AGENTS.md
+        - label: No mezcla fases sin decision
+        - label: Tiene criterio de aceptacion medible
