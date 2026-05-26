@@ -1,0 +1,20 @@
+# CODEOWNERS
+
+# Default owner
+* @marceloanton
+
+# Core docs and governance
+/docs/* @marceloanton
+/AGENTS.md @marceloanton
+
+# Security and tenancy
+/lib/phase1/* @marceloanton
+
+# Accounting and tax
+/lib/phase4* @marceloanton
+/lib/phase8/* @marceloanton
+/app/contabilidad/* @marceloanton
+
+# Billing local
+/lib/phase7/* @marceloanton
+/app/comprobantes/* @marceloanton
