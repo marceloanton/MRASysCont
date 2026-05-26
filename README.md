@@ -71,6 +71,27 @@ Plataforma integral para estudio contable argentino, multi-tenant por **Study ->
 - [Cobertura crítica de tests](docs/CRITICAL_TEST_COVERAGE.md)
 - [Quality gates de CI](docs/CI_QUALITY_GATES.md)
 
+## Licencia y uso comercial
+
+Este proyecto usa licencia propietaria:
+
+- Uso de evaluación/no comercial: permitido.
+- Uso comercial (incluye facturación real o prestación de servicios pagos): requiere licencia paga.
+
+Documentos:
+- [LICENSE](LICENSE)
+- [TERMS.md](TERMS.md)
+- [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md)
+
+Variables de entorno de licencia:
+
+```bash
+MRASYSCONT_LICENSE_KEY=""
+MRASYSCONT_ENFORCE_LICENSE="false"
+```
+
+- Si `MRASYSCONT_ENFORCE_LICENSE=true` y no hay `MRASYSCONT_LICENSE_KEY`, se bloquean acciones de comprobantes.
+
 ## Setup local
 
 ### Requisitos

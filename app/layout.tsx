@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLicenseStatus } from "@/lib/license";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,9 +12,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const license = getLicenseStatus();
+
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        {!license.hasCommercialKey ? (
+          <div className="licenseBanner" role="note">
+            {license.message}
+          </div>
+        ) : null}
+        {children}
+      </body>
     </html>
   );
 }

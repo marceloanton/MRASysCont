@@ -6,6 +6,7 @@ import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { confirmJournalEntry } from "@/lib/phase4-accounting/repository";
 import { buildArsAmounts } from "@/lib/phase6/fx-rules";
+import { assertCommercialLicenseForBilling } from "@/lib/license";
 import {
   cancelVoucher,
   createVoucher,
@@ -46,6 +47,15 @@ export async function createVoucherAction(
     return {
       ok: false,
       message: "No hay sesion activa."
+    };
+  }
+
+  try {
+    assertCommercialLicenseForBilling();
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Licencia comercial requerida."
     };
   }
 
@@ -200,6 +210,15 @@ export async function cancelVoucherAction(formData: FormData) {
     };
   }
 
+  try {
+    assertCommercialLicenseForBilling();
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Licencia comercial requerida."
+    };
+  }
+
   const tenant = getActiveTenantFromCompanies(
     workspace.session,
     workspace.companies
@@ -262,6 +281,15 @@ export async function confirmVoucherAction(formData: FormData) {
     return {
       ok: false,
       message: "No hay sesion activa."
+    };
+  }
+
+  try {
+    assertCommercialLicenseForBilling();
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Licencia comercial requerida."
     };
   }
 
