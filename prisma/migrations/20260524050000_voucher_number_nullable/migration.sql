@@ -1,0 +1,2 @@
+ALTER TABLE "Voucher"
+ALTER COLUMN "number" DROP NOT NULL;

@@ -22,9 +22,9 @@ export default async function CurrentAccountsPage() {
   );
   const canIssue = tenant.membership.permissions.issueInvoices;
   const [thirdPartiesResult, vouchersResult, settlementsResult, treasuryResult] = await Promise.all([
-    listThirdParties(tenant.company.id),
-    listVouchers(tenant.company.id),
-    listSettlements(tenant.company.id),
+    listThirdParties(tenant.company.studyId, tenant.company.id),
+    listVouchers(tenant.company.studyId, tenant.company.id),
+    listSettlements(tenant.company.studyId, tenant.company.id),
     listTreasury(tenant.company.id)
   ]);
   const statements = buildThirdPartyStatements(

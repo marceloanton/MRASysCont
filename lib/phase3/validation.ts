@@ -44,6 +44,14 @@ export function validateVoucherNumber(value: string) {
   return /^[0-9]{1,8}$/.test(value.trim());
 }
 
+export function validatePointOfSale(value: string) {
+  return /^[0-9]{4}$/.test(value.trim());
+}
+
+export function validateVoucherSerial(value: string) {
+  return /^[0-9]{8}$/.test(value.trim());
+}
+
 export function validateVoucherAmounts(input: {
   netAmount: number;
   taxAmount: number;
@@ -69,4 +77,28 @@ export function isSettlementDirection(value: string): value is SettlementDirecti
 
 export function validatePositiveAmount(amount: number) {
   return Number.isFinite(amount) && Math.round(amount * 100) > 0;
+}
+
+export function validateMovementScope(input: {
+  studyId?: string;
+  companyId?: string;
+  thirdPartyId?: string;
+}) {
+  return Boolean(input.studyId && input.companyId && input.thirdPartyId);
+}
+
+function normalizedTaxCondition(value: string) {
+  return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toUpperCase();
+}
+
+export function isResponsableInscripto(value: string) {
+  return normalizedTaxCondition(value).includes("RESPONSABLE INSCRIPTO");
+}
+
+export function isMonotributista(value: string) {
+  return normalizedTaxCondition(value).includes("MONOTRIB");
+}
+
+export function isConsumidorFinal(value: string) {
+  return normalizedTaxCondition(value).includes("CONSUMIDOR FINAL");
 }

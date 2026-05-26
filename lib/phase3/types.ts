@@ -2,6 +2,7 @@ export type ThirdPartyType = "CLIENTE" | "PROVEEDOR" | "CLIENTE_PROVEEDOR";
 
 export type ThirdPartySummary = {
   id: string;
+  studyId: string;
   companyId: string;
   type: ThirdPartyType;
   legalName: string;
@@ -27,14 +28,17 @@ export type VoucherStatus = "BORRADOR" | "REGISTRADO" | "ANULADO";
 
 export type VoucherSummary = {
   id: string;
+  studyId: string;
   companyId: string;
   thirdPartyId: string;
   thirdPartyName: string;
+  journalEntryId?: string;
+  relatedVoucherId?: string;
   direction: VoucherDirection;
   type: VoucherType;
   letter?: string;
   pointOfSale: string;
-  number: string;
+  number?: string;
   issueDate: string;
   dueDate?: string;
   currency: string;
@@ -49,6 +53,7 @@ export type VoucherResult = {
   ok: boolean;
   message: string;
   id?: string;
+  journalEntryId?: string;
 };
 
 export type ThirdPartyStatementLine = {
@@ -78,6 +83,7 @@ export type SettlementDirection = "COBRO" | "PAGO";
 
 export type SettlementSummary = {
   id: string;
+  studyId: string;
   companyId: string;
   thirdPartyId: string;
   thirdPartyName: string;

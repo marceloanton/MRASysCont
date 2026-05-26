@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { demoAccounts, demoJournalEntries, demoPeriods } from "./demo-data";
+import { accountChartTemplates, getAccountChartTemplate } from "./chart-templates";
 import type {
   AccountingPeriodSummary,
   AccountingResult,
@@ -20,19 +21,26 @@ function normalizeDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-export async function listAccounts(companyId: string) {
+function formatVoucherSerial(value: number) {
+  return String(value).padStart(8, "0");
+}
+
+export async function listAccounts(studyId: string, companyId: string) {
   if (!hasDatabase()) {
     return {
       source: "demo" as const,
-      accounts: demoAccounts.filter((account) => account.companyId === companyId)
+      accounts: demoAccounts.filter(
+        (account) => account.studyId === studyId && account.companyId === companyId
+      )
     };
   }
 
   try {
     const accounts = await prisma.account.findMany({
-      where: {
-        companyId
-      },
+        where: {
+          studyId,
+          companyId
+        },
       orderBy: {
         code: "asc"
       }
@@ -42,6 +50,7 @@ export async function listAccounts(companyId: string) {
       source: "database" as const,
       accounts: accounts.map((account): AccountSummary => ({
         id: account.id,
+        studyId: account.studyId ?? undefined,
         companyId: account.companyId,
         code: account.code,
         name: account.name,
@@ -53,12 +62,15 @@ export async function listAccounts(companyId: string) {
   } catch {
     return {
       source: "demo" as const,
-      accounts: demoAccounts.filter((account) => account.companyId === companyId)
+      accounts: demoAccounts.filter(
+        (account) => account.studyId === studyId && account.companyId === companyId
+      )
     };
   }
 }
 
 export async function createAccount(input: {
+  studyId: string;
   companyId: string;
   code: string;
   name: string;
@@ -76,6 +88,7 @@ export async function createAccount(input: {
     const account = await prisma.account.create({
       data: {
         companyId: input.companyId,
+        studyId: input.studyId,
         code: input.code,
         name: input.name,
         type: input.type,
@@ -96,19 +109,78 @@ export async function createAccount(input: {
   }
 }
 
-export async function listAccountingPeriods(companyId: string) {
+export async function listAccountChartTemplates() {
+  return accountChartTemplates;
+}
+
+export async function applyAccountChartTemplate(input: {
+  studyId: string;
+  companyId: string;
+  templateId: string;
+}): Promise<AccountingResult> {
+  if (!hasDatabase()) {
+    return {
+      ok: false,
+      message: "Para aplicar plantillas hace falta PostgreSQL configurado."
+    };
+  }
+
+  const template = getAccountChartTemplate(input.templateId);
+
+  if (!template) {
+    return {
+      ok: false,
+      message: "La plantilla de plan de cuentas no existe."
+    };
+  }
+
+  try {
+    const createdCount = await prisma.$transaction(async (tx) => {
+      const result = await tx.account.createMany({
+        data: template.lines.map((line) => ({
+          studyId: input.studyId,
+          companyId: input.companyId,
+          code: line.code,
+          name: line.name,
+          type: line.type,
+          imputable: line.imputable,
+          active: true
+        })),
+        skipDuplicates: true
+      });
+
+      return result.count;
+    });
+
+    return {
+      ok: true,
+      message: `Plantilla aplicada. Cuentas creadas: ${createdCount}.`,
+      id: input.templateId
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "No se pudo aplicar la plantilla. Revisar conexion y datos."
+    };
+  }
+}
+
+export async function listAccountingPeriods(studyId: string, companyId: string) {
   if (!hasDatabase()) {
     return {
       source: "demo" as const,
-      periods: demoPeriods.filter((period) => period.companyId === companyId)
+      periods: demoPeriods.filter(
+        (period) => period.studyId === studyId && period.companyId === companyId
+      )
     };
   }
 
   try {
     const periods = await prisma.accountingPeriod.findMany({
-      where: {
-        companyId
-      },
+        where: {
+          studyId,
+          companyId
+        },
       orderBy: {
         startsAt: "asc"
       }
@@ -118,6 +190,7 @@ export async function listAccountingPeriods(companyId: string) {
       source: "database" as const,
       periods: periods.map((period): AccountingPeriodSummary => ({
         id: period.id,
+        studyId: period.studyId ?? undefined,
         companyId: period.companyId,
         name: period.name,
         startsAt: normalizeDate(period.startsAt),
@@ -128,12 +201,15 @@ export async function listAccountingPeriods(companyId: string) {
   } catch {
     return {
       source: "demo" as const,
-      periods: demoPeriods.filter((period) => period.companyId === companyId)
+      periods: demoPeriods.filter(
+        (period) => period.studyId === studyId && period.companyId === companyId
+      )
     };
   }
 }
 
 export async function createAccountingPeriod(input: {
+  studyId: string;
   companyId: string;
   name: string;
   startsAt: Date;
@@ -150,6 +226,7 @@ export async function createAccountingPeriod(input: {
     const period = await prisma.accountingPeriod.create({
       data: {
         companyId: input.companyId,
+        studyId: input.studyId,
         name: input.name,
         startsAt: input.startsAt,
         endsAt: input.endsAt,
@@ -171,6 +248,7 @@ export async function createAccountingPeriod(input: {
 }
 
 export async function closeAccountingPeriod(input: {
+  studyId: string;
   companyId: string;
   periodId: string;
 }): Promise<AccountingResult> {
@@ -185,6 +263,7 @@ export async function closeAccountingPeriod(input: {
     const period = await prisma.accountingPeriod.findFirst({
       where: {
         id: input.periodId,
+        studyId: input.studyId,
         companyId: input.companyId
       }
     });
@@ -225,19 +304,22 @@ export async function closeAccountingPeriod(input: {
   }
 }
 
-export async function listJournalEntries(companyId: string) {
+export async function listJournalEntries(studyId: string, companyId: string) {
   if (!hasDatabase()) {
     return {
       source: "demo" as const,
-      entries: demoJournalEntries.filter((entry) => entry.companyId === companyId)
+      entries: demoJournalEntries.filter(
+        (entry) => entry.studyId === studyId && entry.companyId === companyId
+      )
     };
   }
 
   try {
     const entries = await prisma.journalEntry.findMany({
-      where: {
-        companyId
-      },
+        where: {
+          studyId,
+          companyId
+        },
       include: {
         lines: {
           include: {
@@ -266,6 +348,7 @@ export async function listJournalEntries(companyId: string) {
 
         return {
           id: entry.id,
+          studyId: entry.studyId ?? undefined,
           companyId: entry.companyId,
           periodId: entry.periodId,
           number: entry.number,
@@ -290,12 +373,15 @@ export async function listJournalEntries(companyId: string) {
   } catch {
     return {
       source: "demo" as const,
-      entries: demoJournalEntries.filter((entry) => entry.companyId === companyId)
+      entries: demoJournalEntries.filter(
+        (entry) => entry.studyId === studyId && entry.companyId === companyId
+      )
     };
   }
 }
 
 export async function reverseJournalEntry(input: {
+  studyId: string;
   companyId: string;
   entryId: string;
   reason: string;
@@ -311,6 +397,7 @@ export async function reverseJournalEntry(input: {
     const entry = await prisma.journalEntry.findFirst({
       where: {
         id: input.entryId,
+        studyId: input.studyId,
         companyId: input.companyId
       },
       include: {
@@ -350,6 +437,8 @@ export async function reverseJournalEntry(input: {
     const latest = await prisma.journalEntry.findFirst({
       where: {
         companyId: input.companyId
+        ,
+        studyId: input.studyId
       },
       orderBy: {
         number: "desc"
@@ -360,6 +449,7 @@ export async function reverseJournalEntry(input: {
       const reversalEntry = await tx.journalEntry.create({
         data: {
           companyId: entry.companyId,
+          studyId: entry.studyId,
           periodId: entry.periodId,
           number: (latest?.number ?? 0) + 1,
           date: new Date(),
@@ -408,6 +498,7 @@ export async function reverseJournalEntry(input: {
 }
 
 export async function createJournalEntry(input: {
+  studyId: string;
   companyId: string;
   periodId: string;
   date: Date;
@@ -424,6 +515,7 @@ export async function createJournalEntry(input: {
   try {
     const latest = await prisma.journalEntry.findFirst({
       where: {
+        studyId: input.studyId,
         companyId: input.companyId
       },
       orderBy: {
@@ -434,6 +526,7 @@ export async function createJournalEntry(input: {
     const entry = await prisma.journalEntry.create({
       data: {
         companyId: input.companyId,
+        studyId: input.studyId,
         periodId: input.periodId,
         number: (latest?.number ?? 0) + 1,
         date: input.date,
@@ -463,6 +556,7 @@ export async function createJournalEntry(input: {
 }
 
 export async function updateDraftJournalEntry(input: {
+  studyId: string;
   companyId: string;
   entryId: string;
   date: Date;
@@ -480,6 +574,7 @@ export async function updateDraftJournalEntry(input: {
     const entry = await prisma.journalEntry.findFirst({
       where: {
         id: input.entryId,
+        studyId: input.studyId,
         companyId: input.companyId
       },
       include: {
@@ -547,6 +642,7 @@ export async function updateDraftJournalEntry(input: {
 }
 
 export async function deleteDraftJournalEntry(input: {
+  studyId: string;
   companyId: string;
   entryId: string;
 }): Promise<AccountingResult> {
@@ -561,6 +657,7 @@ export async function deleteDraftJournalEntry(input: {
     const entry = await prisma.journalEntry.findFirst({
       where: {
         id: input.entryId,
+        studyId: input.studyId,
         companyId: input.companyId
       },
       include: {
@@ -617,6 +714,7 @@ export async function deleteDraftJournalEntry(input: {
 }
 
 export async function confirmJournalEntry(input: {
+  studyId: string;
   companyId: string;
   entryId: string;
 }): Promise<AccountingResult> {
@@ -631,6 +729,7 @@ export async function confirmJournalEntry(input: {
     const entry = await prisma.journalEntry.findFirst({
       where: {
         id: input.entryId,
+        studyId: input.studyId,
         companyId: input.companyId
       },
       include: {
@@ -675,12 +774,65 @@ export async function confirmJournalEntry(input: {
       };
     }
 
-    await prisma.journalEntry.update({
-      where: {
-        id: entry.id
-      },
-      data: {
-        status: "CONFIRMADO"
+    await prisma.$transaction(async (tx) => {
+      // Confirmamos el asiento y sincronizamos el comprobante vinculado en una sola unidad atomica.
+      await tx.journalEntry.update({
+        where: {
+          id: entry.id
+        },
+        data: {
+          status: "CONFIRMADO"
+        }
+      });
+
+      const linkedVoucher = await tx.voucher.findFirst({
+        where: {
+          studyId: input.studyId,
+          companyId: input.companyId,
+          journalEntryId: entry.id
+        },
+        select: {
+          id: true,
+          direction: true,
+          type: true,
+          pointOfSale: true,
+          number: true
+        }
+      });
+
+      if (!linkedVoucher) {
+        return;
+      }
+
+      // Regla: la numeracion fiscal se asigna al confirmar.
+      // Solo aplica a EMITIDO; RECIBIDO conserva el numero cargado.
+      if (linkedVoucher.direction === "EMITIDO" && !linkedVoucher.number) {
+        const nextSequence = await tx.$queryRaw<Array<{ lastNumber: number }>>`
+          INSERT INTO "VoucherSequence" ("id", "companyId", "pointOfSale", "type", "lastNumber", "createdAt", "updatedAt")
+          VALUES (md5(random()::text || clock_timestamp()::text), ${input.companyId}, ${linkedVoucher.pointOfSale}, ${linkedVoucher.type}::"VoucherType", 1, NOW(), NOW())
+          ON CONFLICT ("companyId", "pointOfSale", "type")
+          DO UPDATE SET "lastNumber" = "VoucherSequence"."lastNumber" + 1, "updatedAt" = NOW()
+          RETURNING "lastNumber";
+        `;
+
+        await tx.voucher.update({
+          where: {
+            id: linkedVoucher.id
+          },
+          data: {
+            number: formatVoucherSerial(nextSequence[0].lastNumber),
+            status: "REGISTRADO"
+          }
+        });
+      } else {
+        await tx.voucher.update({
+          where: {
+            id: linkedVoucher.id
+          },
+          data: {
+            status: "REGISTRADO"
+          }
+        });
       }
     });
 

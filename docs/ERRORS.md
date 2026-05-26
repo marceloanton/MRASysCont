@@ -1,0 +1,34 @@
+# ERRORS
+
+## Objetivo
+Catalogo unificado de errores funcionales y tecnicos.
+
+## Categorias
+- `VALIDATION_ERROR`
+- `PERMISSION_ERROR`
+- `ACCOUNTING_ERROR`
+- `FISCAL_ERROR`
+- `INTEGRATION_ERROR`
+- `CONCURRENCY_ERROR`
+- `IDEMPOTENCY_ERROR`
+- `INTERNAL_ERROR`
+
+## Codigos Minimos
+- `COMPANY_ACCESS_DENIED`
+- `OBJECT_ACCESS_DENIED`
+- `ACCOUNTING_ENTRY_UNBALANCED`
+- `ACCOUNTING_PERIOD_CLOSED`
+- `ACCOUNTING_ENTRY_IMMUTABLE`
+- `INVOICE_NUMBER_ALREADY_USED`
+- `INVOICE_STATE_TRANSITION_INVALID`
+- `IDEMPOTENCY_CONFLICT`
+- `ARCA_SERVICE_UNAVAILABLE`
+- `ARCA_CAE_REJECTED`
+- `DOCUMENT_TYPE_NOT_ALLOWED`
+- `DOCUMENT_SIZE_EXCEEDED`
+- `CONCURRENT_UPDATE_DETECTED`
+
+## Reglas
+- Mensajes de usuario claros y no sensibles.
+- Detalle tecnico en logs sanitizados.
+- Nunca incluir secretos/tokens/certificados.

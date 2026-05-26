@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import type { ThirdPartySummary } from "@/lib/phase3/types";
+import type { ThirdPartySummary, VoucherSummary } from "@/lib/phase3/types";
 import { createVoucherAction, type VoucherFormState } from "./actions";
 
 const initialState: VoucherFormState = {
@@ -9,12 +9,19 @@ const initialState: VoucherFormState = {
   ok: false
 };
 
-export function VoucherForm({ thirdParties }: { thirdParties: ThirdPartySummary[] }) {
+export function VoucherForm({
+  thirdParties,
+  vouchers
+}: {
+  thirdParties: ThirdPartySummary[];
+  vouchers: VoucherSummary[];
+}) {
   const [state, formAction, pending] = useActionState(
     createVoucherAction,
     initialState
   );
   const activeThirdParties = thirdParties.filter((thirdParty) => thirdParty.active);
+  const voucherOrigins = vouchers.filter((voucher) => voucher.status !== "ANULADO");
 
   return (
     <form action={formAction} className="adminForm">
@@ -54,10 +61,23 @@ export function VoucherForm({ thirdParties }: { thirdParties: ThirdPartySummary[
       <input id="pointOfSale" name="pointOfSale" placeholder="0001" required />
 
       <label htmlFor="number">Numero</label>
-      <input id="number" name="number" placeholder="00000001" required />
+      <input id="number" name="number" placeholder="00000001" />
+      <small className="rowNote">
+        Formato obligatorio: XXXX-XXXXXXXX. En EMITIDO se asigna al confirmar; en RECIBIDO se carga manual.
+      </small>
 
       <label htmlFor="issueDate">Fecha emision</label>
       <input id="issueDate" name="issueDate" type="date" required />
+
+      <label htmlFor="relatedVoucherId">Comprobante origen (NC/ND)</label>
+      <select id="relatedVoucherId" name="relatedVoucherId" defaultValue="">
+        <option value="">Sin referencia</option>
+        {voucherOrigins.map((voucher) => (
+          <option key={voucher.id} value={voucher.id}>
+            {voucher.type} {voucher.letter ?? ""} {voucher.pointOfSale}-{voucher.number ?? "PENDIENTE"}
+          </option>
+        ))}
+      </select>
 
       <label htmlFor="dueDate">Fecha vencimiento</label>
       <input id="dueDate" name="dueDate" type="date" />
@@ -67,6 +87,13 @@ export function VoucherForm({ thirdParties }: { thirdParties: ThirdPartySummary[
         <option>ARS</option>
         <option>USD</option>
       </select>
+      <label htmlFor="exchangeRate">Tipo de cambio (USD a ARS)</label>
+      <input
+        id="exchangeRate"
+        name="exchangeRate"
+        inputMode="decimal"
+        placeholder="Ej: 950.50 (obligatorio para USD)"
+      />
 
       <label htmlFor="netAmount">Neto</label>
       <input id="netAmount" name="netAmount" inputMode="decimal" required />

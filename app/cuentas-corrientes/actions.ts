@@ -82,6 +82,7 @@ export async function createSettlementAction(
   }
 
   const result = await createSettlement({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     thirdPartyId,
     direction: directionValue,
@@ -96,6 +97,7 @@ export async function createSettlementAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: directionValue === "COBRO" ? "settlement.collected" : "settlement.paid",

@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { recordAuditEvent } from "@/lib/phase1/audit";
-import { createUserWithMembership } from "@/lib/phase1/repository";
+import { assignUserCompany, createUserWithMembership } from "@/lib/phase1/repository";
 import { getSessionContext } from "@/lib/phase1/session";
-import { getActiveTenant } from "@/lib/phase1/tenant-access";
+import { getRequiredActiveTenant } from "@/lib/phase1/tenant-access";
 import type { UserRole } from "@/lib/phase1/types";
 
 export type UserFormState = {
@@ -28,7 +28,7 @@ export async function createUserAction(
   void _previousState;
 
   const session = await getSessionContext();
-  const activeTenant = getActiveTenant(session);
+  const activeTenant = getRequiredActiveTenant(session);
 
   if (!activeTenant.membership.permissions.manageUsers) {
     return {
@@ -54,12 +54,14 @@ export async function createUserAction(
     name,
     email,
     password,
+    studyId: activeTenant.company.studyId,
     companyId,
     role: roleValue
   });
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: activeTenant.company.studyId,
       userId: session.user.id,
       companyId: activeTenant.company.id,
       action: "user.created",
@@ -79,3 +81,62 @@ export async function createUserAction(
     message: result.message
   };
 }
+
+export async function assignUserCompanyAction(
+  _previousState: UserFormState = initialState,
+  formData: FormData
+): Promise<UserFormState> {
+  void _previousState;
+
+  const session = await getSessionContext();
+  const activeTenant = getRequiredActiveTenant(session);
+
+  if (!activeTenant.membership.permissions.manageUsers) {
+    return {
+      ok: false,
+      message: "No tenes permiso para asignar usuarios."
+    };
+  }
+
+  const userId = String(formData.get("userId") ?? "");
+  const companyId = String(formData.get("companyId") ?? "");
+  const roleValue = String(formData.get("role") ?? "");
+
+  if (!userId || !companyId || !isUserRole(roleValue)) {
+    return {
+      ok: false,
+      message: "Usuario, empresa y rol son obligatorios."
+    };
+  }
+
+  const result = await assignUserCompany({
+    studyId: activeTenant.company.studyId,
+    userId,
+    companyId,
+    role: roleValue
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      studyId: activeTenant.company.studyId,
+      userId: session.user.id,
+      companyId: activeTenant.company.id,
+      action: "user.company_assigned",
+      entity: "UserCompany",
+      entityId: `${userId}:${companyId}`,
+      metadata: {
+        assignedUserId: userId,
+        assignedCompanyId: companyId,
+        role: roleValue
+      }
+    });
+  }
+
+  revalidatePath("/admin/usuarios");
+
+  return {
+    ok: result.ok,
+    message: result.message
+  };
+}
+

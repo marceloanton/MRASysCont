@@ -16,17 +16,20 @@ function normalizeDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-export async function listSettlements(companyId: string) {
+export async function listSettlements(studyId: string, companyId: string) {
   if (!hasDatabase()) {
     return {
       source: "demo" as const,
-      settlements: demoSettlements.filter((settlement) => settlement.companyId === companyId)
+      settlements: demoSettlements.filter(
+        (settlement) => settlement.companyId === companyId
+      )
     };
   }
 
   try {
     const settlements = await prisma.settlement.findMany({
       where: {
+        studyId,
         companyId
       },
       include: {
@@ -42,6 +45,7 @@ export async function listSettlements(companyId: string) {
       source: "database" as const,
       settlements: settlements.map((settlement): SettlementSummary => ({
         id: settlement.id,
+        studyId: settlement.studyId ?? studyId,
         companyId: settlement.companyId,
         thirdPartyId: settlement.thirdPartyId,
         thirdPartyName: settlement.thirdParty.legalName,
@@ -60,12 +64,15 @@ export async function listSettlements(companyId: string) {
   } catch {
     return {
       source: "demo" as const,
-      settlements: demoSettlements.filter((settlement) => settlement.companyId === companyId)
+      settlements: demoSettlements.filter(
+        (settlement) => settlement.companyId === companyId
+      )
     };
   }
 }
 
 export async function createSettlement(input: {
+  studyId: string;
   companyId: string;
   thirdPartyId: string;
   direction: SettlementDirection;
@@ -85,9 +92,33 @@ export async function createSettlement(input: {
   }
 
   try {
+    if (!input.studyId || !input.companyId || !input.thirdPartyId) {
+      return {
+        ok: false,
+        message: "El movimiento requiere studyId, companyId y thirdPartyId."
+      };
+    }
+
+    const company = await prisma.company.findFirst({
+      where: {
+        id: input.companyId,
+        studyId: input.studyId
+      },
+      select: {
+        id: true
+      }
+    });
+    if (!company) {
+      return {
+        ok: false,
+        message: "La empresa activa no pertenece al estudio activo."
+      };
+    }
+
     const thirdParty = await prisma.thirdParty.findFirst({
       where: {
         id: input.thirdPartyId,
+        studyId: input.studyId,
         companyId: input.companyId,
         active: true
       }
@@ -104,6 +135,7 @@ export async function createSettlement(input: {
       const treasuryAccount = await prisma.treasuryAccount.findFirst({
         where: {
           id: input.treasuryAccountId,
+          studyId: input.studyId,
           companyId: input.companyId,
           active: true
         }
@@ -120,6 +152,7 @@ export async function createSettlement(input: {
         const movement = await tx.treasuryMovement.create({
           data: {
             companyId: input.companyId,
+            studyId: input.studyId,
             treasuryAccountId: treasuryAccount.id,
             type: input.direction === "COBRO" ? "INGRESO" : "EGRESO",
             date: input.date,
@@ -133,6 +166,7 @@ export async function createSettlement(input: {
         return tx.settlement.create({
           data: {
             companyId: input.companyId,
+            studyId: input.studyId,
             thirdPartyId: input.thirdPartyId,
             treasuryAccountId: treasuryAccount.id,
             treasuryMovementId: movement.id,
@@ -157,6 +191,7 @@ export async function createSettlement(input: {
     const settlement = await prisma.settlement.create({
       data: {
         companyId: input.companyId,
+        studyId: input.studyId,
         thirdPartyId: input.thirdPartyId,
         direction: input.direction,
         date: input.date,

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { listMemberships, listUsers } from "@/lib/phase1/repository";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { UserForm } from "./user-form";
+import { UserAssignmentForm, UserForm } from "./user-form";
 
 export default async function UsersPage() {
   const workspace = await getWorkspaceContext();
@@ -16,9 +16,10 @@ export default async function UsersPage() {
     workspace.session,
     workspace.companies
   );
+  const activeStudyId = activeTenant.company.studyId;
   const canManage = activeTenant.membership.permissions.manageUsers;
-  const usersResult = await listUsers();
-  const membershipsResult = await listMemberships();
+  const usersResult = await listUsers(activeStudyId);
+  const membershipsResult = await listMemberships(activeStudyId);
 
   return (
     <main className="adminPage">
@@ -39,6 +40,18 @@ export default async function UsersPage() {
             <UserForm companies={workspace.companies} />
           ) : (
             <p className="emptyState">Tu rol no permite crear usuarios.</p>
+          )}
+        </article>
+
+        <article className="panel">
+          <h2>Asignar usuario a empresa</h2>
+          {canManage ? (
+            <UserAssignmentForm
+              users={usersResult.users}
+              companies={workspace.companies}
+            />
+          ) : (
+            <p className="emptyState">Tu rol no permite asignar usuarios.</p>
           )}
         </article>
 

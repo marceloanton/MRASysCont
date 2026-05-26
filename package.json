@@ -9,10 +9,16 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run lib/phase1/password.test.ts lib/phase2/validation.test.ts lib/phase3/validation.test.ts lib/phase4/validation.test.ts",
+    "test:integration": "vitest run lib/phase1/tenant-access.test.ts lib/phase2/report-csv.test.ts lib/phase3/current-account.test.ts",
+    "test:tenancy": "vitest run lib/phase1/tenant-access.test.ts",
+    "test:permissions": "vitest run lib/phase1/tenant-access.test.ts --testNamePattern \"cannot|denied|forbidden|requires|inactive|disabled\"",
+    "test:contract": "node -e \"const fs=require('fs'); if(!fs.existsSync('openapi.yaml')){console.log('[contract] Placeholder controlado: openapi.yaml no existe todavia. TODO: implementar contract tests formales.'); process.exit(0);} console.log('[contract] openapi.yaml detectado. TODO: reemplazar este placeholder por validador de contrato.'); process.exit(0);\"",
+    "typecheck": "node -e \"const fs=require('fs'); fs.rmSync('.next/types',{recursive:true,force:true}); fs.rmSync('tsconfig.tsbuildinfo',{force:true});\" && next typegen && tsc --noEmit",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",
+    "db:migration:check": "node scripts/db-migration-check.mjs",
     "db:seed": "prisma db seed",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate"
@@ -20,8 +26,10 @@
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "next": "^15.3.2",
+    "pdf-lib": "^1.17.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -31,8 +39,8 @@
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.2",
     "prisma": "^6.9.0",
-    "typescript": "^5.8.3",
     "tsx": "^4.20.6",
+    "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
   "overrides": {

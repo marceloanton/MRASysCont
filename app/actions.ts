@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { recordAuditEvent } from "@/lib/phase1/audit";
-import { getSessionContext, setActiveCompany } from "@/lib/phase1/session";
+import { getSessionContext, setActiveTenant } from "@/lib/phase1/session";
 import { assertCompanyAccess } from "@/lib/phase1/tenant-access";
 import { logout } from "./login/actions";
 
@@ -14,8 +14,9 @@ export async function changeActiveCompany(formData: FormData) {
   const session = await getSessionContext();
   const access = assertCompanyAccess(session, companyId);
 
-  await setActiveCompany(companyId);
+  await setActiveTenant(access.company.studyId, companyId);
   recordAuditEvent({
+    studyId: access.company.studyId,
     userId: session.user.id,
     companyId,
     action: "tenant.active_company_changed",

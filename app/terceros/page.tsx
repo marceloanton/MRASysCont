@@ -19,7 +19,10 @@ export default async function ThirdPartiesPage() {
     workspace.companies
   );
   const canManage = tenant.membership.permissions.manageSettings;
-  const result = await listThirdParties(tenant.company.id);
+  const result = await listThirdParties(
+    tenant.company.studyId,
+    tenant.company.id
+  );
 
   return (
     <main className="adminPage">

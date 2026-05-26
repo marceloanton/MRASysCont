@@ -13,6 +13,13 @@ enum UserRole {
   CLIENTE
 }
 
+enum StudyMembershipStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
 enum TenantStatus {
   ACTIVA
   SUSPENDIDA
@@ -73,6 +80,50 @@ enum TreasuryMovementType {
   AJUSTE
 }
 
+enum ClientStudyStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum StudyTaskStatus {
+  PENDING
+  IN_PROGRESS
+  WAITING_DOCUMENTATION
+  IN_REVIEW
+  DONE
+  CANCELLED
+}
+
+enum StudyDeadlineStatus {
+  SCHEDULED
+  IN_PROGRESS
+  PRESENTED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum MonthlyStatusState {
+  NOT_STARTED
+  IN_PROGRESS
+  WAITING_DOCUMENTATION
+  IN_REVIEW
+  READY
+  CLOSED
+  OBSERVED
+}
+
+enum StudyDocumentStatus {
+  UPLOADED
+  PENDING_REVIEW
+  OBSERVED
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -82,13 +133,96 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  studyMemberships StudyMembership[]
   memberships UserCompany[]
   auditEvents AuditEvent[]
   sessions    Session[]
+  clientResponsibilities ClientInternalResponsible[]
+  assignedTasks StudyTask[] @relation("StudyTaskAssignee")
+  createdTasks StudyTask[] @relation("StudyTaskCreator")
+  assignedDeadlines StudyDeadline[] @relation("StudyDeadlineAssignee")
+  monthlyStatusesUpdated ClientMonthlyStatus[] @relation("MonthlyStatusUpdater")
+  createdDocuments StudyDocument[] @relation("StudyDocumentCreator")
+  reviewedDocuments StudyDocument[] @relation("StudyDocumentReviewer")
+  documentVersions StudyDocumentVersion[] @relation("StudyDocumentVersionCreator")
+  documentAccessLogs StudyDocumentAccessLog[]
+}
+
+model Study {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships      StudyMembership[]
+  clients          ClientOfStudy[]
+  companies        Company[]
+  userCompanies    UserCompany[]
+  sessions         Session[]
+  accountingPeriods AccountingPeriod[]
+  accounts          Account[]
+  journalEntries    JournalEntry[]
+  thirdParties      ThirdParty[]
+  vouchers          Voucher[]
+  voucherSequences  VoucherSequence[]
+  settlements       Settlement[]
+  treasuryAccounts  TreasuryAccount[]
+  treasuryMovements TreasuryMovement[]
+  auditEvents       AuditEvent[]
+  services          ClientService[]
+  clientResponsibilities ClientInternalResponsible[]
+  monthlyStatuses   ClientMonthlyStatus[]
+  tasks             StudyTask[]
+  deadlines         StudyDeadline[]
+  documents         StudyDocument[]
+  documentAccessLogs StudyDocumentAccessLog[]
+}
+
+model StudyMembership {
+  id        String                @id @default(cuid())
+  studyId   String
+  userId    String
+  role      UserRole
+  status    StudyMembershipStatus @default(ACTIVE)
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  study Study @relation(fields: [studyId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([studyId, userId])
+  @@index([userId, status])
+}
+
+model ClientOfStudy {
+  id        String   @id @default(cuid())
+  studyId   String
+  legalName String
+  cuit      String?
+  active    Boolean  @default(true)
+  status    ClientStudyStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  study     Study     @relation(fields: [studyId], references: [id])
+  companies Company[]
+  services  ClientService[]
+  responsibilities ClientInternalResponsible[]
+  monthlyStatuses ClientMonthlyStatus[]
+  tasks StudyTask[]
+  deadlines StudyDeadline[]
+  documents StudyDocument[]
+
+  @@unique([studyId, legalName])
+  @@index([studyId, active])
 }
 
 model Company {
   id             String       @id @default(cuid())
+  studyId        String
+  clientOfStudyId String?
   legalName      String
   tradeName      String?
   cuit           String       @unique
@@ -98,20 +232,193 @@ model Company {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
+  study             Study          @relation(fields: [studyId], references: [id])
+  clientOfStudy     ClientOfStudy? @relation(fields: [clientOfStudyId], references: [id])
   memberships       UserCompany[]
   accountingPeriods AccountingPeriod[]
   accounts          Account[]
   journalEntries    JournalEntry[]
   thirdParties      ThirdParty[]
   vouchers          Voucher[]
+  voucherSequences  VoucherSequence[]
   settlements       Settlement[]
   treasuryAccounts  TreasuryAccount[]
   treasuryMovements TreasuryMovement[]
   auditEvents       AuditEvent[]
+  tasks             StudyTask[]
+  deadlines         StudyDeadline[]
+  documents         StudyDocument[]
+
+  @@index([studyId, status])
+  @@index([studyId, clientOfStudyId])
+}
+
+model ClientService {
+  id              String   @id @default(cuid())
+  studyId         String
+  clientOfStudyId String
+  name            String
+  description     String?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  study        Study        @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy @relation(fields: [clientOfStudyId], references: [id])
+
+  @@index([studyId, clientOfStudyId, active])
+  @@unique([studyId, clientOfStudyId, name])
+}
+
+model ClientInternalResponsible {
+  id              String   @id @default(cuid())
+  studyId         String
+  clientOfStudyId String
+  userId          String
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  study         Study        @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy @relation(fields: [clientOfStudyId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
+
+  @@unique([studyId, clientOfStudyId])
+  @@index([studyId, userId, active])
+}
+
+model ClientMonthlyStatus {
+  id              String             @id @default(cuid())
+  studyId         String
+  clientOfStudyId String
+  period          String
+  status          MonthlyStatusState @default(NOT_STARTED)
+  notes           String?
+  updatedByUserId String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  study         Study         @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy @relation(fields: [clientOfStudyId], references: [id])
+  updatedByUser User?         @relation("MonthlyStatusUpdater", fields: [updatedByUserId], references: [id])
+
+  @@unique([studyId, clientOfStudyId, period])
+  @@index([studyId, period, status])
+}
+
+model StudyTask {
+  id              String          @id @default(cuid())
+  studyId         String
+  clientOfStudyId String?
+  companyId       String?
+  title           String
+  description     String?
+  status          StudyTaskStatus @default(PENDING)
+  priority        String          @default("normal")
+  dueDate         DateTime?
+  assignedUserId  String?
+  createdByUserId String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  study         Study         @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy? @relation(fields: [clientOfStudyId], references: [id])
+  company       Company?      @relation(fields: [companyId], references: [id])
+  assignedUser  User?         @relation("StudyTaskAssignee", fields: [assignedUserId], references: [id])
+  createdByUser User          @relation("StudyTaskCreator", fields: [createdByUserId], references: [id])
+
+  @@index([studyId, status, dueDate])
+  @@index([studyId, assignedUserId, status])
+}
+
+model StudyDeadline {
+  id              String              @id @default(cuid())
+  studyId         String
+  clientOfStudyId String
+  companyId       String?
+  title           String
+  dueDate         DateTime
+  status          StudyDeadlineStatus @default(SCHEDULED)
+  notes           String?
+  assignedUserId  String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  study         Study         @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy @relation(fields: [clientOfStudyId], references: [id])
+  company       Company?      @relation(fields: [companyId], references: [id])
+  assignedUser  User?         @relation("StudyDeadlineAssignee", fields: [assignedUserId], references: [id])
+
+  @@index([studyId, dueDate, status])
+  @@index([studyId, clientOfStudyId, status])
+}
+
+model StudyDocument {
+  id               String              @id @default(cuid())
+  studyId          String
+  clientOfStudyId  String?
+  companyId        String?
+  title            String
+  category         String
+  notes            String?
+  status           StudyDocumentStatus @default(UPLOADED)
+  createdByUserId  String
+  reviewedByUserId String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  study         Study          @relation(fields: [studyId], references: [id])
+  clientOfStudy ClientOfStudy? @relation(fields: [clientOfStudyId], references: [id])
+  company       Company?       @relation(fields: [companyId], references: [id])
+  createdByUser User           @relation("StudyDocumentCreator", fields: [createdByUserId], references: [id])
+  reviewedByUser User?         @relation("StudyDocumentReviewer", fields: [reviewedByUserId], references: [id])
+  versions      StudyDocumentVersion[]
+  accessLogs    StudyDocumentAccessLog[]
+
+  @@index([studyId, status, createdAt])
+  @@index([studyId, clientOfStudyId, status])
+  @@index([studyId, companyId, status])
+}
+
+model StudyDocumentVersion {
+  id              String   @id @default(cuid())
+  documentId      String
+  version         Int
+  storageKey      String
+  mimeType        String
+  sizeBytes       Int
+  checksumSha256  String
+  createdByUserId String
+  createdAt       DateTime @default(now())
+
+  document      StudyDocument @relation(fields: [documentId], references: [id])
+  createdByUser User          @relation("StudyDocumentVersionCreator", fields: [createdByUserId], references: [id])
+
+  @@unique([documentId, version])
+  @@index([documentId, version])
+}
+
+model StudyDocumentAccessLog {
+  id         String   @id @default(cuid())
+  studyId    String
+  documentId String
+  userId     String
+  action     String
+  metadata   Json?
+  occurredAt DateTime @default(now())
+
+  study    Study         @relation(fields: [studyId], references: [id])
+  document StudyDocument @relation(fields: [documentId], references: [id])
+  user     User          @relation(fields: [userId], references: [id])
+
+  @@index([studyId, occurredAt])
+  @@index([documentId, occurredAt])
+  @@index([userId, occurredAt])
 }
 
 model UserCompany {
   id        String   @id @default(cuid())
+  studyId   String
   userId    String
   companyId String
   role      UserRole
@@ -122,29 +429,34 @@ model UserCompany {
   canReviewDocs     Boolean @default(false)
   createdAt DateTime @default(now())
 
+  study   Study   @relation(fields: [studyId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
   company Company @relation(fields: [companyId], references: [id])
 
-  @@unique([userId, companyId])
-  @@index([companyId, role])
+  @@unique([studyId, userId, companyId])
+  @@index([studyId, companyId, role])
 }
 
 model Session {
   id              String   @id @default(cuid())
   userId          String
+  activeStudyId   String?
   activeCompanyId String?
   expiresAt       DateTime
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  activeStudy Study? @relation(fields: [activeStudyId], references: [id])
+  user        User   @relation(fields: [userId], references: [id])
 
   @@index([userId, expiresAt])
+  @@index([activeStudyId])
   @@index([activeCompanyId])
 }
 
 model AccountingPeriod {
   id        String                 @id @default(cuid())
+  studyId   String?
   companyId String
   name      String
   startsAt  DateTime
@@ -153,15 +465,18 @@ model AccountingPeriod {
   createdAt DateTime               @default(now())
   updatedAt DateTime               @updatedAt
 
+  study          Study?         @relation(fields: [studyId], references: [id])
   company        Company        @relation(fields: [companyId], references: [id])
   journalEntries JournalEntry[]
 
   @@index([companyId, status])
   @@index([companyId, startsAt, endsAt])
+  @@index([studyId, companyId, status])
 }
 
 model Account {
   id        String   @id @default(cuid())
+  studyId   String?
   companyId String
   code      String
   name      String
@@ -171,15 +486,18 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  study   Study?  @relation(fields: [studyId], references: [id])
   company Company @relation(fields: [companyId], references: [id])
   lines   JournalEntryLine[]
 
   @@unique([companyId, code])
   @@index([companyId, type])
+  @@index([studyId, companyId, type])
 }
 
 model JournalEntry {
   id          String             @id @default(cuid())
+  studyId     String?
   companyId   String
   periodId    String
   number      Int
@@ -192,6 +510,7 @@ model JournalEntry {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
+  study   Study?               @relation(fields: [studyId], references: [id])
   company Company              @relation(fields: [companyId], references: [id])
   period  AccountingPeriod     @relation(fields: [periodId], references: [id])
   lines   JournalEntryLine[]
@@ -199,10 +518,12 @@ model JournalEntry {
   reversedByEntry JournalEntry? @relation("JournalEntryReversedBy", fields: [reversedByEntryId], references: [id])
   reversalEntries JournalEntry[] @relation("JournalEntryReversal")
   reversedEntries JournalEntry[] @relation("JournalEntryReversedBy")
+  voucher Voucher?
 
   @@unique([companyId, number])
   @@index([companyId, date])
   @@index([companyId, periodId, status])
+  @@index([studyId, companyId, date])
   @@index([reversalOfEntryId])
   @@index([reversedByEntryId])
 }
@@ -226,6 +547,7 @@ model JournalEntryLine {
 
 model ThirdParty {
   id           String         @id @default(cuid())
+  studyId      String?
   companyId    String
   type         ThirdPartyType
   legalName    String
@@ -240,6 +562,7 @@ model ThirdParty {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  study      Study?     @relation(fields: [studyId], references: [id])
   company  Company   @relation(fields: [companyId], references: [id])
   vouchers Voucher[]
   settlements Settlement[]
@@ -247,17 +570,19 @@ model ThirdParty {
   @@unique([companyId, document])
   @@index([companyId, type])
   @@index([companyId, active])
+  @@index([studyId, companyId, type])
 }
 
 model Voucher {
   id            String           @id @default(cuid())
+  studyId       String?
   companyId     String
   thirdPartyId  String
   direction     VoucherDirection
   type          VoucherType
   letter        String?
   pointOfSale   String
-  number        String
+  number        String?
   issueDate     DateTime
   dueDate       DateTime?
   currency      String           @default("ARS")
@@ -265,21 +590,48 @@ model Voucher {
   taxAmount     Decimal          @default(0) @db.Decimal(18, 2)
   totalAmount   Decimal          @db.Decimal(18, 2)
   status        VoucherStatus    @default(REGISTRADO)
+  journalEntryId String?         @unique
+  relatedVoucherId String?
   notes         String?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
+  study      Study?      @relation(fields: [studyId], references: [id])
   company    Company    @relation(fields: [companyId], references: [id])
   thirdParty ThirdParty @relation(fields: [thirdPartyId], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+  relatedVoucher Voucher? @relation("VoucherReference", fields: [relatedVoucherId], references: [id])
+  referencedByVouchers Voucher[] @relation("VoucherReference")
 
   @@unique([companyId, direction, type, letter, pointOfSale, number])
   @@index([companyId, direction, issueDate])
   @@index([companyId, thirdPartyId])
   @@index([companyId, status])
+  @@index([studyId, companyId, status])
+  @@index([relatedVoucherId])
+}
+
+model VoucherSequence {
+  id          String      @id @default(cuid())
+  studyId     String?
+  companyId   String
+  pointOfSale String
+  type        VoucherType
+  lastNumber  Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  study   Study?  @relation(fields: [studyId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, pointOfSale, type])
+  @@index([companyId, pointOfSale, type])
+  @@index([studyId, companyId, pointOfSale, type])
 }
 
 model Settlement {
   id           String              @id @default(cuid())
+  studyId      String?
   companyId    String
   thirdPartyId String
   treasuryAccountId String?
@@ -294,6 +646,7 @@ model Settlement {
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
 
+  study      Study?      @relation(fields: [studyId], references: [id])
   company    Company    @relation(fields: [companyId], references: [id])
   thirdParty ThirdParty @relation(fields: [thirdPartyId], references: [id])
   treasuryAccount TreasuryAccount? @relation(fields: [treasuryAccountId], references: [id])
@@ -302,10 +655,12 @@ model Settlement {
   @@index([companyId, thirdPartyId])
   @@index([companyId, direction, date])
   @@index([companyId, treasuryAccountId])
+  @@index([studyId, companyId, date])
 }
 
 model TreasuryAccount {
   id        String              @id @default(cuid())
+  studyId   String?
   companyId String
   type      TreasuryAccountType
   name      String
@@ -316,6 +671,7 @@ model TreasuryAccount {
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
 
+  study   Study?  @relation(fields: [studyId], references: [id])
   company Company @relation(fields: [companyId], references: [id])
   movements TreasuryMovement[]
   settlements Settlement[]
@@ -323,10 +679,12 @@ model TreasuryAccount {
   @@unique([companyId, name])
   @@index([companyId, type])
   @@index([companyId, active])
+  @@index([studyId, companyId, type])
 }
 
 model TreasuryMovement {
   id                String               @id @default(cuid())
+  studyId           String?
   companyId         String
   treasuryAccountId String
   type              TreasuryMovementType
@@ -341,7 +699,8 @@ model TreasuryMovement {
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
 
-  company Company @relation(fields: [companyId], references: [id])
+  study   Study?          @relation(fields: [studyId], references: [id])
+  company Company         @relation(fields: [companyId], references: [id])
   treasuryAccount TreasuryAccount @relation(fields: [treasuryAccountId], references: [id])
   settlement Settlement?
 
@@ -349,10 +708,12 @@ model TreasuryMovement {
   @@index([companyId, treasuryAccountId])
   @@index([companyId, type])
   @@index([companyId, reconciled])
+  @@index([studyId, companyId, date])
 }
 
 model AuditEvent {
   id         String   @id @default(cuid())
+  studyId    String?
   companyId  String?
   userId     String?
   action     String
@@ -363,9 +724,11 @@ model AuditEvent {
   userAgent  String?
   occurredAt DateTime @default(now())
 
+  study   Study?   @relation(fields: [studyId], references: [id])
   company Company? @relation(fields: [companyId], references: [id])
   user    User?    @relation(fields: [userId], references: [id])
 
   @@index([companyId, occurredAt])
+  @@index([studyId, occurredAt])
   @@index([userId, occurredAt])
 }

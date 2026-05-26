@@ -1,4 +1,4 @@
-import { getDemoCompany } from "./demo-data";
+import { getDemoCompany, getDemoStudy } from "./demo-data";
 import type { Company, PermissionKey, SessionContext, TenantAccess } from "./types";
 
 export class TenantAccessError extends Error {
@@ -10,6 +10,10 @@ export class TenantAccessError extends Error {
 
 export function getAllowedCompanyIds(session: SessionContext) {
   return new Set(session.memberships.map((membership) => membership.companyId));
+}
+
+export function getAllowedStudyIds(session: SessionContext) {
+  return new Set(session.memberships.map((membership) => membership.studyId));
 }
 
 export function assertCompanyAccess(
@@ -29,6 +33,15 @@ export function assertCompanyAccess(
     throw new TenantAccessError("El usuario no tiene acceso a esta empresa.");
   }
 
+  const activeStudyId = session.activeStudyId ?? membership.studyId;
+  if (membership.studyId !== activeStudyId) {
+    throw new TenantAccessError("La empresa no pertenece al estudio activo.");
+  }
+
+  if (membership.studyMembershipStatus && membership.studyMembershipStatus !== "ACTIVE") {
+    throw new TenantAccessError("La membresia del estudio no esta activa.");
+  }
+
   if (requiredPermission && !membership.permissions[requiredPermission]) {
     throw new TenantAccessError("El usuario no tiene permiso para esta accion.");
   }
@@ -39,6 +52,15 @@ export function assertCompanyAccess(
     throw new TenantAccessError("La empresa no esta activa.");
   }
 
+  if (company.studyId !== membership.studyId) {
+    throw new TenantAccessError("La empresa no pertenece al estudio del usuario.");
+  }
+
+  const study = getDemoStudy(membership.studyId);
+  if (!study) {
+    throw new TenantAccessError("El estudio activo no esta disponible.");
+  }
+
   return {
     user: session.user,
     company,
@@ -47,6 +69,14 @@ export function assertCompanyAccess(
 }
 
 export function getActiveTenant(session: SessionContext): TenantAccess {
+  if (!session.activeStudyId) {
+    const firstStudy = session.memberships.at(0)?.studyId;
+    if (!firstStudy) {
+      throw new TenantAccessError("El usuario no tiene estudios asignados.");
+    }
+    session.activeStudyId = firstStudy;
+  }
+
   const activeCompanyId =
     session.activeCompanyId ?? session.memberships.at(0)?.companyId;
 
@@ -55,6 +85,18 @@ export function getActiveTenant(session: SessionContext): TenantAccess {
   }
 
   return assertCompanyAccess(session, activeCompanyId);
+}
+
+export function getRequiredActiveTenant(session: SessionContext): TenantAccess {
+  if (!session.activeStudyId) {
+    throw new TenantAccessError("No hay estudio activo en la sesion.");
+  }
+
+  if (!session.activeCompanyId) {
+    throw new TenantAccessError("No hay empresa activa en la sesion.");
+  }
+
+  return assertCompanyAccess(session, session.activeCompanyId);
 }
 
 export function assertCompanyAccessWithCompanies(
@@ -75,6 +117,15 @@ export function assertCompanyAccessWithCompanies(
     throw new TenantAccessError("El usuario no tiene acceso a esta empresa.");
   }
 
+  const activeStudyId = session.activeStudyId ?? membership.studyId;
+  if (membership.studyId !== activeStudyId) {
+    throw new TenantAccessError("La empresa no pertenece al estudio activo.");
+  }
+
+  if (membership.studyMembershipStatus && membership.studyMembershipStatus !== "ACTIVE") {
+    throw new TenantAccessError("La membresia del estudio no esta activa.");
+  }
+
   if (requiredPermission && !membership.permissions[requiredPermission]) {
     throw new TenantAccessError("El usuario no tiene permiso para esta accion.");
   }
@@ -83,6 +134,10 @@ export function assertCompanyAccessWithCompanies(
 
   if (!company || company.status !== "ACTIVA") {
     throw new TenantAccessError("La empresa no esta activa.");
+  }
+
+  if (company.studyId !== membership.studyId) {
+    throw new TenantAccessError("La empresa no pertenece al estudio del usuario.");
   }
 
   return {
@@ -96,6 +151,14 @@ export function getActiveTenantFromCompanies(
   session: SessionContext,
   companies: Company[]
 ): TenantAccess {
+  if (!session.activeStudyId) {
+    const firstStudy = session.memberships.at(0)?.studyId;
+    if (!firstStudy) {
+      throw new TenantAccessError("El usuario no tiene estudios asignados.");
+    }
+    session.activeStudyId = firstStudy;
+  }
+
   const activeCompanyId =
     session.activeCompanyId ?? session.memberships.at(0)?.companyId;
 
@@ -104,4 +167,23 @@ export function getActiveTenantFromCompanies(
   }
 
   return assertCompanyAccessWithCompanies(session, companies, activeCompanyId);
+}
+
+export function getRequiredActiveTenantFromCompanies(
+  session: SessionContext,
+  companies: Company[]
+): TenantAccess {
+  if (!session.activeStudyId) {
+    throw new TenantAccessError("No hay estudio activo en la sesion.");
+  }
+
+  if (!session.activeCompanyId) {
+    throw new TenantAccessError("No hay empresa activa en la sesion.");
+  }
+
+  return assertCompanyAccessWithCompanies(
+    session,
+    companies,
+    session.activeCompanyId
+  );
 }

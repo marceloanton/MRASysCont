@@ -4,8 +4,12 @@ import { revalidatePath } from "next/cache";
 import { recordAuditEvent } from "@/lib/phase1/audit";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { createAccount } from "@/lib/phase2/repository";
-import { isAccountType, validateAccountCode } from "@/lib/phase2/validation";
+import {
+  applyAccountChartTemplate,
+  createAccount,
+  listAccountChartTemplates
+} from "@/lib/phase4-accounting/repository";
+import { isAccountType, validateAccountCode } from "@/lib/phase4-accounting/validation";
 
 export type AccountFormState = {
   message: string;
@@ -64,6 +68,7 @@ export async function createAccountAction(
   }
 
   const result = await createAccount({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     code,
     name,
@@ -73,6 +78,7 @@ export async function createAccountAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "account.created",
@@ -91,4 +97,53 @@ export async function createAccountAction(
     ok: result.ok,
     message: result.message
   };
+}
+
+export async function applyAccountTemplateAction(formData: FormData) {
+  const workspace = await getWorkspaceContext();
+
+  if (!workspace) {
+    return;
+  }
+
+  const tenant = getActiveTenantFromCompanies(workspace.session, workspace.companies);
+
+  if (!tenant.membership.permissions.manageSettings) {
+    return;
+  }
+
+  const templateId = String(formData.get("templateId") ?? "");
+
+  if (!templateId) {
+    return;
+  }
+
+  const templates = await listAccountChartTemplates();
+  const exists = templates.some((template) => template.id === templateId);
+
+  if (!exists) {
+    return;
+  }
+
+  const result = await applyAccountChartTemplate({
+    studyId: tenant.company.studyId,
+    companyId: tenant.company.id,
+    templateId
+  });
+
+  if (result.ok) {
+    recordAuditEvent({
+      studyId: tenant.company.studyId,
+      userId: workspace.session.user.id,
+      companyId: tenant.company.id,
+      action: "account.template_applied",
+      entity: "AccountTemplate",
+      entityId: templateId,
+      metadata: {
+        templateId
+      }
+    });
+  }
+
+  revalidatePath("/contabilidad/cuentas");
 }

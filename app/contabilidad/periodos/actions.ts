@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { recordAuditEvent } from "@/lib/phase1/audit";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { closeAccountingPeriod, createAccountingPeriod } from "@/lib/phase2/repository";
-import { validatePeriodRange } from "@/lib/phase2/validation";
+import { closeAccountingPeriod, createAccountingPeriod } from "@/lib/phase4-accounting/repository";
+import { validatePeriodRange } from "@/lib/phase4-accounting/validation";
 
 export type PeriodFormState = {
   message: string;
@@ -56,6 +56,7 @@ export async function createPeriodAction(
   }
 
   const result = await createAccountingPeriod({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     name,
     startsAt,
@@ -64,6 +65,7 @@ export async function createPeriodAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "accounting_period.created",
@@ -106,12 +108,14 @@ export async function closePeriodAction(formData: FormData) {
   }
 
   const result = await closeAccountingPeriod({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     periodId
   });
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "accounting_period.closed",

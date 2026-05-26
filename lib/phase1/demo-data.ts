@@ -1,5 +1,14 @@
 import { permissionsForRole } from "./permissions";
-import type { Company, Membership, User, UserRole } from "./types";
+import type { Company, Membership, Study, User, UserRole } from "./types";
+
+export const demoStudies: Study[] = [
+  {
+    id: "std_default",
+    name: "Default Study",
+    slug: "default-study",
+    active: true
+  }
+];
 
 export const demoUsers: User[] = [
   {
@@ -25,6 +34,7 @@ export const demoUsers: User[] = [
 export const demoCompanies: Company[] = [
   {
     id: "emp_alfa",
+    studyId: "std_default",
     legalName: "Alfa Servicios SRL",
     tradeName: "Alfa",
     cuit: "30-70000001-1",
@@ -33,6 +43,7 @@ export const demoCompanies: Company[] = [
   },
   {
     id: "emp_beta",
+    studyId: "std_default",
     legalName: "Beta Comercio SA",
     tradeName: "Beta",
     cuit: "30-70000002-2",
@@ -41,6 +52,7 @@ export const demoCompanies: Company[] = [
   },
   {
     id: "emp_gamma",
+    studyId: "std_default",
     legalName: "Gamma Monotributo",
     tradeName: "Gamma",
     cuit: "20-30000003-3",
@@ -51,9 +63,11 @@ export const demoCompanies: Company[] = [
 
 const membership = (
   userId: string,
+  studyId: string,
   companyId: string,
   role: UserRole
 ): Membership => ({
+  studyId,
   userId,
   companyId,
   role,
@@ -61,16 +75,20 @@ const membership = (
 });
 
 export const demoMemberships: Membership[] = [
-  membership("usr_contador", "emp_alfa", "CONTADOR"),
-  membership("usr_contador", "emp_beta", "CONTADOR"),
-  membership("usr_contador", "emp_gamma", "CONTADOR"),
-  membership("usr_asistente", "emp_alfa", "ASISTENTE"),
-  membership("usr_asistente", "emp_beta", "ASISTENTE"),
-  membership("usr_cliente", "emp_gamma", "CLIENTE")
+  membership("usr_contador", "std_default", "emp_alfa", "CONTADOR"),
+  membership("usr_contador", "std_default", "emp_beta", "CONTADOR"),
+  membership("usr_contador", "std_default", "emp_gamma", "CONTADOR"),
+  membership("usr_asistente", "std_default", "emp_alfa", "ASISTENTE"),
+  membership("usr_asistente", "std_default", "emp_beta", "ASISTENTE"),
+  membership("usr_cliente", "std_default", "emp_gamma", "CLIENTE")
 ];
 
 export function getDemoUser(userId: string) {
   return demoUsers.find((user) => user.id === userId && user.active);
+}
+
+export function getDemoStudy(studyId: string) {
+  return demoStudies.find((study) => study.id === studyId && study.active);
 }
 
 export function getDemoCompany(companyId: string) {

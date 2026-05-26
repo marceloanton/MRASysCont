@@ -6,6 +6,11 @@ import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 
 const moduleCards = [
   {
+    title: "Estudios",
+    detail: "Tenancy principal por estudio y membresias activas.",
+    href: "/admin/estudios"
+  },
+  {
     title: "Empresas",
     detail: "Selector de empresa activo y permisos por tenant.",
     href: "/admin/empresas"
@@ -24,6 +29,31 @@ const moduleCards = [
     title: "Seguridad",
     detail: "Toda accion sensible valida acceso a empresa activa.",
     href: "/"
+  },
+  {
+    title: "Dashboard estudio",
+    detail: "Resumen de clientes, tareas y vencimientos por estudio.",
+    href: "/estudio/dashboard"
+  },
+  {
+    title: "Clientes del estudio",
+    detail: "Cartera, responsable interno y estado mensual.",
+    href: "/estudio/clientes"
+  },
+  {
+    title: "Tareas internas",
+    detail: "Seguimiento de tareas por estudio y responsables.",
+    href: "/estudio/tareas"
+  },
+  {
+    title: "Vencimientos",
+    detail: "Agenda basica de vencimientos por cliente.",
+    href: "/estudio/vencimientos"
+  },
+  {
+    title: "Expediente documental",
+    detail: "Documentos por estudio con revision y auditoria de descargas.",
+    href: "/estudio/documentos"
   },
   {
     title: "Plan de cuentas",
@@ -76,13 +106,19 @@ export default async function Home() {
 
   const { session } = workspace;
   const activeTenant = getActiveTenantFromCompanies(session, workspace.companies);
+  const activeStudyId = session.activeStudyId ?? activeTenant.membership.studyId;
   const allowedCompanyIds = new Set(
-    session.memberships.map((membership) => membership.companyId)
+    session.memberships
+      .filter((membership) => membership.studyId === activeStudyId)
+      .map((membership) => membership.companyId)
   );
   const availableCompanies = workspace.companies.filter((company) =>
     allowedCompanyIds.has(company.id)
   );
-  const auditEvents = listAuditEvents(activeTenant.company.id);
+  const auditEvents = await listAuditEvents(
+    activeTenant.company.studyId,
+    activeTenant.company.id
+  );
 
   return (
     <main className="workspace">

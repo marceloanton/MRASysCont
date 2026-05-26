@@ -2,8 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { listAccountingPeriods } from "@/lib/phase2/repository";
-import { getAccountingReports } from "@/lib/phase2/reports";
+import { listAccountingPeriods } from "@/lib/phase4-accounting/repository";
+import { getAccountingReports } from "@/lib/phase4-accounting/reports";
+import { getVatReports } from "@/lib/phase8/reports";
 
 export default async function AccountingReportsPage({
   searchParams
@@ -21,16 +22,27 @@ export default async function AccountingReportsPage({
     workspace.session,
     workspace.companies
   );
-  const periodsResult = await listAccountingPeriods(tenant.company.id);
+  const periodsResult = await listAccountingPeriods(
+    tenant.company.studyId,
+    tenant.company.id
+  );
   const selectedPeriodId =
     params.periodId && params.periodId !== "todos" ? params.periodId : undefined;
   const exportPeriodQuery = selectedPeriodId
     ? `&periodId=${encodeURIComponent(selectedPeriodId)}`
     : "";
   const reports = await getAccountingReports({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     periodId: selectedPeriodId
   });
+  const vatReports = selectedPeriodId
+    ? await getVatReports({
+        studyId: tenant.company.studyId,
+        companyId: tenant.company.id,
+        periodId: selectedPeriodId
+      })
+    : null;
   const totalDebit = reports.journalLines.reduce((sum, line) => sum + line.debit, 0);
   const totalCredit = reports.journalLines.reduce((sum, line) => sum + line.credit, 0);
   const totalDebitBalance = reports.trialBalanceLines.reduce(
@@ -81,6 +93,25 @@ export default async function AccountingReportsPage({
         <Link href={`/contabilidad/reportes/imprimir?periodId=${selectedPeriodId ?? "todos"}`}>
           Imprimir / PDF
         </Link>
+        {selectedPeriodId ? (
+          <>
+            <Link href={`/contabilidad/reportes/export?type=iva-ventas&periodId=${selectedPeriodId}`}>
+              IVA Ventas
+            </Link>
+            <Link href={`/contabilidad/reportes/export?type=iva-compras&periodId=${selectedPeriodId}`}>
+              IVA Compras
+            </Link>
+            <Link href={`/contabilidad/reportes/export?type=iva-mensual&periodId=${selectedPeriodId}`}>
+              IVA Mensual
+            </Link>
+            <Link href={`/contabilidad/reportes/export?type=iva-conciliacion&periodId=${selectedPeriodId}`}>
+              IVA Conciliacion
+            </Link>
+            <Link href={`/contabilidad/reportes/export?type=iva-mensual&periodId=${selectedPeriodId}&format=xlsx`}>
+              IVA Excel
+            </Link>
+          </>
+        ) : null}
       </section>
 
       <section className="reportSummary">
@@ -95,6 +126,85 @@ export default async function AccountingReportsPage({
         <article>
           <span>Diferencia</span>
           <strong>{(totalDebit - totalCredit).toLocaleString("es-AR")}</strong>
+        </article>
+
+        <article className="panel">
+          <h2>IVA base</h2>
+          {vatReports ? (
+            <>
+              <div className="reportSummary">
+                <article>
+                  <span>Debito fiscal</span>
+                  <strong>{vatReports.monthly.salesVatDebitFiscal.toLocaleString("es-AR")}</strong>
+                </article>
+                <article>
+                  <span>Credito fiscal</span>
+                  <strong>{vatReports.monthly.purchasesVatCreditFiscal.toLocaleString("es-AR")}</strong>
+                </article>
+                <article>
+                  <span>Neto IVA</span>
+                  <strong>{vatReports.monthly.netVatPayable.toLocaleString("es-AR")}</strong>
+                </article>
+              </div>
+              <div className="tableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Libro</th>
+                      <th>Base imponible</th>
+                      <th>IVA</th>
+                      <th>Exento</th>
+                      <th>No gravado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>IVA Ventas</td>
+                      <td>{vatReports.monthly.salesTaxableBase.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.salesVatDebitFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.salesExemptAmount.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.salesNonTaxedAmount.toLocaleString("es-AR")}</td>
+                    </tr>
+                    <tr>
+                      <td>IVA Compras</td>
+                      <td>{vatReports.monthly.purchasesTaxableBase.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.purchasesVatCreditFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.purchasesExemptAmount.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.monthly.purchasesNonTaxedAmount.toLocaleString("es-AR")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="tableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Conciliacion IVA</th>
+                      <th>Esperado</th>
+                      <th>Contable</th>
+                      <th>Diferencia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Debito fiscal</td>
+                      <td>{vatReports.reconciliation.expectedVatDebitFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.reconciliation.accountingVatDebitFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.reconciliation.debitDifference.toLocaleString("es-AR")}</td>
+                    </tr>
+                    <tr>
+                      <td>Credito fiscal</td>
+                      <td>{vatReports.reconciliation.expectedVatCreditFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.reconciliation.accountingVatCreditFiscal.toLocaleString("es-AR")}</td>
+                      <td>{vatReports.reconciliation.creditDifference.toLocaleString("es-AR")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <p>Selecciona un periodo para generar libros y reporte mensual de IVA base.</p>
+          )}
         </article>
       </section>
 
@@ -150,6 +260,9 @@ export default async function AccountingReportsPage({
                   <th>Fecha</th>
                   <th>Descripcion</th>
                   <th>Cuenta</th>
+                  <th>Mon. orig.</th>
+                  <th>Imp. orig.</th>
+                  <th>T/C</th>
                   <th>Debe</th>
                   <th>Haber</th>
                 </tr>
@@ -163,6 +276,9 @@ export default async function AccountingReportsPage({
                     <td>
                       {line.accountCode} - {line.accountName}
                     </td>
+                    <td>{line.currency ?? "ARS"}</td>
+                    <td>{line.originalAmount?.toLocaleString("es-AR") ?? "-"}</td>
+                    <td>{line.exchangeRate?.toLocaleString("es-AR") ?? "-"}</td>
                     <td>{line.debit.toLocaleString("es-AR")}</td>
                     <td>{line.credit.toLocaleString("es-AR")}</td>
                   </tr>

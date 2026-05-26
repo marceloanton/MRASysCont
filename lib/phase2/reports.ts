@@ -74,6 +74,7 @@ function buildTrialBalance(lines: JournalReportLine[]): TrialBalanceLine[] {
 }
 
 export async function getJournalReport(input: {
+  studyId: string;
   companyId: string;
   periodId?: string;
 }) {
@@ -87,10 +88,9 @@ export async function getJournalReport(input: {
   try {
     const entries = await prisma.journalEntry.findMany({
       where: {
+        studyId: input.studyId,
         companyId: input.companyId,
-        status: {
-          in: ["CONFIRMADO", "ANULADO"]
-        },
+        status: "CONFIRMADO",
         ...(input.periodId ? { periodId: input.periodId } : {})
       },
       include: {
@@ -121,7 +121,10 @@ export async function getJournalReport(input: {
         accountName: line.account.name,
         accountType: line.account.type as AccountType,
         debit: Number(line.debit),
-        credit: Number(line.credit)
+        credit: Number(line.credit),
+        currency: line.currency,
+        originalAmount: line.originalAmount ? Number(line.originalAmount) : undefined,
+        exchangeRate: line.exchangeRate ? Number(line.exchangeRate) : undefined
       }))
     );
 
@@ -138,6 +141,7 @@ export async function getJournalReport(input: {
 }
 
 export async function getLedgerReport(input: {
+  studyId: string;
   companyId: string;
   periodId?: string;
 }) {
@@ -150,6 +154,7 @@ export async function getLedgerReport(input: {
 }
 
 export async function getTrialBalanceReport(input: {
+  studyId: string;
   companyId: string;
   periodId?: string;
 }) {
@@ -162,6 +167,7 @@ export async function getTrialBalanceReport(input: {
 }
 
 export async function getAccountingReports(input: {
+  studyId: string;
   companyId: string;
   periodId?: string;
 }) {

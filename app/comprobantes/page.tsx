@@ -4,6 +4,9 @@ import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
 import { listThirdParties } from "@/lib/phase3/repository";
 import { listVouchers } from "@/lib/phase3/voucher-repository";
+import { confirmJournalEntryAction } from "@/app/contabilidad/asientos/actions";
+import { cancelVoucherAction, confirmVoucherAction } from "./actions";
+import { ConfirmSubmitButton } from "./confirm-submit-button";
 import { VoucherForm } from "./voucher-form";
 
 export default async function VouchersPage() {
@@ -18,9 +21,10 @@ export default async function VouchersPage() {
     workspace.companies
   );
   const canIssue = tenant.membership.permissions.issueInvoices;
+  const canPost = tenant.membership.permissions.postAccounting;
   const [thirdPartiesResult, vouchersResult] = await Promise.all([
-    listThirdParties(tenant.company.id),
-    listVouchers(tenant.company.id)
+    listThirdParties(tenant.company.studyId, tenant.company.id),
+    listVouchers(tenant.company.studyId, tenant.company.id)
   ]);
 
   return (
@@ -39,7 +43,10 @@ export default async function VouchersPage() {
         <article className="panel">
           <h2>Nuevo comprobante</h2>
           {canIssue ? (
-            <VoucherForm thirdParties={thirdPartiesResult.thirdParties} />
+            <VoucherForm
+              thirdParties={thirdPartiesResult.thirdParties}
+              vouchers={vouchersResult.vouchers}
+            />
           ) : (
             <p className="emptyState">Tu rol no permite registrar comprobantes.</p>
           )}
@@ -55,6 +62,8 @@ export default async function VouchersPage() {
                   <th>Operacion</th>
                   <th>Comprobante</th>
                   <th>Tercero</th>
+                  <th>Asiento</th>
+                  <th>Accion</th>
                   <th>Moneda</th>
                   <th>Total</th>
                   <th>Estado</th>
@@ -68,10 +77,74 @@ export default async function VouchersPage() {
                     <td>
                       {voucher.type} {voucher.letter ?? ""}
                       <small className="rowNote">
-                        {voucher.pointOfSale}-{voucher.number}
+                        {voucher.pointOfSale}-{voucher.number ?? "PENDIENTE"}
                       </small>
                     </td>
                     <td>{voucher.thirdPartyName}</td>
+                    <td>
+                      {voucher.journalEntryId ? (
+                        <div className="actionStack">
+                          <Link href={`/contabilidad/asientos#entry-${voucher.journalEntryId}`}>
+                            Ver asiento
+                          </Link>
+                          <Link href={`/comprobantes/${voucher.id}/pdf`} target="_blank">
+                            PDF local
+                          </Link>
+                          {voucher.status === "BORRADOR" && canPost ? (
+                            <div className="actionStack">
+                              <form action={confirmJournalEntryAction}>
+                                <input type="hidden" name="entryId" value={voucher.journalEntryId} />
+                                <button className="tableButton" type="submit">
+                                  Confirmar asiento
+                                </button>
+                              </form>
+                              <form
+                                action={async (formData) => {
+                                  "use server";
+                                  await confirmVoucherAction(formData);
+                                }}
+                              >
+                                <input type="hidden" name="voucherId" value={voucher.id} />
+                                <button className="tableButton" type="submit">
+                                  Confirmar comprobante
+                                </button>
+                              </form>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <div className="actionStack">
+                          <span>Pendiente</span>
+                          <Link href={`/comprobantes/${voucher.id}/pdf`} target="_blank">
+                            PDF local
+                          </Link>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      {voucher.status === "BORRADOR" ? (
+                        <div className="actionStack">
+                          <span className="rowNote">Pendiente contable</span>
+                          {canIssue ? (
+                            <form
+                              action={async (formData) => {
+                                "use server";
+                                await cancelVoucherAction(formData);
+                              }}
+                            >
+                              <input type="hidden" name="voucherId" value={voucher.id} />
+                              <ConfirmSubmitButton
+                                className="tableButton"
+                                label="Anular comprobante"
+                                confirmMessage="Esta accion anula el comprobante borrador. ¿Querés continuar?"
+                              />
+                            </form>
+                          ) : null}
+                        </div>
+                      ) : (
+                        "Contabilizado"
+                      )}
+                    </td>
                     <td>{voucher.currency}</td>
                     <td>{voucher.totalAmount.toLocaleString("es-AR")}</td>
                     <td>{voucher.status}</td>

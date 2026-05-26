@@ -20,8 +20,16 @@ export type User = {
   active: boolean;
 };
 
+export type Study = {
+  id: string;
+  name: string;
+  slug: string;
+  active: boolean;
+};
+
 export type Company = {
   id: string;
+  studyId: string;
   legalName: string;
   tradeName?: string;
   cuit: string;
@@ -30,15 +38,18 @@ export type Company = {
 };
 
 export type Membership = {
+  studyId: string;
   userId: string;
   companyId: string;
   role: UserRole;
+  studyMembershipStatus?: "INVITED" | "ACTIVE" | "SUSPENDED" | "DISABLED";
   permissions: PermissionSet;
 };
 
 export type SessionContext = {
   user: User;
   memberships: Membership[];
+  activeStudyId?: string;
   activeCompanyId?: string;
 };
 
@@ -49,6 +60,7 @@ export type TenantAccess = {
 };
 
 export type AuditEventInput = {
+  studyId?: string;
   userId?: string;
   companyId?: string;
   action: string;

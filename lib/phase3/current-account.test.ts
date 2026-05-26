@@ -4,6 +4,7 @@ import type { VoucherSummary } from "./types";
 
 const baseVoucher: VoucherSummary = {
   id: "voucher_1",
+  studyId: "std_default",
   companyId: "emp",
   thirdPartyId: "third",
   thirdPartyName: "Cliente",
@@ -34,6 +35,7 @@ describe("third party current account", () => {
       [
         {
           id: "settlement_1",
+          studyId: "std_default",
           companyId: "emp",
           thirdPartyId: "third",
           thirdPartyName: "Cliente",
@@ -73,6 +75,7 @@ describe("third party current account", () => {
       [
         {
           id: "settlement_1",
+          studyId: "std_default",
           companyId: "emp",
           thirdPartyId: "third",
           thirdPartyName: "Cliente",

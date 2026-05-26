@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { listAccountingPeriods } from "@/lib/phase2/repository";
+import { listAccountingPeriods } from "@/lib/phase4-accounting/repository";
 import { closePeriodAction } from "./actions";
 import { PeriodForm } from "./period-form";
 
@@ -18,7 +18,10 @@ export default async function PeriodsPage() {
     workspace.companies
   );
   const canManage = tenant.membership.permissions.manageSettings;
-  const result = await listAccountingPeriods(tenant.company.id);
+  const result = await listAccountingPeriods(
+    tenant.company.studyId,
+    tenant.company.id
+  );
 
   return (
     <main className="adminPage">

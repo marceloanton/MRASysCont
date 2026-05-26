@@ -8,17 +8,20 @@ function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
 }
 
-export async function listThirdParties(companyId: string) {
+export async function listThirdParties(studyId: string, companyId: string) {
   if (!hasDatabase()) {
     return {
       source: "demo" as const,
-      thirdParties: demoThirdParties.filter((thirdParty) => thirdParty.companyId === companyId)
+      thirdParties: demoThirdParties.filter(
+        (thirdParty) => thirdParty.companyId === companyId
+      )
     };
   }
 
   try {
     const thirdParties = await prisma.thirdParty.findMany({
       where: {
+        studyId,
         companyId
       },
       orderBy: [
@@ -35,6 +38,7 @@ export async function listThirdParties(companyId: string) {
       source: "database" as const,
       thirdParties: thirdParties.map((thirdParty): ThirdPartySummary => ({
         id: thirdParty.id,
+        studyId: thirdParty.studyId ?? studyId,
         companyId: thirdParty.companyId,
         type: thirdParty.type as ThirdPartyType,
         legalName: thirdParty.legalName,
@@ -51,12 +55,15 @@ export async function listThirdParties(companyId: string) {
   } catch {
     return {
       source: "demo" as const,
-      thirdParties: demoThirdParties.filter((thirdParty) => thirdParty.companyId === companyId)
+      thirdParties: demoThirdParties.filter(
+        (thirdParty) => thirdParty.companyId === companyId
+      )
     };
   }
 }
 
 export async function createThirdParty(input: {
+  studyId: string;
   companyId: string;
   type: ThirdPartyType;
   legalName: string;
@@ -76,8 +83,33 @@ export async function createThirdParty(input: {
   }
 
   try {
+    if (!input.studyId || !input.companyId) {
+      return {
+        ok: false,
+        message: "El tercero requiere studyId y companyId."
+      };
+    }
+
+    const company = await prisma.company.findFirst({
+      where: {
+        id: input.companyId,
+        studyId: input.studyId
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (!company) {
+      return {
+        ok: false,
+        message: "La empresa activa no pertenece al estudio activo."
+      };
+    }
+
     const thirdParty = await prisma.thirdParty.create({
       data: {
+        studyId: input.studyId,
         companyId: input.companyId,
         type: input.type,
         legalName: input.legalName,
@@ -105,6 +137,7 @@ export async function createThirdParty(input: {
 }
 
 export async function updateThirdParty(input: {
+  studyId: string;
   companyId: string;
   thirdPartyId: string;
   type: ThirdPartyType;
@@ -125,9 +158,17 @@ export async function updateThirdParty(input: {
   }
 
   try {
+    if (!input.studyId || !input.companyId) {
+      return {
+        ok: false,
+        message: "El tercero requiere studyId y companyId."
+      };
+    }
+
     const existing = await prisma.thirdParty.findFirst({
       where: {
         id: input.thirdPartyId,
+        studyId: input.studyId,
         companyId: input.companyId
       }
     });
@@ -170,6 +211,7 @@ export async function updateThirdParty(input: {
 }
 
 export async function setThirdPartyActive(input: {
+  studyId: string;
   companyId: string;
   thirdPartyId: string;
   active: boolean;
@@ -182,9 +224,17 @@ export async function setThirdPartyActive(input: {
   }
 
   try {
+    if (!input.studyId || !input.companyId) {
+      return {
+        ok: false,
+        message: "El tercero requiere studyId y companyId."
+      };
+    }
+
     const existing = await prisma.thirdParty.findFirst({
       where: {
         id: input.thirdPartyId,
+        studyId: input.studyId,
         companyId: input.companyId
       }
     });

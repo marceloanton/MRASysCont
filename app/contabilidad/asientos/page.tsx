@@ -6,7 +6,7 @@ import {
   listAccountingPeriods,
   listAccounts,
   listJournalEntries
-} from "@/lib/phase2/repository";
+} from "@/lib/phase4-accounting/repository";
 import {
   confirmJournalEntryAction,
   deleteDraftJournalEntryAction,
@@ -28,9 +28,9 @@ export default async function JournalEntriesPage() {
   );
   const canPost = tenant.membership.permissions.postAccounting;
   const [accountsResult, periodsResult, entriesResult] = await Promise.all([
-    listAccounts(tenant.company.id),
-    listAccountingPeriods(tenant.company.id),
-    listJournalEntries(tenant.company.id)
+    listAccounts(tenant.company.studyId, tenant.company.id),
+    listAccountingPeriods(tenant.company.studyId, tenant.company.id),
+    listJournalEntries(tenant.company.studyId, tenant.company.id)
   ]);
 
   return (
@@ -75,7 +75,7 @@ export default async function JournalEntriesPage() {
               </thead>
               <tbody>
                 {entriesResult.entries.map((entry) => (
-                  <tr key={entry.id}>
+                  <tr key={entry.id} id={`entry-${entry.id}`}>
                     <td>{entry.number}</td>
                     <td>{entry.date}</td>
                     <td>

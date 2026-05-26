@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import type { AccountingPeriodSummary, AccountSummary } from "@/lib/phase2/types";
+import type { AccountingPeriodSummary, AccountSummary } from "@/lib/phase4-accounting/types";
 import { createJournalEntryAction, type JournalEntryFormState } from "./actions";
 
 const initialState: JournalEntryFormState = {

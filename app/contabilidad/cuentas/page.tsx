@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { listAccounts } from "@/lib/phase2/repository";
+import { listAccountChartTemplates, listAccounts } from "@/lib/phase4-accounting/repository";
+import { applyAccountTemplateAction } from "./actions";
 import { AccountForm } from "./account-form";
 
 export default async function AccountsPage() {
@@ -17,7 +18,10 @@ export default async function AccountsPage() {
     workspace.companies
   );
   const canManage = tenant.membership.permissions.manageSettings;
-  const result = await listAccounts(tenant.company.id);
+  const [result, templates] = await Promise.all([
+    listAccounts(tenant.company.studyId, tenant.company.id),
+    listAccountChartTemplates()
+  ]);
 
   return (
     <main className="adminPage">
@@ -34,6 +38,20 @@ export default async function AccountsPage() {
       <section className="adminGrid">
         <article className="panel">
           <h2>Nueva cuenta</h2>
+          {canManage ? (
+            <form action={applyAccountTemplateAction} className="inlineAction">
+              <select name="templateId" defaultValue={templates[0]?.id}>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+              <button className="tableButton" type="submit">
+                Aplicar plantilla
+              </button>
+            </form>
+          ) : null}
           {canManage ? (
             <AccountForm />
           ) : (

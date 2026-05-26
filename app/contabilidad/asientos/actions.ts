@@ -12,13 +12,13 @@ import {
   listAccounts,
   reverseJournalEntry,
   updateDraftJournalEntry
-} from "@/lib/phase2/repository";
+} from "@/lib/phase4-accounting/repository";
 import {
   validateBalancedEntry,
   validateEntryAccountsBelongToCompany,
   validateOpenPeriod
-} from "@/lib/phase2/validation";
-import type { JournalEntryLineInput } from "@/lib/phase2/types";
+} from "@/lib/phase4-accounting/validation";
+import type { JournalEntryLineInput } from "@/lib/phase4-accounting/types";
 
 export type JournalEntryFormState = {
   message: string;
@@ -96,8 +96,8 @@ export async function createJournalEntryAction(
   }
 
   const [accountsResult, periodsResult] = await Promise.all([
-    listAccounts(tenant.company.id),
-    listAccountingPeriods(tenant.company.id)
+    listAccounts(tenant.company.studyId, tenant.company.id),
+    listAccountingPeriods(tenant.company.studyId, tenant.company.id)
   ]);
 
   if (
@@ -121,6 +121,7 @@ export async function createJournalEntryAction(
   }
 
   const result = await createJournalEntry({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     periodId,
     date,
@@ -130,6 +131,7 @@ export async function createJournalEntryAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "journal_entry.created",
@@ -172,12 +174,14 @@ export async function confirmJournalEntryAction(formData: FormData) {
   }
 
   const result = await confirmJournalEntry({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     entryId
   });
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "journal_entry.confirmed",
@@ -187,6 +191,7 @@ export async function confirmJournalEntryAction(formData: FormData) {
   }
 
   revalidatePath("/contabilidad/asientos");
+  revalidatePath("/comprobantes");
 }
 
 export async function updateDraftJournalEntryAction(
@@ -235,7 +240,10 @@ export async function updateDraftJournalEntryAction(
     };
   }
 
-  const accountsResult = await listAccounts(tenant.company.id);
+  const accountsResult = await listAccounts(
+    tenant.company.studyId,
+    tenant.company.id
+  );
 
   if (
     !validateEntryAccountsBelongToCompany(
@@ -251,6 +259,7 @@ export async function updateDraftJournalEntryAction(
   }
 
   const result = await updateDraftJournalEntry({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     entryId,
     date,
@@ -260,6 +269,7 @@ export async function updateDraftJournalEntryAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "journal_entry.draft_updated",
@@ -303,6 +313,7 @@ export async function reverseJournalEntryAction(formData: FormData) {
   }
 
   const result = await reverseJournalEntry({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     entryId,
     reason
@@ -310,6 +321,7 @@ export async function reverseJournalEntryAction(formData: FormData) {
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "journal_entry.reversed",
@@ -348,12 +360,14 @@ export async function deleteDraftJournalEntryAction(formData: FormData) {
   }
 
   const result = await deleteDraftJournalEntry({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     entryId
   });
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "journal_entry.draft_deleted",

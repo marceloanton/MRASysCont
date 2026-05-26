@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import type { AccountSummary, JournalEntrySummary } from "@/lib/phase2/types";
+import type { AccountSummary, JournalEntrySummary } from "@/lib/phase4-accounting/types";
 import { updateDraftJournalEntryAction, type JournalEntryFormState } from "./actions";
 
 const initialState: JournalEntryFormState = {

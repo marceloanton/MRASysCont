@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getWorkspaceContext } from "@/lib/phase1/session";
 import { getActiveTenantFromCompanies } from "@/lib/phase1/tenant-access";
-import { getAccountingReports } from "@/lib/phase2/reports";
+import { getAccountingReports } from "@/lib/phase4-accounting/reports";
 import { PrintButton } from "./print-button";
 
 export default async function PrintableReportsPage({
@@ -24,6 +24,7 @@ export default async function PrintableReportsPage({
   const selectedPeriodId =
     params.periodId && params.periodId !== "todos" ? params.periodId : undefined;
   const reports = await getAccountingReports({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     periodId: selectedPeriodId
   });
@@ -118,6 +119,9 @@ export default async function PrintableReportsPage({
               <th>Fecha</th>
               <th>Descripcion</th>
               <th>Cuenta</th>
+              <th>Mon. orig.</th>
+              <th>Imp. orig.</th>
+              <th>T/C</th>
               <th>Debe</th>
               <th>Haber</th>
             </tr>
@@ -131,6 +135,9 @@ export default async function PrintableReportsPage({
                 <td>
                   {line.accountCode} - {line.accountName}
                 </td>
+                <td>{line.currency ?? "ARS"}</td>
+                <td>{line.originalAmount?.toLocaleString("es-AR") ?? "-"}</td>
+                <td>{line.exchangeRate?.toLocaleString("es-AR") ?? "-"}</td>
                 <td>{line.debit.toLocaleString("es-AR")}</td>
                 <td>{line.credit.toLocaleString("es-AR")}</td>
               </tr>

@@ -6,11 +6,12 @@ import {
   deleteDatabaseSession,
   getWorkspaceBySessionId,
   getWorkspaceData,
-  updateSessionCompany
+  updateSessionTenant
 } from "./repository";
 
 const sessionCookie = "mrasyscont_session";
 const userCookie = "mrasyscont_demo_user";
+const studyCookie = "mrasyscont_demo_study";
 const companyCookie = "mrasyscont_demo_company";
 
 export async function getSessionContext(): Promise<SessionContext> {
@@ -41,9 +42,10 @@ export async function getWorkspaceContext() {
     return null;
   }
 
+  const activeStudyId = cookieStore.get(studyCookie)?.value;
   const activeCompanyId = cookieStore.get(companyCookie)?.value;
 
-  return getWorkspaceData(demoUserId, activeCompanyId);
+  return getWorkspaceData(demoUserId, activeStudyId, activeCompanyId);
 }
 
 export async function setSessionCookie(sessionId: string) {
@@ -55,6 +57,7 @@ export async function setSessionCookie(sessionId: string) {
     maxAge: 60 * 60 * 12
   });
   cookieStore.delete(userCookie);
+  cookieStore.delete(studyCookie);
   cookieStore.delete(companyCookie);
 }
 
@@ -65,16 +68,23 @@ export async function setDemoUser(userId: string) {
     sameSite: "lax",
     path: "/"
   });
+  cookieStore.delete(studyCookie);
   cookieStore.delete(companyCookie);
 }
 
-export async function setActiveCompany(companyId: string) {
+export async function setActiveTenant(studyId: string, companyId: string) {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get(sessionCookie)?.value;
 
   if (sessionId) {
-    await updateSessionCompany(sessionId, companyId);
+    await updateSessionTenant(sessionId, studyId, companyId);
   }
+
+  cookieStore.set(studyCookie, studyId, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/"
+  });
 
   cookieStore.set(companyCookie, companyId, {
     httpOnly: true,
@@ -93,5 +103,6 @@ export async function clearSession() {
 
   cookieStore.delete(sessionCookie);
   cookieStore.delete(userCookie);
+  cookieStore.delete(studyCookie);
   cookieStore.delete(companyCookie);
 }

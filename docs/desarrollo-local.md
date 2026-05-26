@@ -122,12 +122,20 @@ La contrasena puede cambiarse con `SEED_USER_PASSWORD` antes de ejecutar `npm ru
 ## Validaciones
 
 ```bash
+npm run db:up
+npm run db:migration:check
 npm run lint
 npm run typecheck
 npm run test
 npm run build
 npm run prisma:validate
 ```
+
+`db:migration:check` requiere PostgreSQL accesible en `localhost:5432`.
+Si falla con error de schema engine:
+1. abrir Docker Desktop,
+2. ejecutar `npm run db:up`,
+3. reintentar `npm run db:migration:check`.
 
 ## Notas
 

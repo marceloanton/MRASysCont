@@ -104,12 +104,14 @@ export async function createThirdPartyAction(
   }
 
   const result = await createThirdParty({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     ...parsed.input
   });
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "third_party.created",
@@ -175,6 +177,7 @@ export async function updateThirdPartyAction(
   }
 
   const result = await updateThirdParty({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     thirdPartyId,
     ...parsed.input
@@ -182,6 +185,7 @@ export async function updateThirdPartyAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: "third_party.updated",
@@ -226,6 +230,7 @@ export async function setThirdPartyActiveAction(formData: FormData) {
   }
 
   const result = await setThirdPartyActive({
+    studyId: tenant.company.studyId,
     companyId: tenant.company.id,
     thirdPartyId,
     active
@@ -233,6 +238,7 @@ export async function setThirdPartyActiveAction(formData: FormData) {
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: tenant.company.studyId,
       userId: workspace.session.user.id,
       companyId: tenant.company.id,
       action: active ? "third_party.activated" : "third_party.deactivated",

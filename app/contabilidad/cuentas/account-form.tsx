@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { accountTypes } from "@/lib/phase2/validation";
+import { accountTypes } from "@/lib/phase4-accounting/validation";
 import { createAccountAction, type AccountFormState } from "./actions";
 
 const initialState: AccountFormState = {

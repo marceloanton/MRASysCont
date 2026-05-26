@@ -3,6 +3,7 @@ import type { AccountingPeriodSummary, AccountSummary, JournalEntrySummary } fro
 export const demoAccounts: AccountSummary[] = [
   {
     id: "acc_caja",
+    studyId: "std_default",
     companyId: "emp_alfa",
     code: "1.01.001",
     name: "Caja",
@@ -12,6 +13,7 @@ export const demoAccounts: AccountSummary[] = [
   },
   {
     id: "acc_banco",
+    studyId: "std_default",
     companyId: "emp_alfa",
     code: "1.01.002",
     name: "Banco",
@@ -21,6 +23,7 @@ export const demoAccounts: AccountSummary[] = [
   },
   {
     id: "acc_ventas",
+    studyId: "std_default",
     companyId: "emp_alfa",
     code: "4.01.001",
     name: "Ventas",
@@ -30,6 +33,7 @@ export const demoAccounts: AccountSummary[] = [
   },
   {
     id: "acc_caja_gamma",
+    studyId: "std_other",
     companyId: "emp_gamma",
     code: "1.01.001",
     name: "Caja",
@@ -42,6 +46,7 @@ export const demoAccounts: AccountSummary[] = [
 export const demoPeriods: AccountingPeriodSummary[] = [
   {
     id: "period_alfa_2026_01",
+    studyId: "std_default",
     companyId: "emp_alfa",
     name: "Enero 2026",
     startsAt: "2026-01-01",
@@ -50,6 +55,7 @@ export const demoPeriods: AccountingPeriodSummary[] = [
   },
   {
     id: "period_alfa_2026_02",
+    studyId: "std_default",
     companyId: "emp_alfa",
     name: "Febrero 2026",
     startsAt: "2026-02-01",
@@ -58,6 +64,7 @@ export const demoPeriods: AccountingPeriodSummary[] = [
   },
   {
     id: "period_gamma_2026_01",
+    studyId: "std_other",
     companyId: "emp_gamma",
     name: "Enero 2026",
     startsAt: "2026-01-01",
@@ -69,6 +76,7 @@ export const demoPeriods: AccountingPeriodSummary[] = [
 export const demoJournalEntries: JournalEntrySummary[] = [
   {
     id: "entry_alfa_1",
+    studyId: "std_default",
     companyId: "emp_alfa",
     periodId: "period_alfa_2026_01",
     number: 1,
@@ -97,6 +105,7 @@ export const demoJournalEntries: JournalEntrySummary[] = [
   },
   {
     id: "entry_alfa_2",
+    studyId: "std_default",
     companyId: "emp_alfa",
     periodId: "period_alfa_2026_01",
     number: 2,
@@ -126,6 +135,7 @@ export const demoJournalEntries: JournalEntrySummary[] = [
   },
   {
     id: "entry_alfa_3",
+    studyId: "std_default",
     companyId: "emp_alfa",
     periodId: "period_alfa_2026_01",
     number: 3,

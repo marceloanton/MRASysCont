@@ -3,6 +3,7 @@ import type { SettlementSummary, ThirdPartySummary, VoucherSummary } from "./typ
 export const demoThirdParties: ThirdPartySummary[] = [
   {
     id: "third_alfa_cliente",
+    studyId: "std_default",
     companyId: "emp_alfa",
     type: "CLIENTE",
     legalName: "Cliente Demo SA",
@@ -17,6 +18,7 @@ export const demoThirdParties: ThirdPartySummary[] = [
   },
   {
     id: "third_alfa_proveedor",
+    studyId: "std_default",
     companyId: "emp_alfa",
     type: "PROVEEDOR",
     legalName: "Proveedor Demo SRL",
@@ -29,6 +31,7 @@ export const demoThirdParties: ThirdPartySummary[] = [
   },
   {
     id: "third_gamma_cliente",
+    studyId: "std_default",
     companyId: "emp_gamma",
     type: "CLIENTE",
     legalName: "Consumidor Gamma",
@@ -42,6 +45,7 @@ export const demoThirdParties: ThirdPartySummary[] = [
 export const demoVouchers: VoucherSummary[] = [
   {
     id: "voucher_alfa_emitido_1",
+    studyId: "std_default",
     companyId: "emp_alfa",
     thirdPartyId: "third_alfa_cliente",
     thirdPartyName: "Cliente Demo SA",
@@ -61,6 +65,7 @@ export const demoVouchers: VoucherSummary[] = [
   },
   {
     id: "voucher_alfa_recibido_1",
+    studyId: "std_default",
     companyId: "emp_alfa",
     thirdPartyId: "third_alfa_proveedor",
     thirdPartyName: "Proveedor Demo SRL",
@@ -82,6 +87,7 @@ export const demoVouchers: VoucherSummary[] = [
 export const demoSettlements: SettlementSummary[] = [
   {
     id: "settlement_alfa_cobro_1",
+    studyId: "std_default",
     companyId: "emp_alfa",
     thirdPartyId: "third_alfa_cliente",
     thirdPartyName: "Cliente Demo SA",
@@ -98,6 +104,7 @@ export const demoSettlements: SettlementSummary[] = [
   },
   {
     id: "settlement_alfa_pago_1",
+    studyId: "std_default",
     companyId: "emp_alfa",
     thirdPartyId: "third_alfa_proveedor",
     thirdPartyName: "Proveedor Demo SRL",

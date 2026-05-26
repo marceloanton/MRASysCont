@@ -6,8 +6,22 @@ export type AccountType =
   | "EGRESOS"
   | "ORDEN";
 
+export type AccountTemplateLine = {
+  code: string;
+  name: string;
+  type: AccountType;
+  imputable: boolean;
+};
+
+export type AccountChartTemplate = {
+  id: string;
+  name: string;
+  lines: AccountTemplateLine[];
+};
+
 export type AccountSummary = {
   id: string;
+  studyId?: string;
   companyId: string;
   code: string;
   name: string;
@@ -20,6 +34,7 @@ export type AccountingPeriodStatus = "ABIERTO" | "CERRADO";
 
 export type AccountingPeriodSummary = {
   id: string;
+  studyId?: string;
   companyId: string;
   name: string;
   startsAt: string;
@@ -51,6 +66,7 @@ export type JournalEntryLineSummary = {
 
 export type JournalEntrySummary = {
   id: string;
+  studyId?: string;
   companyId: string;
   periodId: string;
   number: number;
@@ -76,6 +92,9 @@ export type JournalReportLine = {
   accountType: AccountType;
   debit: number;
   credit: number;
+  currency?: string;
+  originalAmount?: number;
+  exchangeRate?: number;
 };
 
 export type LedgerAccountReport = {

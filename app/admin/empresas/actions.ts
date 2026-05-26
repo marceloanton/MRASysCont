@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { recordAuditEvent } from "@/lib/phase1/audit";
 import { createCompany } from "@/lib/phase1/repository";
 import { getSessionContext } from "@/lib/phase1/session";
-import { getActiveTenant } from "@/lib/phase1/tenant-access";
+import { getRequiredActiveTenant } from "@/lib/phase1/tenant-access";
 
 export type CompanyFormState = {
   message: string;
@@ -23,7 +23,7 @@ export async function createCompanyAction(
   void _previousState;
 
   const session = await getSessionContext();
-  const activeTenant = getActiveTenant(session);
+  const activeTenant = getRequiredActiveTenant(session);
 
   if (!activeTenant.membership.permissions.manageSettings) {
     return {
@@ -45,6 +45,7 @@ export async function createCompanyAction(
   }
 
   const result = await createCompany({
+    studyId: activeTenant.company.studyId,
     legalName,
     tradeName,
     cuit,
@@ -53,6 +54,7 @@ export async function createCompanyAction(
 
   if (result.ok) {
     recordAuditEvent({
+      studyId: activeTenant.company.studyId,
       userId: session.user.id,
       companyId: activeTenant.company.id,
       action: "company.created",

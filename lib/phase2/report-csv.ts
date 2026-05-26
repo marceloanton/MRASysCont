@@ -34,13 +34,16 @@ export function buildTrialBalanceCsv(lines: TrialBalanceLine[]) {
 
 export function buildJournalCsv(lines: JournalReportLine[]) {
   return toCsv([
-    ["Asiento", "Fecha", "Descripcion", "Cuenta", "Nombre", "Debe", "Haber"],
+    ["Asiento", "Fecha", "Descripcion", "Cuenta", "Nombre", "Moneda original", "Importe original", "Tipo cambio", "Debe ARS", "Haber ARS"],
     ...lines.map((line) => [
       line.number,
       line.date,
       line.description,
       line.accountCode,
       line.accountName,
+      line.currency ?? "ARS",
+      line.originalAmount ?? "",
+      line.exchangeRate ?? "",
       line.debit,
       line.credit
     ])
