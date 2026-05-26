@@ -1,11 +1,16 @@
 # MRASysCont
 
-Plataforma integral para estudio contable argentino.
+Plataforma integral para estudios contables argentinos.
 
-## Estado
+## Demo publica
 
-- Fases 0.6 a 8 cerradas.
-- Demo pública disponible en `/publico`.
+- Landing: `/publico`
+- Producto: `login` con entorno demo/local
+
+## Estado actual
+
+- Fases 0.6 a 8 cerradas (incluye IVA base).
+- Arquitectura multi-tenant orientada a estudio contable.
 
 ## Documentacion publica
 
@@ -18,10 +23,10 @@ Plataforma integral para estudio contable argentino.
 - [Deploy free](docs/DEPLOY_FREE.md)
 - [Acceso a docs internas](docs/public/INTERNAL_DOCS_ACCESS.md)
 
-## Licencia y uso comercial
+## Licencia
 
-- Uso de evaluacion/no comercial: permitido.
-- Uso comercial/facturacion real: requiere licencia comercial paga.
+- Uso de evaluación/no comercial: permitido.
+- Uso comercial y facturación real: requiere licencia comercial paga.
 
-Contacto:
+Contacto comercial:
 - marceloanton@outlook.com
